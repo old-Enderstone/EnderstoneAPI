@@ -7,13 +7,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class User {
+public abstract class Player {
 
     private final UUID id;
     private String lastKnownName;
     private final Collection<IUserProperty<?>> properties;
 
-    public User(UUID id, String lastKnownName, Collection<IUserProperty<?>> properties) {
+    public Player(UUID id, String lastKnownName, Collection<IUserProperty<?>> properties) {
         this.id = id;
         this.lastKnownName = lastKnownName;
         this.properties = properties;
@@ -21,8 +21,6 @@ public abstract class User {
 
     /**
      * Creates a new
-     * @param property
-     * @return
      */
     public abstract IUserProperty<?> getProperty(UserProperty property);
 
