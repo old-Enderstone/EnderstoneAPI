@@ -1,25 +1,32 @@
 package net.enderstone.api.common;
 
+import net.enderstone.api.common.properties.IUserProperty;
+import net.enderstone.api.common.properties.UserProperty;
+
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
-
-// TODO: stats
-// TODO: top users by stats
-// TODO: i18n service
-// TODO: delete all user data
-// TODO: IntProperty, StringProperty [...]
-// TODO: terms of service
-public class User {
+public abstract class User {
 
     private final UUID id;
     private String lastKnownName;
+    private final Collection<IUserProperty<?>> properties;
 
-    public User(final UUID id, final String lastKnownName) {
+    public User(UUID id, String lastKnownName, Collection<IUserProperty<?>> properties) {
         this.id = id;
         this.lastKnownName = lastKnownName;
+        this.properties = properties;
     }
 
-    public void setLastKnownName(final String lastKnownName) {
+    /**
+     * Creates a new
+     * @param property
+     * @return
+     */
+    public abstract IUserProperty<?> getProperty(UserProperty property);
+
+    public void setLastKnownName(String lastKnownName) {
         this.lastKnownName = lastKnownName;
     }
 
@@ -29,5 +36,9 @@ public class User {
 
     public String getLastKnownName() {
         return lastKnownName;
+    }
+
+    public Collection<IUserProperty<?>> getProperties() {
+        return List.copyOf(properties);
     }
 }
