@@ -36,4 +36,18 @@ public abstract class IntegerUserProperty implements IUserProperty<Integer> {
     public void set(Integer value) {
         this.value = value;
     }
+
+    @Override
+    public Integer getDefaultValue() {
+        return (Integer)key.defaultValue;
+    }
+
+    public abstract Integer add(Integer value);
+
+    public abstract Integer subtract(Integer value);
+
+    public abstract Integer multiply(Integer value);
+
+    public abstract Integer divide(Integer value);
+
 }

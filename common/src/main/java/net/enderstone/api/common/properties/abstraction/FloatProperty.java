@@ -27,4 +27,18 @@ public abstract class FloatProperty implements IProperty<Float> {
     public void set(Float value) {
         this.value = value;
     }
+
+    @Override
+    public Float getDefaultValue() {
+        return (Float)key.defaultValue;
+    }
+
+    public abstract Float add(Float value);
+
+    public abstract Float subtract(Float value);
+
+    public abstract Float multiply(Float value);
+
+    public abstract Float divide(Float value);
+    
 }

@@ -36,4 +36,18 @@ public abstract class LongUserProperty implements IUserProperty<Long> {
     public void set(Long value) {
         this.value = value;
     }
+
+    @Override
+    public Long getDefaultValue() {
+        return (Long)key.defaultValue;
+    }
+
+    public abstract Long add(Long value);
+
+    public abstract Long subtract(Long value);
+
+    public abstract Long multiply(Long value);
+
+    public abstract Long divide(Long value);
+
 }

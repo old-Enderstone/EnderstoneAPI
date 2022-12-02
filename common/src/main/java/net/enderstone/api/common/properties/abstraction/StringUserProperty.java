@@ -36,4 +36,10 @@ public abstract class StringUserProperty implements IUserProperty<String> {
     public String get() {
         return value;
     }
+
+    @Override
+    public String getDefaultValue() {
+        return (String)key.defaultValue;
+    }
+
 }

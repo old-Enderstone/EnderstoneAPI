@@ -36,4 +36,12 @@ public abstract class BooleanUserProperty implements IUserProperty<Boolean> {
     public void set(Boolean value) {
         this.value = value;
     }
+
+    @Override
+    public Boolean getDefaultValue() {
+        return (Boolean)key.defaultValue;
+    }
+
+    public abstract Boolean toggle();
+
 }

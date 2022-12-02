@@ -27,4 +27,10 @@ public abstract class StringProperty implements IProperty<String> {
     public void set(String value) {
         this.value = value;
     }
+
+    @Override
+    public String getDefaultValue() {
+        return (String)key.defaultValue;
+    }
+
 }

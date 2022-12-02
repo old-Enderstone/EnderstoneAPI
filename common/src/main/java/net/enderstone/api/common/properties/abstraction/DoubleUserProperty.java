@@ -36,4 +36,18 @@ public abstract class DoubleUserProperty implements IUserProperty<Double> {
     public void set(Double value) {
         this.value = value;
     }
+
+    @Override
+    public Double getDefaultValue() {
+        return (Double)key.defaultValue;
+    }
+
+    public abstract Double add(Double value);
+
+    public abstract Double subtract(Double value);
+
+    public abstract Double multiply(Double value);
+
+    public abstract Double divide(Double value);
+
 }
