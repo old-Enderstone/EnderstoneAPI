@@ -209,7 +209,8 @@ public class SQLConnector {
                     "jdbc:" + "mysql" + "://" +
                             this.hostAddress +
                             ":" + this.hostPort +
-                            (this.database != null ? "/" + this.database: ""),
+                            (this.database != null ? "/" + this.database: "") +
+                            "?autoReconnect=true",
                     connectionProps);
 
             if(isConnected()) Main.logger.info("Connected to sql server.");

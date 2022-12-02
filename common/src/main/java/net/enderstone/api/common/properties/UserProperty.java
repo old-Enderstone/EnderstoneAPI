@@ -4,16 +4,17 @@ import java.util.Locale;
 
 public enum UserProperty {
 
-    LAST_SEEN(null),
-    LAST_IP(null),
-    LAST_COUNTRY(null),
-    LOCALE(new Locale("en", "us")),
-    PLAYTIME(0),
-    COINS(100);
+    LAST_SEEN(PropertyType.LONG, 0L),
+    LAST_COUNTRY(PropertyType.STRING, null),
+    LOCALE(PropertyType.STRING, new Locale("en", "us")),
+    PLAYTIME(PropertyType.INTEGER, 0),
+    COINS(PropertyType.INTEGER, 100);
 
+    public final PropertyType type;
     public final Object defaultValue;
 
-    UserProperty(Object defaultValue) {
+    UserProperty(final PropertyType type, final Object defaultValue) {
+        this.type = type;
         this.defaultValue = defaultValue;
     }
 }

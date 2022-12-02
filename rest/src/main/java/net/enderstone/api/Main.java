@@ -2,12 +2,18 @@ package net.enderstone.api;
 
 import com.bethibande.web.logging.ConsoleColors;
 import com.bethibande.web.logging.LoggerFactory;
+import net.enderstone.api.common.properties.UserProperty;
+import net.enderstone.api.common.properties.abstraction.IntegerUserProperty;
+import net.enderstone.api.common.properties.abstraction.StringUserProperty;
 import net.enderstone.api.config.Config;
 import net.enderstone.api.config.IPWhitelist;
+import net.enderstone.api.repo.UserPropertyRepository;
 import net.enderstone.api.sql.SQLConnector;
 import net.enderstone.api.utils.FileUtil;
 
 import java.io.File;
+import java.util.AbstractMap;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.logging.Logger;
@@ -67,6 +73,14 @@ public class Main {
         connector.connect();
 
         logger.info(annotate("Started!", GREEN));
+
+        UserPropertyRepository repo = new UserPropertyRepository();
+        IntegerUserProperty prop = (IntegerUserProperty) repo.get(new AbstractMap.SimpleImmutableEntry<>(UUID.randomUUID(), UserProperty.COINS));
+        prop.set(6);
+        prop.add(1); // 7
+        prop.subtract(3); // 4
+        prop.divide(2); // 2
+        prop.multiply(4); // 8
 
         exit.join();
 

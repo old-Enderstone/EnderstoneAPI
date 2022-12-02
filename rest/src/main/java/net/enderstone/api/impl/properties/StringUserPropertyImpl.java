@@ -4,7 +4,6 @@ import net.enderstone.api.common.properties.UserProperty;
 import net.enderstone.api.common.properties.abstraction.StringUserProperty;
 import net.enderstone.api.repo.UserPropertyRepository;
 
-import java.util.AbstractMap;
 import java.util.UUID;
 
 public class StringUserPropertyImpl extends StringUserProperty {
@@ -17,8 +16,13 @@ public class StringUserPropertyImpl extends StringUserProperty {
 
     @Override
     public void set(String value) {
-        super.set(value);
-        repo.update(new AbstractMap.SimpleImmutableEntry<>(getOwner(), getKey()), this);
+        if(super.value == null) {
+            super.set(value);
+            repo.insert(toEntry(), this);
+        } else {
+            super.set(value);
+            repo.update(toEntry(), this);
+        }
     }
 
     @Override

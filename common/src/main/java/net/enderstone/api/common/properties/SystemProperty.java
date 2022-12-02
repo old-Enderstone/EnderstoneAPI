@@ -2,13 +2,15 @@ package net.enderstone.api.common.properties;
 
 public enum SystemProperty {
 
-    MAINTENANCE(true),
-    MOTD("§9MOTD Default value"),
-    SLOTS(50);
+    MAINTENANCE(PropertyType.BOOLEAN, true),
+    MOTD(PropertyType.STRING, "§9MOTD Default value"),
+    SLOTS(PropertyType.INTEGER, 50);
 
+    public final PropertyType type;
     public final Object defaultValue;
 
-    SystemProperty(Object defaultValue) {
+    SystemProperty(final PropertyType type, final Object defaultValue) {
+        this.type = type;
         this.defaultValue = defaultValue;
     }
 }
