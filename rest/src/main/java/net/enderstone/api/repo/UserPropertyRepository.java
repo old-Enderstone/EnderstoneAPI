@@ -7,8 +7,7 @@ import net.enderstone.api.impl.properties.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class UserPropertyRepository implements IMultipleKeyRepository<UUID, UserProperty, IUserProperty<?>> {
 
@@ -37,6 +36,28 @@ public class UserPropertyRepository implements IMultipleKeyRepository<UUID, User
                 """
                 ALTER TABLE `User` ADD FOREIGN KEY (`uId`) REFERENCES `Property` (`uId`);
                 """);
+    }
+
+    /**
+     * Returns a collection containing all properties stored in the database that belong to the given uuid.
+     * The return value is never null, if there are no properties an empty collection will be returned
+     */
+    public Collection<IUserProperty<?>> getAllPropertiesByOwner(UUID owner) {
+        ResultSet rs = Main.connector.query("select `property`, `value` from `Property` where uId=?;", owner);
+        List<IUserProperty<?>> properties = new ArrayList<>();
+        try {
+            while(rs.next()) {
+                String typeStr = rs.getString("property");
+                String value = rs.getString("value");
+                UserProperty property = UserProperty.valueOf(typeStr);
+
+                properties.add(createProperty(owner, property, value));
+            }
+            rs.close();
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return properties;
     }
 
     @Override
