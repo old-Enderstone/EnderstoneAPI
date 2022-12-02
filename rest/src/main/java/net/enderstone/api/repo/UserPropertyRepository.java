@@ -91,23 +91,12 @@ public class UserPropertyRepository implements IMultipleKeyRepository<UUID, User
         };
     }
 
-    private IUserProperty<?> createProperty(UUID owner, UserProperty property) {
-        return switch(property.type) {
-            case STRING -> new StringUserPropertyImpl(property, owner, null, this);
-            case BOOLEAN -> new BooleanUserPropertyImpl(property, owner, null, this);
-            case INTEGER -> new IntegerUserPropertyImpl(property, owner, null, this);
-            case LONG -> new LongUserPropertyImpl(property, owner, null, this);
-            case DOUBLE -> new DoubleUserPropertyImpl(property, owner, null, this);
-            case FLOAT -> new FloatUserPropertyImpl(property, owner, null, this);
-        };
-    }
-
     @Override
     public IUserProperty<?> get(final Map.Entry<UUID, UserProperty> key) {
         ResultSet rs = Main.connector.query("select `value` from `Property` where `uId`=? and `property`=?;", key.getKey().toString(), key.getValue().toString());
         try {
             if(!rs.next()) {
-                return createProperty(key.getKey(), key.getValue());
+                return null;
             }
 
             String value = rs.getString("value");

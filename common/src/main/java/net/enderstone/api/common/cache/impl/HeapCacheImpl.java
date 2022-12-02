@@ -119,7 +119,12 @@ public class HeapCacheImpl<K, V> extends ICache<K, V> implements HasListeners<K,
     public V get(final K key) {
         SimpleItem<K, V> item = cache.get(key);
         if(item == null && supplier == null) return null;
-        if(item == null) {
+        if(item != null && lifetime != null && item.getExpiryTime() <= System.currentTimeMillis()) {
+            cache.remove(key);
+            order.remove(key);
+            item = null;
+        }
+        if(item == null && supplier != null) {
             V value = supplier.apply(key);
             if(value == null) return null;
 
