@@ -4,6 +4,7 @@ import com.bethibande.web.logging.ConsoleColors;
 import com.bethibande.web.logging.LoggerFactory;
 import net.enderstone.api.config.Config;
 import net.enderstone.api.config.IPWhitelist;
+import net.enderstone.api.sql.SQLConnector;
 import net.enderstone.api.utils.FileUtil;
 
 import java.io.File;
@@ -20,6 +21,11 @@ public class Main {
 
     public static ScheduledThreadPoolExecutor executor;
     public static Logger logger;
+
+    public static Config config;
+    public static IPWhitelist whitelist;
+
+    public static SQLConnector connector;
 
     public static final CompletableFuture<Integer> exit = new CompletableFuture<>();
 
@@ -38,7 +44,7 @@ public class Main {
         }
 
         if(!whitelistFile.exists()) {
-            FileUtil.writeJson(new IPWhitelist(), configFile);
+            FileUtil.writeJson(new IPWhitelist(), whitelistFile);
         }
     }
 
@@ -50,6 +56,15 @@ public class Main {
         logger = LoggerFactory.createLogger(executor);
         logger.info("Starting..");
 
+        config = FileUtil.readJson(configFile, Config.class);
+        whitelist = FileUtil.readJson(whitelistFile, IPWhitelist.class);
+
+        connector = new SQLConnector();
+        connector.setHostAddress(config.sqlHost, config.sqlPort)
+                 .setUser(config.sqlUsername, config.sqlPassword)
+                 .setDatabase(config.sqlDatabase);
+
+        connector.connect();
 
         logger.info(annotate("Started!", GREEN));
 

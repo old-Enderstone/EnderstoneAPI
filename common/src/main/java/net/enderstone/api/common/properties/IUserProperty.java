@@ -11,6 +11,7 @@ public interface IUserProperty<T> {
      * Get the current value of the property. If there is no value, returns the default value
      */
     T get();
+    T getDefaultValue();
 
     void set(final T value);
 

@@ -5,6 +5,7 @@ import java.util.List;
 
 public class IPWhitelist {
 
+    public boolean use = false;
     public List<String> whitelist;
 
     public IPWhitelist() {
