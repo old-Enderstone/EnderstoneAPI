@@ -11,7 +11,7 @@ public abstract class Player {
 
     protected final UUID id;
     protected String lastKnownName;
-    protected final Collection<IUserProperty<?>> properties;
+    protected Collection<IUserProperty<?>> properties;
 
     public Player(UUID id, String lastKnownName, Collection<IUserProperty<?>> properties) {
         this.id = id;
@@ -26,6 +26,10 @@ public abstract class Player {
 
     public void setLastKnownName(String lastKnownName) {
         this.lastKnownName = lastKnownName;
+    }
+
+    public void setProperties(Collection<IUserProperty<?>> properties) {
+        this.properties = properties;
     }
 
     public UUID getId() {

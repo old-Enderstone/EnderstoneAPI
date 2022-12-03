@@ -9,26 +9,20 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class BooleanUserPropertyImpl extends BooleanUserProperty {
 
-    private final UserPropertyRepository repo;
+    private final UserPropertyRepository repository;
     private final ReentrantLock lock = new ReentrantLock();
 
-    public BooleanUserPropertyImpl(UserProperty key, UUID owner, Boolean value, UserPropertyRepository repo) {
+    public BooleanUserPropertyImpl(UserProperty key, UUID owner, Boolean value, UserPropertyRepository repository) {
         super(key, owner, value);
-        this.repo = repo;
+        this.repository = repository;
     }
 
     @Override
     public void set(Boolean value) {
-        if(value == null) throw new NullPointerException("Null not allowed here");
         lock.lock();
 
-        if(super.value == null) {
-            super.set(value);
-            repo.insert(toEntry(), this);
-        } else {
-            super.set(value);
-            repo.update(toEntry(), this);
-        }
+        super.set(value);
+        repository.setValue(getOwner(), getKey(), value);
 
         lock.unlock();
     }
@@ -37,10 +31,10 @@ public class BooleanUserPropertyImpl extends BooleanUserProperty {
     public Boolean toggle() {
         lock.lock();
 
-        boolean value = !get();
-        set(value);
+        final boolean newValue = repository.toggle(getOwner(), getKey());
+        super.set(newValue);
 
         lock.unlock();
-        return value;
+        return newValue;
     }
 }

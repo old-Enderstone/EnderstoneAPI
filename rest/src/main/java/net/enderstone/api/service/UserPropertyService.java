@@ -3,7 +3,7 @@ package net.enderstone.api.service;
 import net.enderstone.api.common.properties.IUserProperty;
 import net.enderstone.api.common.properties.UserProperty;
 import net.enderstone.api.impl.properties.*;
-import net.enderstone.api.repo.UserPropertyRepository;
+import net.enderstone.api.repository.UserPropertyRepository;
 
 import java.util.AbstractMap;
 import java.util.Collection;

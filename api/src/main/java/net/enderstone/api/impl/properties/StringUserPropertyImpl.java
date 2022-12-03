@@ -8,25 +8,16 @@ import java.util.UUID;
 
 public class StringUserPropertyImpl extends StringUserProperty {
 
-    private UserPropertyRepository repo;
+    private final UserPropertyRepository repository;
 
-    public StringUserPropertyImpl(UserProperty key, UUID owner, String value, UserPropertyRepository repo) {
+    public StringUserPropertyImpl(UserProperty key, UUID owner, String value, UserPropertyRepository repository) {
         super(key, owner, value);
+        this.repository = repository;
     }
 
     @Override
     public void set(String value) {
-        if(super.value == null) {
-            super.set(value);
-            repo.insert(toEntry(), this);
-        } else {
-            super.set(value);
-            repo.update(toEntry(), this);
-        }
-    }
-
-    @Override
-    public String get() {
-        return super.get();
+        super.set(value);
+        repository.setValue(getOwner(), getKey(), value);
     }
 }

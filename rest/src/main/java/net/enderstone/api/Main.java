@@ -1,15 +1,15 @@
 package net.enderstone.api;
 
-import com.bethibande.web.logging.ConsoleColors;
+import com.bethibande.web.JWebServer;
 import com.bethibande.web.logging.LoggerFactory;
-import net.enderstone.api.common.properties.UserProperty;
-import net.enderstone.api.common.properties.abstraction.IntegerUserProperty;
-import net.enderstone.api.common.properties.abstraction.StringUserProperty;
+import net.enderstone.api.annotations.ParameterAnnotationProcessor;
+import net.enderstone.api.annotations.WhitelistedInvocationHandler;
 import net.enderstone.api.config.Config;
 import net.enderstone.api.config.IPWhitelist;
-import net.enderstone.api.repo.IRepository;
-import net.enderstone.api.repo.PlayerRepository;
-import net.enderstone.api.repo.UserPropertyRepository;
+import net.enderstone.api.repository.IRepository;
+import net.enderstone.api.repository.PlayerRepository;
+import net.enderstone.api.repository.UserPropertyRepository;
+import net.enderstone.api.rest.PlayerHandler;
 import net.enderstone.api.service.PlayerService;
 import net.enderstone.api.service.UserPropertyService;
 import net.enderstone.api.sql.SQLConnector;
@@ -17,8 +17,6 @@ import net.enderstone.api.utils.Arrays;
 import net.enderstone.api.utils.FileUtil;
 
 import java.io.File;
-import java.util.AbstractMap;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.logging.Logger;
@@ -44,6 +42,8 @@ public class Main {
 
     private static UserPropertyRepository userPropertyRepository;
     public static UserPropertyService userPropertyService;
+
+    public static JWebServer restServer;
 
     public static final CompletableFuture<Integer> exit = new CompletableFuture<>();
 
@@ -91,8 +91,15 @@ public class Main {
         userPropertyService = new UserPropertyService(userPropertyRepository);
 
         if(Arrays.contains(args, "--genDatabase")) {
-            Stream.of(userPropertyRepository, playerRepository).forEach(IRepository::setupDatabase);
+            Stream.of(playerRepository, userPropertyRepository).forEach(IRepository::setupDatabase);
         }
+
+        restServer = new JWebServer()
+                .withBindAddress(config.bindAddress, config.port)
+                .withMethodInvocationHandler(new WhitelistedInvocationHandler())
+                .withProcessor(new ParameterAnnotationProcessor())
+                .withHandler(PlayerHandler.class);
+        restServer.start();
 
         logger.info(annotate("Started!", GREEN));
 

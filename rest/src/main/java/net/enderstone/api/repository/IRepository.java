@@ -1,6 +1,4 @@
-package net.enderstone.api.repo;
-
-import net.enderstone.api.sql.SQLConnector;
+package net.enderstone.api.repository;
 
 public interface IRepository<K, V> {
 

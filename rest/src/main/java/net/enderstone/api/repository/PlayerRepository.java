@@ -1,4 +1,4 @@
-package net.enderstone.api.repo;
+package net.enderstone.api.repository;
 
 import net.enderstone.api.Main;
 import net.enderstone.api.common.Player;
