@@ -64,7 +64,7 @@ public class EnderStoneAPI {
         return baseUrl;
     }
 
-    public Player getUserById(UUID id) {
+    public Player getPlayerById(UUID id) {
         return playerCache.get(id);
     }
 

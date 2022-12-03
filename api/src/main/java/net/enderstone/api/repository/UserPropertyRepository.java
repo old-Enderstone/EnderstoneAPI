@@ -2,6 +2,8 @@ package net.enderstone.api.repository;
 
 import net.enderstone.api.EnderStoneAPI;
 import net.enderstone.api.common.properties.UserProperty;
+import net.enderstone.api.common.types.Message;
+import net.enderstone.api.utils.IOUtils;
 
 import java.util.UUID;
 
@@ -14,11 +16,14 @@ public class UserPropertyRepository {
     }
 
     public void setValue(UUID user, UserProperty property, Object value) {
-
+        Message message = IOUtils.getJson(String.format("%s%s/%s/%s/%s", api.getBaseUrl(), "/set/player/property", user.toString(), property.toString(), value.toString()), Message.class);
+        if(message == null ||message.id() != 200) throw new RuntimeException("Failed to set user property.");
     }
 
     public boolean toggle(UUID user, UserProperty property) {
-        return false;
+        Message message = IOUtils.getJson(String.format("%s%s/%s/%s", api.getBaseUrl(), "/toggle/player/property", user.toString(), property.toString()), Message.class);
+        if(message == null ||message.id() != 200) throw new RuntimeException("Failed to set user property.");
+        return (boolean) message.message();
     }
 
     public int addInt(UUID user, UserProperty property, int value) {

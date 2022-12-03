@@ -19,6 +19,7 @@ import net.enderstone.api.utils.FileUtil;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
@@ -95,6 +96,7 @@ public class Main {
         }
 
         restServer = new JWebServer()
+                .withLogLevel(Level.FINE)
                 .withBindAddress(config.bindAddress, config.port)
                 .withMethodInvocationHandler(new WhitelistedInvocationHandler())
                 .withProcessor(new ParameterAnnotationProcessor())
