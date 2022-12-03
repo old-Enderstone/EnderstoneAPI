@@ -13,13 +13,7 @@ public class UserPropertyRepository implements IMultipleKeyRepository<UUID, User
 
     @Override
     public void setupDatabase() {
-        Main.connector.updateBatch("""
-                CREATE TABLE `User` (
-                  `uId` varchar(36) PRIMARY KEY NOT NULL,
-                  `lastKnownName` varchar(16)
-                );
-                """,
-                """          
+        Main.connector.updateBatch("""          
                 CREATE TABLE `Property` (
                   `uId` varchar(36) NOT NULL,
                   `property` varchar(128) NOT NULL,
@@ -34,7 +28,7 @@ public class UserPropertyRepository implements IMultipleKeyRepository<UUID, User
                 );
                 """,
                 """
-                ALTER TABLE `User` ADD FOREIGN KEY (`uId`) REFERENCES `Property` (`uId`);
+                ALTER TABLE `Player` ADD FOREIGN KEY (`uId`) REFERENCES `Property` (`uId`);
                 """);
     }
 

@@ -9,9 +9,9 @@ import java.util.UUID;
 
 public abstract class Player {
 
-    private final UUID id;
-    private String lastKnownName;
-    private final Collection<IUserProperty<?>> properties;
+    protected final UUID id;
+    protected String lastKnownName;
+    protected final Collection<IUserProperty<?>> properties;
 
     public Player(UUID id, String lastKnownName, Collection<IUserProperty<?>> properties) {
         this.id = id;
@@ -20,7 +20,7 @@ public abstract class Player {
     }
 
     /**
-     * Creates a new
+     * Gets a user property or creates a new one using the given default value, if the property does not yet exist.
      */
     public abstract IUserProperty<?> getProperty(UserProperty property);
 

@@ -7,8 +7,13 @@ import net.enderstone.api.common.properties.abstraction.IntegerUserProperty;
 import net.enderstone.api.common.properties.abstraction.StringUserProperty;
 import net.enderstone.api.config.Config;
 import net.enderstone.api.config.IPWhitelist;
+import net.enderstone.api.repo.IRepository;
+import net.enderstone.api.repo.PlayerRepository;
 import net.enderstone.api.repo.UserPropertyRepository;
+import net.enderstone.api.service.PlayerService;
+import net.enderstone.api.service.UserPropertyService;
 import net.enderstone.api.sql.SQLConnector;
+import net.enderstone.api.utils.Arrays;
 import net.enderstone.api.utils.FileUtil;
 
 import java.io.File;
@@ -17,6 +22,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import static com.bethibande.web.logging.ConsoleColors.*;
 
@@ -32,6 +38,12 @@ public class Main {
     public static IPWhitelist whitelist;
 
     public static SQLConnector connector;
+
+    private static PlayerRepository playerRepository;
+    public static PlayerService playerService;
+
+    private static UserPropertyRepository userPropertyRepository;
+    public static UserPropertyService userPropertyService;
 
     public static final CompletableFuture<Integer> exit = new CompletableFuture<>();
 
@@ -72,15 +84,17 @@ public class Main {
 
         connector.connect();
 
-        logger.info(annotate("Started!", GREEN));
+        playerRepository = new PlayerRepository();
+        playerService = new PlayerService(playerRepository);
 
-        UserPropertyRepository repo = new UserPropertyRepository();
-        IntegerUserProperty prop = (IntegerUserProperty) repo.get(new AbstractMap.SimpleImmutableEntry<>(UUID.randomUUID(), UserProperty.COINS));
-        prop.set(6);
-        prop.add(1); // 7
-        prop.subtract(3); // 4
-        prop.divide(2); // 2
-        prop.multiply(4); // 8
+        userPropertyRepository = new UserPropertyRepository();
+        userPropertyService = new UserPropertyService(userPropertyRepository);
+
+        if(Arrays.contains(args, "--genDatabase")) {
+            Stream.of(userPropertyRepository, playerRepository).forEach(IRepository::setupDatabase);
+        }
+
+        logger.info(annotate("Started!", GREEN));
 
         exit.join();
 
