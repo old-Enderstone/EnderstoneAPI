@@ -6,12 +6,10 @@ import net.enderstone.api.common.cache.CacheLifetimeType;
 import net.enderstone.api.common.cache.ICache;
 import net.enderstone.api.common.cache.StorageType;
 import net.enderstone.api.common.cache.ref.HeapReference;
-import net.enderstone.api.common.properties.IUserProperty;
-import net.enderstone.api.common.properties.UserProperty;
-import net.enderstone.api.impl.properties.BooleanUserPropertyImpl;
-import net.enderstone.api.impl.properties.StringUserPropertyImpl;
+import net.enderstone.api.impl.types.UserPropertyFactoryImpl;
 import net.enderstone.api.repository.PlayerRepository;
 import net.enderstone.api.repository.UserPropertyRepository;
+import net.enderstone.api.types.IUserPropertyFactory;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +37,8 @@ public class EnderStoneAPI {
 
     private String baseUrl;
 
+    private IUserPropertyFactory userPropertyFactory = new UserPropertyFactoryImpl(userPropertyRepository);
+
     private EnderStoneAPI() {
         init();
     }
@@ -52,23 +52,20 @@ public class EnderStoneAPI {
         }
     }
 
+    public void setUserPropertyFactory(IUserPropertyFactory userPropertyFactory) {
+        this.userPropertyFactory = userPropertyFactory;
+    }
+
+    public IUserPropertyFactory getUserPropertyFactory() {
+        return userPropertyFactory;
+    }
+
     public String getBaseUrl() {
         return baseUrl;
     }
 
     public Player getUserById(UUID id) {
         return playerCache.get(id);
-    }
-
-    public IUserProperty<?> createProperty(final UUID owner, final UserProperty property) {
-        return switch(property.type) {
-            case STRING -> new StringUserPropertyImpl(property, owner, null, userPropertyRepository);
-            case BOOLEAN -> new BooleanUserPropertyImpl(property, owner, null, userPropertyRepository);
-            case INTEGER -> new IntegerUserPropertyImpl(property, owner, null, userPropertyRepository);
-            case LONG -> new LongUserPropertyImpl(property, owner, null, userPropertyRepository);
-            case DOUBLE -> new DoubleUserPropertyImpl(property, owner, null, userPropertyRepository);
-            case FLOAT -> new FloatUserPropertyImpl(property, owner, null, userPropertyRepository);
-        };
     }
 
 }
