@@ -3,6 +3,7 @@ package net.enderstone.api.rest;
 import com.bethibande.web.annotations.URI;
 import net.enderstone.api.Main;
 import net.enderstone.api.annotations.Parameter;
+import net.enderstone.api.annotations.Whitelisted;
 import net.enderstone.api.common.properties.IUserProperty;
 import net.enderstone.api.common.properties.UserProperty;
 import net.enderstone.api.common.properties.abstraction.*;
@@ -14,6 +15,7 @@ import java.util.UUID;
 public class UserPropertyHandler {
 
     @URI(value = "/toggle/player/property/" + Regex.UUID + "/" + Regex.PROPERTY, type = URI.URIType.REGEX)
+    @Whitelisted
     public Message toggleProperty(@Parameter(3) String uId, @Parameter(4) String propertyStr) {
         final UUID uuid = UUID.fromString(uId);
         final UserProperty propertyType = UserProperty.valueOf(propertyStr);
@@ -28,6 +30,7 @@ public class UserPropertyHandler {
     }
 
     @URI(value = "/set/player/property/" + Regex.UUID + "/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
+    @Whitelisted
     public Object setValue(@Parameter(3) String uId,
                            @Parameter(4) String propertyStr,
                            @Parameter(5) String valueStr) {
@@ -56,6 +59,24 @@ public class UserPropertyHandler {
         }
 
         return new Message(200, "OK");
+    }
+
+    @URI(value = "/addInt/player/property/" + Regex.UUID + "/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
+    @Whitelisted
+    public Object addInt(@Parameter(3) String uId,
+                         @Parameter(4) String propertyStr,
+                         @Parameter(5) String valueStr) {
+        final UUID uuid = UUID.fromString(uId);
+        final UserProperty propertyType = UserProperty.valueOf(propertyStr);
+        final int value = Integer.parseInt(valueStr);
+
+        final IUserProperty<?> property = Main.userPropertyService.getUserProperty(uuid, propertyType);
+        if(!(property instanceof IntegerUserProperty)) {
+            // TODO: custom context with method for sending 400 invalid property type response like on line 27
+            return null;
+        }
+
+        return new Message(200, ((IntegerUserProperty)property).add(value));
     }
 
 }
