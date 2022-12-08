@@ -28,7 +28,7 @@ public class UserPropertyRepository implements IMultipleKeyRepository<UUID, User
                 );
                 """,
                 """
-                ALTER TABLE `Player` ADD FOREIGN KEY (`uId`) REFERENCES `Property` (`uId`);
+                ALTER TABLE `Property` ADD FOREIGN KEY (`uId`) REFERENCES `Player` (`uId`);
                 """);
     }
 

@@ -10,6 +10,7 @@ import net.enderstone.api.repository.IRepository;
 import net.enderstone.api.repository.PlayerRepository;
 import net.enderstone.api.repository.UserPropertyRepository;
 import net.enderstone.api.rest.PlayerHandler;
+import net.enderstone.api.rest.UserPropertyHandler;
 import net.enderstone.api.service.PlayerService;
 import net.enderstone.api.service.UserPropertyService;
 import net.enderstone.api.sql.SQLConnector;
@@ -91,8 +92,10 @@ public class Main {
         userPropertyRepository = new UserPropertyRepository();
         userPropertyService = new UserPropertyService(userPropertyRepository);
 
-        if(Arrays.contains(args, "--genDatabase")) {
+        if(Arrays.contains(args, "--createDatabase")) {
+            logger.info("Creating database..");
             Stream.of(playerRepository, userPropertyRepository).forEach(IRepository::setupDatabase);
+            logger.info("Database created!");
         }
 
         restServer = new JWebServer()
@@ -100,7 +103,9 @@ public class Main {
                 .withBindAddress(config.bindAddress, config.port)
                 .withMethodInvocationHandler(new WhitelistedInvocationHandler())
                 .withProcessor(new ParameterAnnotationProcessor())
-                .withHandler(PlayerHandler.class);
+                .withContextFactory(ApiContext::new)
+                .withHandler(PlayerHandler.class)
+                .withHandler(UserPropertyHandler.class);
         restServer.start();
 
         logger.info(annotate("Started!", GREEN));

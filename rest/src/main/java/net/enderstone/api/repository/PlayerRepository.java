@@ -51,7 +51,7 @@ public class PlayerRepository implements IRepository<UUID, Player> {
         ResultSet rs = Main.connector.query("select `lastKnownName` from `Player` where `uId`=?;", key.toString());
         try {
             if(!rs.next()) return null;
-            final String lastKnownName = rs.getString("lastKnownString");
+            final String lastKnownName = rs.getString("lastKnownName");
 
             return new PlayerImpl(key, lastKnownName, new ArrayList<>());
         } catch (SQLException e) {

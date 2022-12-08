@@ -15,11 +15,14 @@ public class Test {
         Player player = api.getPlayerById(uId);
 
         if(player == null) {
-            // create player
-            // player = api.getPlayerById(uId);
+            player = api.createPlayer(uId, "Test");
+            System.out.println("Created player");
         }
 
-        ((IntegerUserProperty)player.getProperty(UserProperty.COINS)).set(200);
+        final IntegerUserProperty coinsProperty = ((IntegerUserProperty)player.getProperty(UserProperty.COINS));
+        coinsProperty.set(200);
+        coinsProperty.multiply(2);
+        System.out.println("value: " + coinsProperty.get());
     }
 
 }

@@ -64,8 +64,16 @@ public class EnderStoneAPI {
         return baseUrl;
     }
 
-    public Player getPlayerById(UUID id) {
+    public Player getPlayerById(final UUID id) {
         return playerCache.get(id);
+    }
+
+    public Player createPlayer(final UUID id, final String name) {
+        final Player player = playerRepository.create(id, name);
+        if(player == null) return null;
+
+        playerCache.set(id, player);
+        return player;
     }
 
 }
