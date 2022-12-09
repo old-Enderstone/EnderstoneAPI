@@ -8,10 +8,12 @@ import net.enderstone.api.config.Config;
 import net.enderstone.api.config.IPWhitelist;
 import net.enderstone.api.repository.IRepository;
 import net.enderstone.api.repository.PlayerRepository;
+import net.enderstone.api.repository.SystemPropertyRepository;
 import net.enderstone.api.repository.UserPropertyRepository;
 import net.enderstone.api.rest.PlayerHandler;
 import net.enderstone.api.rest.UserPropertyHandler;
 import net.enderstone.api.service.PlayerService;
+import net.enderstone.api.service.SystemPropertyService;
 import net.enderstone.api.service.UserPropertyService;
 import net.enderstone.api.sql.SQLConnector;
 import net.enderstone.api.utils.Arrays;
@@ -38,6 +40,9 @@ public class Main {
     public static IPWhitelist whitelist;
 
     public static SQLConnector connector;
+
+    private static SystemPropertyRepository systemPropertyRepository;
+    public static SystemPropertyService systemPropertyService;
 
     private static PlayerRepository playerRepository;
     public static PlayerService playerService;
@@ -85,6 +90,9 @@ public class Main {
                  .setDatabase(config.sqlDatabase);
 
         connector.connect();
+
+        systemPropertyRepository = new SystemPropertyRepository();
+        systemPropertyService = new SystemPropertyService(systemPropertyRepository);
 
         playerRepository = new PlayerRepository();
         playerService = new PlayerService(playerRepository);
