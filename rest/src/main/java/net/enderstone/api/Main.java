@@ -11,6 +11,7 @@ import net.enderstone.api.repository.PlayerRepository;
 import net.enderstone.api.repository.SystemPropertyRepository;
 import net.enderstone.api.repository.UserPropertyRepository;
 import net.enderstone.api.rest.PlayerHandler;
+import net.enderstone.api.rest.SystemPropertyHandler;
 import net.enderstone.api.rest.UserPropertyHandler;
 import net.enderstone.api.service.PlayerService;
 import net.enderstone.api.service.SystemPropertyService;
@@ -113,7 +114,8 @@ public class Main {
                 .withProcessor(new ParameterAnnotationProcessor())
                 .withContextFactory(ApiContext::new)
                 .withHandler(PlayerHandler.class)
-                .withHandler(UserPropertyHandler.class);
+                .withHandler(UserPropertyHandler.class)
+                .withHandler(SystemPropertyHandler.class);
         restServer.start();
 
         logger.info(annotate("Started!", GREEN));
