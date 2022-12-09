@@ -5,8 +5,8 @@ import net.enderstone.api.common.properties.SystemProperty;
 
 public abstract class AbstractSystemProperty<T> implements IProperty<T> {
 
-    private final SystemProperty key;
-    private T value;
+    protected final SystemProperty key;
+    protected T value;
 
     public AbstractSystemProperty(SystemProperty key, T value) {
         this.key = key;

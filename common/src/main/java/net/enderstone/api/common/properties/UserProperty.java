@@ -6,7 +6,7 @@ public enum UserProperty {
 
     LAST_SEEN(PropertyType.LONG, 0L),
     LAST_COUNTRY(PropertyType.STRING, null),
-    LOCALE(PropertyType.STRING, new Locale("en", "us")),
+    LOCALE(PropertyType.STRING, new Locale("en", "us").toString()),
     PLAYTIME(PropertyType.INTEGER, 0),
     COINS(PropertyType.INTEGER, 100);
 
