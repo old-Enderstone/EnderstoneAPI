@@ -6,9 +6,12 @@ import net.enderstone.api.common.cache.CacheLifetimeType;
 import net.enderstone.api.common.cache.ICache;
 import net.enderstone.api.common.cache.StorageType;
 import net.enderstone.api.common.cache.ref.HeapReference;
+import net.enderstone.api.impl.types.SystemPropertyFactoryImpl;
 import net.enderstone.api.impl.types.UserPropertyFactoryImpl;
 import net.enderstone.api.repository.PlayerRepository;
+import net.enderstone.api.repository.SystemPropertyRepository;
 import net.enderstone.api.repository.UserPropertyRepository;
+import net.enderstone.api.types.ISystemPropertyFactory;
 import net.enderstone.api.types.IUserPropertyFactory;
 
 import java.util.UUID;
@@ -25,6 +28,7 @@ public class EnderStoneAPI {
 
     private final PlayerRepository playerRepository = new PlayerRepository(this);
     private final UserPropertyRepository userPropertyRepository = new UserPropertyRepository(this);
+    private final SystemPropertyRepository systemPropertyRepository = new SystemPropertyRepository(this);
 
     private final ICache<UUID, Player> playerCache = CacheBuilder.<UUID, Player>build("PlayerCache")
                                                                  .setStorageType(StorageType.HEAP)
@@ -38,6 +42,7 @@ public class EnderStoneAPI {
     private String baseUrl;
 
     private IUserPropertyFactory userPropertyFactory = new UserPropertyFactoryImpl(userPropertyRepository);
+    private ISystemPropertyFactory systemPropertyFactory = new SystemPropertyFactoryImpl(systemPropertyRepository);
 
     private EnderStoneAPI() {
         init();
@@ -50,6 +55,10 @@ public class EnderStoneAPI {
         if(host.equals("debug")) {
             baseUrl = "http://127.0.0.1:4455";
         }
+    }
+
+    public ISystemPropertyFactory getSystemPropertyFactory() {
+        return systemPropertyFactory;
     }
 
     public void setUserPropertyFactory(IUserPropertyFactory userPropertyFactory) {
