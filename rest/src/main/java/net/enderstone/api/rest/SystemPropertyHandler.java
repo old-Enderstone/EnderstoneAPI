@@ -11,8 +11,22 @@ import net.enderstone.api.common.properties.abstraction.*;
 import net.enderstone.api.common.types.Message;
 import net.enderstone.api.common.utils.Regex;
 
+import java.util.Collection;
+
 @SuppressWarnings("unused")
 public class SystemPropertyHandler {
+
+    @URI("/get/system/all")
+    public Collection<IProperty<?>> getAllProperties() {
+        return Main.systemPropertyService.getAllProperties();
+    }
+
+    @URI(value = "/get/system/property/" + Regex.PROPERTY, type = URI.URIType.REGEX)
+    public IProperty<?> getProperty(@Parameter(2) String propertyStr) {
+        final SystemProperty property = SystemProperty.valueOf(propertyStr);
+
+        return Main.systemPropertyService.getProperty(property);
+    }
 
     @URI(value = "/toggle/system/property/" + Regex.PROPERTY, type = URI.URIType.REGEX)
     @Whitelisted

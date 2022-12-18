@@ -5,9 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.enderstone</groupId>
-    <artifactId>EnderstoneAPI</artifactId>
+    <artifactId>enderstone-api</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
+
     <modules>
         <module>rest</module>
         <module>api</module>
@@ -19,5 +20,13 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub OWNER Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/Enderstone/EnderstoneAPI</url>
+        </repository>
+    </distributionManagement>
 
 </project>

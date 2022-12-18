@@ -1,8 +1,10 @@
 package net.enderstone.api;
 
 import net.enderstone.api.common.Player;
+import net.enderstone.api.common.properties.SystemProperty;
 import net.enderstone.api.common.properties.UserProperty;
 import net.enderstone.api.common.properties.abstraction.IntegerUserProperty;
+import net.enderstone.api.common.properties.abstraction.StringProperty;
 
 import java.util.UUID;
 
@@ -23,6 +25,12 @@ public class Test {
         coinsProperty.set(200);
         coinsProperty.multiply(2);
         System.out.println("value: " + coinsProperty.get());
+
+        final StringProperty motd = (StringProperty) api.getSystemProperty(SystemProperty.MOTD);
+
+        System.out.println("MOTD: " + motd.get());
+        motd.set("§cTest");
+        System.out.println("MOTD: " + motd.get());
     }
 
 }

@@ -5,6 +5,8 @@ import net.enderstone.api.common.properties.SystemProperty;
 import net.enderstone.api.impl.properties.*;
 import net.enderstone.api.repository.SystemPropertyRepository;
 
+import java.util.Collection;
+
 public class SystemPropertyService {
 
     private final SystemPropertyRepository repository;
@@ -22,6 +24,10 @@ public class SystemPropertyService {
             case DOUBLE -> new DoubleSystemPropertyImpl(property, null, repository);
             case FLOAT -> new FloatSystemPropertyImpl(property, null, repository);
         };
+    }
+
+    public Collection<IProperty<?>> getAllProperties() {
+        return repository.getAllProperties();
     }
 
     public IProperty<?> getProperty(SystemProperty property) {

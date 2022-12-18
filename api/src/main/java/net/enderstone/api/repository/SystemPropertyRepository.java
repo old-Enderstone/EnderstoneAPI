@@ -1,11 +1,15 @@
 package net.enderstone.api.repository;
 
+import com.google.gson.reflect.TypeToken;
 import net.enderstone.api.EnderStoneAPI;
+import net.enderstone.api.common.properties.IProperty;
 import net.enderstone.api.common.properties.SystemProperty;
 import net.enderstone.api.common.types.Message;
 import net.enderstone.api.common.types.TypedMessage;
 import net.enderstone.api.utils.IOUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 
 public class SystemPropertyRepository {
@@ -14,6 +18,16 @@ public class SystemPropertyRepository {
 
     public SystemPropertyRepository(EnderStoneAPI api) {
         this.api = api;
+    }
+
+    public Collection<IProperty<?>> getAllProperties() {
+        return IOUtils.getJson(String.format("%s/get/system/all", api.getBaseUrl()),
+                               TypeToken.getParameterized(ArrayList.class, IProperty.class).getType());
+    }
+
+    public IProperty<?> getProperty(final SystemProperty property) {
+        return IOUtils.getJson(String.format("%s/get/system/property/%s", api.getBaseUrl(), property.toString()),
+                               IProperty.class);
     }
 
     public void setValue(final SystemProperty property, final Object value) {
@@ -36,160 +50,160 @@ public class SystemPropertyRepository {
 
     public int addInt(SystemProperty property, int value) {
         final TypedMessage<Integer> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%d",
-                api.getBaseUrl(),
-                "/addInt/system/property",
-                                property.toString(),
-                value), Integer.class);
+                                                                                    api.getBaseUrl(),
+                                                                                    "/addInt/system/property",
+                                                                                    property.toString(),
+                                                                                    value), Integer.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }
 
     public int subInt(SystemProperty property, int value) {
         final TypedMessage<Integer> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%d",
-                api.getBaseUrl(),
-                "/subInt/system/property",
-                                property.toString(),
-                value), Integer.class);
+                                                                                    api.getBaseUrl(),
+                                                                                    "/subInt/system/property",
+                                                                                    property.toString(),
+                                                                                    value), Integer.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }
 
     public int divInt(SystemProperty property, int value) {
         final TypedMessage<Integer> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%d",
-                api.getBaseUrl(),
-                "/divInt/system/property",
-                                property.toString(),
-                value), Integer.class);
+                                                                                    api.getBaseUrl(),
+                                                                                    "/divInt/system/property",
+                                                                                    property.toString(),
+                                                                                    value), Integer.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }
 
     public int mulInt(SystemProperty property, int value) {
         final TypedMessage<Integer> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%d",
-                api.getBaseUrl(),
-                "/mulInt/system/property",
-                                property.toString(),
-                value), Integer.class);
+                                                                                    api.getBaseUrl(),
+                                                                                    "/mulInt/system/property",
+                                                                                    property.toString(),
+                                                                                    value), Integer.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }
 
     public long addLong(SystemProperty property, long value) {
         final TypedMessage<Long> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%d",
-                api.getBaseUrl(),
-                "/addLong/system/property",
-                                property.toString(),
-                value), Long.class);
+                                                                                 api.getBaseUrl(),
+                                                                                 "/addLong/system/property",
+                                                                                 property.toString(),
+                                                                                 value), Long.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }
 
     public long subLong(SystemProperty property, long value) {
         final TypedMessage<Long> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%d",
-                api.getBaseUrl(),
-                "/subLong/system/property",
-                                property.toString(),
-                value), Long.class);
+                                                                                 api.getBaseUrl(),
+                                                                                 "/subLong/system/property",
+                                                                                 property.toString(),
+                                                                                 value), Long.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }
 
     public long divLong(SystemProperty property, long value) {
         final TypedMessage<Long> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%d",
-                api.getBaseUrl(),
-                "/divLong/system/property",
-                                property.toString(),
-                value), Long.class);
+                                                                                 api.getBaseUrl(),
+                                                                                 "/divLong/system/property",
+                                                                                 property.toString(),
+                                                                                 value), Long.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }
 
     public long mulLong(SystemProperty property, long value) {
         final TypedMessage<Long> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%d",
-                api.getBaseUrl(),
-                "/mulLong/system/property",
-                                property.toString(),
-                value), Long.class);
+                                                                                 api.getBaseUrl(),
+                                                                                 "/mulLong/system/property",
+                                                                                 property.toString(),
+                                                                                 value), Long.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }
 
     public double addDouble(SystemProperty property, double value) {
         final TypedMessage<Double> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%f",
-                api.getBaseUrl(),
-                "/addDouble/system/property",
-                                property.toString(),
-                value), Double.class);
+                                                                                   api.getBaseUrl(),
+                                                                                   "/addDouble/system/property",
+                                                                                   property.toString(),
+                                                                                   value), Double.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }
 
     public double subDouble(SystemProperty property, double value) {
         final TypedMessage<Double> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%f",
-                api.getBaseUrl(),
-                "/subDouble/system/property",
-                                property.toString(),
-                value), Double.class);
+                                                                                   api.getBaseUrl(),
+                                                                                   "/subDouble/system/property",
+                                                                                   property.toString(),
+                                                                                   value), Double.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }
 
     public double divDouble(SystemProperty property, double value) {
         final TypedMessage<Double> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%f",
-                api.getBaseUrl(),
-                "/divDouble/system/property",
-                                property.toString(),
-                value), Double.class);
+                                                                                   api.getBaseUrl(),
+                                                                                   "/divDouble/system/property",
+                                                                                   property.toString(),
+                                                                                   value), Double.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }
 
     public double mulDouble(SystemProperty property, double value) {
         final TypedMessage<Double> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%f",
-                api.getBaseUrl(),
-                "/mulDouble/system/property",
-                                property.toString(),
-                value), Double.class);
+                                                                                   api.getBaseUrl(),
+                                                                                   "/mulDouble/system/property",
+                                                                                   property.toString(),
+                                                                                   value), Double.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }
 
     public float addFloat(SystemProperty property, float value) {
         final TypedMessage<Float> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%f",
-                api.getBaseUrl(),
-                "/addFloat/system/property",
-                                property.toString(),
-                value), Float.class);
+                                                                                  api.getBaseUrl(),
+                                                                                  "/addFloat/system/property",
+                                                                                  property.toString(),
+                                                                                  value), Float.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }
 
     public float subFloat(SystemProperty property, float value) {
         final TypedMessage<Float> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%f",
-                api.getBaseUrl(),
-                "/subFloat/system/property",
-                                property.toString(),
-                value), Float.class);
+                                                                                  api.getBaseUrl(),
+                                                                                  "/subFloat/system/property",
+                                                                                  property.toString(),
+                                                                                  value), Float.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }
 
     public float divFloat(SystemProperty property, float value) {
         final TypedMessage<Float> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%f",
-                api.getBaseUrl(),
-                "/divFloat/system/property",
-                                property.toString(),
-                value), Float.class);
+                                                                                  api.getBaseUrl(),
+                                                                                  "/divFloat/system/property",
+                                                                                  property.toString(),
+                                                                                  value), Float.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }
 
     public float mulFloat(SystemProperty property, float value) {
         final TypedMessage<Float> message = IOUtils.getTypedMessage(String.format("%s%s/%s/%f",
-                api.getBaseUrl(),
-                "/mulFloat/system/property",
-                                property.toString(),
-                value), Float.class);
+                                                                                  api.getBaseUrl(),
+                                                                                  "/mulFloat/system/property",
+                                                                                  property.toString(),
+                                                                                  value), Float.class);
         if(message == null || message.id() != 200) throw new RuntimeException("Failed to set system property.");
         return message.message();
     }

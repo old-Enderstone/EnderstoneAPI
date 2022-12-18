@@ -6,6 +6,8 @@ import net.enderstone.api.common.cache.CacheLifetimeType;
 import net.enderstone.api.common.cache.ICache;
 import net.enderstone.api.common.cache.StorageType;
 import net.enderstone.api.common.cache.ref.HeapReference;
+import net.enderstone.api.common.properties.IProperty;
+import net.enderstone.api.common.properties.SystemProperty;
 import net.enderstone.api.impl.types.SystemPropertyFactoryImpl;
 import net.enderstone.api.impl.types.UserPropertyFactoryImpl;
 import net.enderstone.api.repository.PlayerRepository;
@@ -39,6 +41,12 @@ public class EnderStoneAPI {
                                                                  .setMaxSize(1000)
                                                                  .create();
 
+    private final ICache<SystemProperty, IProperty<?>> propertyCache = CacheBuilder.<SystemProperty, IProperty<?>>build("PropertyCache")
+                                                                                   .setStorageType(StorageType.HEAP)
+                                                                                   .setWriter((k, v) -> new HeapReference<>(v))
+                                                                                   .setSupplier(this::loadSystemProperty)
+                                                                                   .create();
+
     private String baseUrl;
 
     private IUserPropertyFactory userPropertyFactory = new UserPropertyFactoryImpl(userPropertyRepository);
@@ -55,6 +63,20 @@ public class EnderStoneAPI {
         if(host.equals("debug")) {
             baseUrl = "http://127.0.0.1:4455";
         }
+    }
+
+    public IProperty<?> getSystemProperty(final SystemProperty property) {
+        return propertyCache.get(property);
+    }
+
+    private IProperty<?> loadSystemProperty(final SystemProperty property) {
+        final IProperty<?> systemProperty = systemPropertyRepository.getProperty(property);
+        if(systemProperty != null) return systemProperty;
+        return systemPropertyFactory.createEmpty(property, systemPropertyRepository);
+    }
+
+    public void setSystemPropertyFactory(ISystemPropertyFactory systemPropertyFactory) {
+        this.systemPropertyFactory = systemPropertyFactory;
     }
 
     public ISystemPropertyFactory getSystemPropertyFactory() {
