@@ -1,6 +1,6 @@
 package net.enderstone.api.sql;
 
-import net.enderstone.api.Main;
+import net.enderstone.api.RestAPI;
 
 import java.sql.*;
 import java.util.Properties;
@@ -173,7 +173,7 @@ public class SQLConnector {
 
         try {
             this.con.close();
-            Main.logger.info("SQL Connector disconnected.");
+            RestAPI.logger.info("SQL Connector disconnected.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -197,7 +197,7 @@ public class SQLConnector {
      */
     public boolean connect() {
         if(this.username == null || this.password == null || this.hostAddress == null) {
-            Main.logger.severe("Couldn't connect to mysql server, username/password or hostAddress not set!");
+            RestAPI.logger.severe("Couldn't connect to mysql server, username/password or hostAddress not set!");
         }
 
         Properties connectionProps = new Properties();
@@ -213,8 +213,8 @@ public class SQLConnector {
                             "?autoReconnect=true",
                     connectionProps);
 
-            if(isConnected()) Main.logger.info("Connected to sql server.");
-            if(!isConnected()) Main.logger.severe("Couldn't connect to sql server.");
+            if(isConnected()) RestAPI.logger.info("Connected to sql server.");
+            if(!isConnected()) RestAPI.logger.severe("Couldn't connect to sql server.");
         } catch(Exception ex) {
             ex.printStackTrace();
         }

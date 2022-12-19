@@ -1,6 +1,6 @@
 package net.enderstone.api.repository;
 
-import net.enderstone.api.Main;
+import net.enderstone.api.RestAPI;
 import net.enderstone.api.common.Player;
 import net.enderstone.api.impl.PlayerImpl;
 
@@ -15,7 +15,7 @@ public class PlayerRepository implements IRepository<UUID, Player> {
 
     @Override
     public void setupDatabase() {
-        Main.connector.update("""
+        RestAPI.connector.update("""
                 CREATE TABLE `Player` (
                   `uId` varchar(36) PRIMARY KEY NOT NULL,
                   `lastKnownName` varchar(16)
@@ -25,7 +25,7 @@ public class PlayerRepository implements IRepository<UUID, Player> {
 
     @Override
     public boolean hasKey(UUID key) {
-        ResultSet rs = Main.connector.query("select `uId` from `Player` where uId=?;", key.toString());
+        ResultSet rs = RestAPI.connector.query("select `uId` from `Player` where uId=?;", key.toString());
         try {
             return rs.next();
         } catch (SQLException e) {
@@ -35,12 +35,12 @@ public class PlayerRepository implements IRepository<UUID, Player> {
 
     @Override
     public void insert(UUID key, Player value) {
-        Main.connector.update("insert into `Player` values (?, ?);", key.toString(), value.getLastKnownName());
+        RestAPI.connector.update("insert into `Player` values (?, ?);", key.toString(), value.getLastKnownName());
     }
 
     @Override
     public void update(UUID key, Player value) {
-        Main.connector.update("update `Player` set `lastKnownName`=? where `uId`=?;", value.getLastKnownName(), key.toString());
+        RestAPI.connector.update("update `Player` set `lastKnownName`=? where `uId`=?;", value.getLastKnownName(), key.toString());
     }
 
     /**
@@ -48,7 +48,7 @@ public class PlayerRepository implements IRepository<UUID, Player> {
      */
     @Override
     public Player get(UUID key) {
-        ResultSet rs = Main.connector.query("select `lastKnownName` from `Player` where `uId`=?;", key.toString());
+        ResultSet rs = RestAPI.connector.query("select `lastKnownName` from `Player` where `uId`=?;", key.toString());
         try {
             if(!rs.next()) return null;
             final String lastKnownName = rs.getString("lastKnownName");
@@ -60,7 +60,7 @@ public class PlayerRepository implements IRepository<UUID, Player> {
     }
 
     public Collection<UUID> nameToUUID(String name) {
-        ResultSet rs = Main.connector.query("select `uId` from `Player` where `lastKnownName`=?;", name);
+        ResultSet rs = RestAPI.connector.query("select `uId` from `Player` where `lastKnownName`=?;", name);
         List<UUID> ids = new ArrayList<>();
 
         try {
@@ -77,6 +77,6 @@ public class PlayerRepository implements IRepository<UUID, Player> {
 
     @Override
     public void delete(UUID key) {
-        Main.connector.update("delete from `Player` where `uId`=?;", key.toString());
+        RestAPI.connector.update("delete from `Player` where `uId`=?;", key.toString());
     }
 }

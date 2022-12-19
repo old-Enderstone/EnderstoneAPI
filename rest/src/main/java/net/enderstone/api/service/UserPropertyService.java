@@ -1,5 +1,6 @@
 package net.enderstone.api.service;
 
+import com.bethibande.web.beans.GlobalBean;
 import net.enderstone.api.common.properties.IUserProperty;
 import net.enderstone.api.common.properties.UserProperty;
 import net.enderstone.api.impl.properties.*;
@@ -9,7 +10,7 @@ import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.UUID;
 
-public class UserPropertyService {
+public class UserPropertyService extends GlobalBean {
 
     private final UserPropertyRepository repository;
 

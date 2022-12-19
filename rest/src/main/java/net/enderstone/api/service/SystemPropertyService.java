@@ -1,5 +1,6 @@
 package net.enderstone.api.service;
 
+import com.bethibande.web.beans.GlobalBean;
 import net.enderstone.api.common.properties.IProperty;
 import net.enderstone.api.common.properties.SystemProperty;
 import net.enderstone.api.impl.properties.*;
@@ -7,7 +8,7 @@ import net.enderstone.api.repository.SystemPropertyRepository;
 
 import java.util.Collection;
 
-public class SystemPropertyService {
+public class SystemPropertyService extends GlobalBean {
 
     private final SystemPropertyRepository repository;
 

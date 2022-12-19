@@ -1,6 +1,7 @@
 package net.enderstone.api.service;
 
-import net.enderstone.api.Main;
+import com.bethibande.web.beans.GlobalBean;
+import net.enderstone.api.RestAPI;
 import net.enderstone.api.common.Player;
 import net.enderstone.api.common.properties.IUserProperty;
 import net.enderstone.api.impl.PlayerImpl;
@@ -9,7 +10,7 @@ import net.enderstone.api.repository.PlayerRepository;
 import java.util.Collection;
 import java.util.UUID;
 
-public class PlayerService {
+public class PlayerService extends GlobalBean {
 
     private final PlayerRepository repository;
 
@@ -37,7 +38,7 @@ public class PlayerService {
         Player player = repository.get(id);
         if(player == null) return null;
 
-        final Collection<IUserProperty<?>> properties = Main.userPropertyService.getAllUserProperties(id);
+        final Collection<IUserProperty<?>> properties = RestAPI.userPropertyService.getAllUserProperties(id);
         player.setProperties(properties);
 
         return player;

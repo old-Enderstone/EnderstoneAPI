@@ -2,7 +2,6 @@ package net.enderstone.api.rest;
 
 import com.bethibande.web.annotations.URI;
 import net.enderstone.api.ApiContext;
-import net.enderstone.api.Main;
 import net.enderstone.api.annotations.Parameter;
 import net.enderstone.api.annotations.Whitelisted;
 import net.enderstone.api.common.properties.IProperty;
@@ -10,6 +9,7 @@ import net.enderstone.api.common.properties.SystemProperty;
 import net.enderstone.api.common.properties.abstraction.*;
 import net.enderstone.api.common.types.Message;
 import net.enderstone.api.common.utils.Regex;
+import net.enderstone.api.service.SystemPropertyService;
 
 import java.util.Collection;
 
@@ -17,24 +17,26 @@ import java.util.Collection;
 public class SystemPropertyHandler {
 
     @URI("/get/system/all")
-    public Collection<IProperty<?>> getAllProperties() {
-        return Main.systemPropertyService.getAllProperties();
+    public Collection<IProperty<?>> getAllProperties(final SystemPropertyService systemPropertyService) {
+        return systemPropertyService.getAllProperties();
     }
 
     @URI(value = "/get/system/property/" + Regex.PROPERTY, type = URI.URIType.REGEX)
-    public IProperty<?> getProperty(@Parameter(2) String propertyStr) {
+    public IProperty<?> getProperty(final @Parameter(2) String propertyStr,
+                                    final SystemPropertyService systemPropertyService) {
         final SystemProperty property = SystemProperty.valueOf(propertyStr);
 
-        return Main.systemPropertyService.getProperty(property);
+        return systemPropertyService.getProperty(property);
     }
 
     @URI(value = "/toggle/system/property/" + Regex.PROPERTY, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object toggleProperty(@Parameter(3) String propertyStr,
-                                 ApiContext context) {
+    public Object toggleProperty(final @Parameter(3) String propertyStr,
+                                 final ApiContext context,
+                                 final SystemPropertyService systemPropertyService) {
         final SystemProperty systemProperty = SystemProperty.valueOf(propertyStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(systemProperty);
+        final IProperty<?> property = systemPropertyService.getProperty(systemProperty);
 
         if(!(property instanceof BooleanProperty bp)) {
             return context.invalidPropertyMessage();
@@ -45,11 +47,12 @@ public class SystemPropertyHandler {
 
     @URI(value = "/set/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object setValue(@Parameter(3) String propertyStr,
-                           @Parameter(4) String valueStr) {
+    public Object setValue(final @Parameter(3) String propertyStr,
+                           final @Parameter(4) String valueStr,
+                           final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
 
         if(property instanceof StringProperty p) {
             p.set(valueStr);
@@ -75,13 +78,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/addInt/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object addInt(@Parameter(3) String propertyStr,
-                         @Parameter(4) String valueStr,
-                         ApiContext context) {
+    public Object addInt(final @Parameter(3) String propertyStr,
+                         final @Parameter(4) String valueStr,
+                         final ApiContext context,
+                         final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final int value = Integer.parseInt(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof IntegerProperty up)) {
             return context.invalidPropertyMessage();
         }
@@ -91,13 +95,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/subInt/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object subInt(@Parameter(3) String propertyStr,
-                         @Parameter(4) String valueStr,
-                         ApiContext context) {
+    public Object subInt(final @Parameter(3) String propertyStr,
+                         final @Parameter(4) String valueStr,
+                         final ApiContext context,
+                         final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final int value = Integer.parseInt(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof IntegerProperty up)) {
             return context.invalidPropertyMessage();
         }
@@ -107,13 +112,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/divInt/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object divInt(@Parameter(3) String propertyStr,
-                         @Parameter(4) String valueStr,
-                         ApiContext context) {
+    public Object divInt(final @Parameter(3) String propertyStr,
+                         final @Parameter(4) String valueStr,
+                         final ApiContext context,
+                         final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final int value = Integer.parseInt(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof IntegerProperty up)) {
             return context.invalidPropertyMessage();
         }
@@ -123,13 +129,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/mulInt/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object mulInt(@Parameter(3) String propertyStr,
-                         @Parameter(4) String valueStr,
-                         ApiContext context) {
+    public Object mulInt(final @Parameter(3) String propertyStr,
+                         final @Parameter(4) String valueStr,
+                         final ApiContext context,
+                         final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final int value = Integer.parseInt(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof IntegerProperty up)) {
             return context.invalidPropertyMessage();
         }
@@ -139,13 +146,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/addLong/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object addLong(@Parameter(3) String propertyStr,
-                          @Parameter(4) String valueStr,
-                          ApiContext context) {
+    public Object addLong(final @Parameter(3) String propertyStr,
+                          final @Parameter(4) String valueStr,
+                          final  ApiContext context,
+                          final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final long value = Long.parseLong(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof LongProperty up)) {
             return context.invalidPropertyMessage();
         }
@@ -155,13 +163,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/subLong/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object subLong(@Parameter(3) String propertyStr,
-                          @Parameter(4) String valueStr,
-                          ApiContext context) {
+    public Object subLong(final @Parameter(3) String propertyStr,
+                          final  @Parameter(4) String valueStr,
+                          final ApiContext context,
+                          final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final long value = Long.parseLong(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof LongProperty up)) {
             return context.invalidPropertyMessage();
         }
@@ -171,13 +180,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/divLong/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object divLong(@Parameter(3) String propertyStr,
-                          @Parameter(4) String valueStr,
-                          ApiContext context) {
+    public Object divLong(final @Parameter(3) String propertyStr,
+                          final @Parameter(4) String valueStr,
+                          final ApiContext context,
+                          final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final long value = Long.parseLong(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof LongProperty up)) {
             return context.invalidPropertyMessage();
         }
@@ -187,13 +197,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/mulLong/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object mulLong(@Parameter(3) String propertyStr,
-                          @Parameter(4) String valueStr,
-                          ApiContext context) {
+    public Object mulLong(final @Parameter(3) String propertyStr,
+                          final @Parameter(4) String valueStr,
+                          final ApiContext context,
+                          final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final long value = Long.parseLong(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof LongProperty up)) {
             return context.invalidPropertyMessage();
         }
@@ -203,13 +214,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/addFloat/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object addFloat(@Parameter(3) String propertyStr,
-                           @Parameter(4) String valueStr,
-                           ApiContext context) {
+    public Object addFloat(final @Parameter(3) String propertyStr,
+                           final @Parameter(4) String valueStr,
+                           final ApiContext context,
+                           final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final float value = Float.parseFloat(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof FloatProperty up)) {
             return context.invalidPropertyMessage();
         }
@@ -219,13 +231,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/subFloat/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object subFloat(@Parameter(3) String propertyStr,
-                           @Parameter(4) String valueStr,
-                           ApiContext context) {
+    public Object subFloat(final @Parameter(3) String propertyStr,
+                           final @Parameter(4) String valueStr,
+                           final ApiContext context,
+                           final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final float value = Float.parseFloat(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof FloatProperty up)) {
             return context.invalidPropertyMessage();
         }
@@ -235,13 +248,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/divFloat/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object divFloat(@Parameter(3) String propertyStr,
-                           @Parameter(4) String valueStr,
-                           ApiContext context) {
+    public Object divFloat(final @Parameter(3) String propertyStr,
+                           final @Parameter(4) String valueStr,
+                           final ApiContext context,
+                           final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final float value = Float.parseFloat(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof FloatProperty up)) {
             return context.invalidPropertyMessage();
         }
@@ -251,13 +265,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/mulFloat/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object mulFloat(@Parameter(3) String propertyStr,
-                           @Parameter(4) String valueStr,
-                           ApiContext context) {
+    public Object mulFloat(final @Parameter(3) String propertyStr,
+                           final @Parameter(4) String valueStr,
+                           final  ApiContext context,
+                           final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final float value = Float.parseFloat(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof FloatProperty up)) {
             return context.invalidPropertyMessage();
         }
@@ -267,13 +282,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/addDouble/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object addDouble(@Parameter(3) String propertyStr,
-                            @Parameter(4) String valueStr,
-                            ApiContext context) {
+    public Object addDouble(final @Parameter(3) String propertyStr,
+                            final @Parameter(4) String valueStr,
+                            final ApiContext context,
+                            final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final double value = Double.parseDouble(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof DoubleProperty up)) {
             return context.invalidPropertyMessage();
         }
@@ -283,13 +299,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/subDouble/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object subDouble(@Parameter(3) String propertyStr,
-                            @Parameter(4) String valueStr,
-                            ApiContext context) {
+    public Object subDouble(final @Parameter(3) String propertyStr,
+                            final @Parameter(4) String valueStr,
+                            final ApiContext context,
+                            final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final double value = Double.parseDouble(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof DoubleProperty up)) {
             return context.invalidPropertyMessage();
         }
@@ -299,13 +316,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/divDouble/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object divDouble(@Parameter(3) String propertyStr,
-                            @Parameter(4) String valueStr,
-                            ApiContext context) {
+    public Object divDouble(final @Parameter(3) String propertyStr,
+                            final @Parameter(4) String valueStr,
+                            final ApiContext context,
+                            final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final double value = Double.parseDouble(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof DoubleProperty up)) {
             return context.invalidPropertyMessage();
         }
@@ -315,13 +333,14 @@ public class SystemPropertyHandler {
 
     @URI(value = "/mulDouble/system/property/" + Regex.PROPERTY + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
     @Whitelisted
-    public Object mulDouble(@Parameter(3) String propertyStr,
-                            @Parameter(4) String valueStr,
-                            ApiContext context) {
+    public Object mulDouble(final @Parameter(3) String propertyStr,
+                            final @Parameter(4) String valueStr,
+                            final ApiContext context,
+                            final SystemPropertyService systemPropertyService) {
         final SystemProperty propertyType = SystemProperty.valueOf(propertyStr);
         final double value = Double.parseDouble(valueStr);
 
-        final IProperty<?> property = Main.systemPropertyService.getProperty(propertyType);
+        final IProperty<?> property = systemPropertyService.getProperty(propertyType);
         if(!(property instanceof DoubleProperty up)) {
             return context.invalidPropertyMessage();
         }

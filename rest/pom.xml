@@ -34,7 +34,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>net.enderstone.api.Main</mainClass>
+                            <mainClass>net.enderstone.api.RestAPI</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

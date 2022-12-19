@@ -1,6 +1,6 @@
 package net.enderstone.api.repository;
 
-import net.enderstone.api.Main;
+import net.enderstone.api.RestAPI;
 import net.enderstone.api.common.properties.IUserProperty;
 import net.enderstone.api.common.properties.UserProperty;
 import net.enderstone.api.impl.properties.*;
@@ -13,7 +13,7 @@ public class UserPropertyRepository implements IMultipleKeyRepository<UUID, User
 
     @Override
     public void setupDatabase() {
-        Main.connector.updateBatch("""          
+        RestAPI.connector.updateBatch("""          
                 CREATE TABLE `Property` (
                   `uId` varchar(36) NOT NULL,
                   `property` varchar(128) NOT NULL,
@@ -31,7 +31,7 @@ public class UserPropertyRepository implements IMultipleKeyRepository<UUID, User
      * The return value is never null, if there are no properties an empty collection will be returned
      */
     public Collection<IUserProperty<?>> getAllPropertiesByOwner(UUID owner) {
-        ResultSet rs = Main.connector.query("select `property`, `value` from `Property` where uId=?;", owner);
+        ResultSet rs = RestAPI.connector.query("select `property`, `value` from `Property` where uId=?;", owner);
         List<IUserProperty<?>> properties = new ArrayList<>();
         try {
             while(rs.next()) {
@@ -50,7 +50,7 @@ public class UserPropertyRepository implements IMultipleKeyRepository<UUID, User
 
     @Override
     public boolean hasKey(final Map.Entry<UUID, UserProperty> key) {
-        ResultSet rs = Main.connector.query("select `uId` from `Property` where `uId`=? and `property`=?;", key.getKey().toString(), key.getValue().toString());
+        ResultSet rs = RestAPI.connector.query("select `uId` from `Property` where `uId`=? and `property`=?;", key.getKey().toString(), key.getValue().toString());
         try {
             return rs.next();
         } catch (SQLException e) {
@@ -60,12 +60,12 @@ public class UserPropertyRepository implements IMultipleKeyRepository<UUID, User
 
     @Override
     public void insert(final Map.Entry<UUID, UserProperty> key, final IUserProperty<?> value) {
-        Main.connector.update("insert into `Property` values (?, ?, ?);", value.getOwner().toString(), value.getKey().toString(), value.get().toString());
+        RestAPI.connector.update("insert into `Property` values (?, ?, ?);", value.getOwner().toString(), value.getKey().toString(), value.get().toString());
     }
 
     @Override
     public void update(final Map.Entry<UUID, UserProperty> key, final IUserProperty<?> value) {
-        Main.connector.update("update `Property` set `value`=? where `uId`=? and `property`=?;", value.get().toString(), value.getOwner().toString(), value.getKey().toString());
+        RestAPI.connector.update("update `Property` set `value`=? where `uId`=? and `property`=?;", value.get().toString(), value.getOwner().toString(), value.getKey().toString());
     }
 
     private IUserProperty<?> createProperty(UUID owner, UserProperty property, String value) {
@@ -81,7 +81,7 @@ public class UserPropertyRepository implements IMultipleKeyRepository<UUID, User
 
     @Override
     public IUserProperty<?> get(final Map.Entry<UUID, UserProperty> key) {
-        ResultSet rs = Main.connector.query("select `value` from `Property` where `uId`=? and `property`=?;", key.getKey().toString(), key.getValue().toString());
+        ResultSet rs = RestAPI.connector.query("select `value` from `Property` where `uId`=? and `property`=?;", key.getKey().toString(), key.getValue().toString());
         try {
             if(!rs.next()) {
                 return null;
@@ -97,6 +97,6 @@ public class UserPropertyRepository implements IMultipleKeyRepository<UUID, User
 
     @Override
     public void delete(final Map.Entry<UUID, UserProperty> key) {
-        Main.connector.update("delete from `Property` where `uId`=? and `property`=?;", key.getKey().toString(), key.getValue().toString());
+        RestAPI.connector.update("delete from `Property` where `uId`=? and `property`=?;", key.getKey().toString(), key.getValue().toString());
     }
 }

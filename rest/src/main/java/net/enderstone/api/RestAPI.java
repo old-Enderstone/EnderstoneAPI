@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 
 import static com.bethibande.web.logging.ConsoleColors.*;
 
-public class Main {
+public class RestAPI {
 
     public static final File configFile = new File("./config.json");
     public static final File whitelistFile = new File("./ip-whitelist.json");
@@ -43,13 +43,10 @@ public class Main {
     public static SQLConnector connector;
 
     private static SystemPropertyRepository systemPropertyRepository;
-    public static SystemPropertyService systemPropertyService;
 
     private static PlayerRepository playerRepository;
-    public static PlayerService playerService;
 
     private static UserPropertyRepository userPropertyRepository;
-    public static UserPropertyService userPropertyService;
 
     public static JWebServer restServer;
 
@@ -93,13 +90,13 @@ public class Main {
         connector.connect();
 
         systemPropertyRepository = new SystemPropertyRepository();
-        systemPropertyService = new SystemPropertyService(systemPropertyRepository);
+        final SystemPropertyService systemPropertyService = new SystemPropertyService(systemPropertyRepository);
 
         playerRepository = new PlayerRepository();
-        playerService = new PlayerService(playerRepository);
+        final PlayerService playerService = new PlayerService(playerRepository);
 
         userPropertyRepository = new UserPropertyRepository();
-        userPropertyService = new UserPropertyService(userPropertyRepository);
+        final UserPropertyService userPropertyService = new UserPropertyService(userPropertyRepository);
 
         if(Arrays.contains(args, "--createDatabase")) {
             logger.info("Creating database..");
@@ -117,6 +114,10 @@ public class Main {
                 .withHandler(UserPropertyHandler.class)
                 .withHandler(SystemPropertyHandler.class);
         restServer.start();
+
+        restServer.storeGlobalBean(systemPropertyService);
+        restServer.storeGlobalBean(playerService);
+        restServer.storeGlobalBean(userPropertyService);
 
         logger.info(annotate("Started!", GREEN));
 
