@@ -3,6 +3,7 @@ package net.enderstone.api.repository;
 import net.enderstone.api.RestAPI;
 import net.enderstone.api.common.Player;
 import net.enderstone.api.impl.PlayerImpl;
+import net.enderstone.api.service.UserPropertyService;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,13 +14,22 @@ import java.util.UUID;
 
 public class PlayerRepository implements IRepository<UUID, Player> {
 
+    private final UserPropertyService userPropertyService;
+
+    public PlayerRepository(final UserPropertyService userPropertyService) {
+        this.userPropertyService = userPropertyService;
+    }
+
     @Override
     public void setupDatabase() {
-        RestAPI.connector.update("""
+        RestAPI.connector.updateBatch("""
                 CREATE TABLE `Player` (
                   `uId` varchar(36) PRIMARY KEY NOT NULL,
                   `lastKnownName` varchar(16)
                 );
+                """,
+                """
+                ALTER TABLE `Property` ADD FOREIGN KEY (`uId`) REFERENCES `Player` (`uId`);
                 """);
     }
 
@@ -53,7 +63,7 @@ public class PlayerRepository implements IRepository<UUID, Player> {
             if(!rs.next()) return null;
             final String lastKnownName = rs.getString("lastKnownName");
 
-            return new PlayerImpl(key, lastKnownName, new ArrayList<>());
+            return new PlayerImpl(key, lastKnownName, new ArrayList<>(), userPropertyService);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

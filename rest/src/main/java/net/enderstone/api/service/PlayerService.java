@@ -13,9 +13,11 @@ import java.util.UUID;
 public class PlayerService extends GlobalBean {
 
     private final PlayerRepository repository;
+    private final UserPropertyService userPropertyService;
 
-    public PlayerService(PlayerRepository repository) {
+    public PlayerService(final PlayerRepository repository, final UserPropertyService userPropertyService) {
         this.repository = repository;
+        this.userPropertyService = userPropertyService;
     }
 
     public boolean playerExists(UUID uuid) {
@@ -23,7 +25,7 @@ public class PlayerService extends GlobalBean {
     }
 
     public void createPlayer(UUID id, String name) {
-        repository.insert(id, new PlayerImpl(id, name, null));
+        repository.insert(id, new PlayerImpl(id, name, null, userPropertyService));
     }
 
     public void saveLastKnownName(Player player) {
@@ -38,7 +40,7 @@ public class PlayerService extends GlobalBean {
         Player player = repository.get(id);
         if(player == null) return null;
 
-        final Collection<IUserProperty<?>> properties = RestAPI.userPropertyService.getAllUserProperties(id);
+        final Collection<IUserProperty<?>> properties = userPropertyService.getAllUserProperties(id);
         player.setProperties(properties);
 
         return player;

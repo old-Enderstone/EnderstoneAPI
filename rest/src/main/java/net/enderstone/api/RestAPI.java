@@ -92,11 +92,12 @@ public class RestAPI {
         systemPropertyRepository = new SystemPropertyRepository();
         final SystemPropertyService systemPropertyService = new SystemPropertyService(systemPropertyRepository);
 
-        playerRepository = new PlayerRepository();
-        final PlayerService playerService = new PlayerService(playerRepository);
-
         userPropertyRepository = new UserPropertyRepository();
         final UserPropertyService userPropertyService = new UserPropertyService(userPropertyRepository);
+
+        playerRepository = new PlayerRepository(userPropertyService);
+        final PlayerService playerService = new PlayerService(playerRepository, userPropertyService);
+
 
         if(Arrays.contains(args, "--createDatabase")) {
             logger.info("Creating database..");
