@@ -5,6 +5,7 @@ import net.enderstone.api.common.properties.SystemProperty;
 import net.enderstone.api.common.properties.UserProperty;
 import net.enderstone.api.common.properties.abstraction.IntegerUserProperty;
 import net.enderstone.api.common.properties.abstraction.StringProperty;
+import net.enderstone.api.common.utils.Strings;
 
 import java.util.UUID;
 

@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class HeapCacheImpl<K, V> extends ICache<K, V> implements HasListeners<K, V>,
+public class SimpleCacheImpl<K, V> extends ICache<K, V> implements HasListeners<K, V>,
                                                                    HasSupplier<K, V>,
                                                                    HasMaxSize,
                                                                    HasLifetime {
@@ -31,11 +31,11 @@ public class HeapCacheImpl<K, V> extends ICache<K, V> implements HasListeners<K,
 
     private Integer maxSize = Integer.MAX_VALUE;
 
-    public HeapCacheImpl(String name) {
+    public SimpleCacheImpl(String name) {
         super(name);
     }
 
-    public HeapCacheImpl(UUID id) {
+    public SimpleCacheImpl(UUID id) {
         super(id);
     }
 

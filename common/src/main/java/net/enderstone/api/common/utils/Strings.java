@@ -49,17 +49,41 @@ public class Strings {
         return uuid(bytes);
     }
 
+    public static String bytesToHex(byte[] hash) {
+        StringBuilder hexString = new StringBuilder(2 * hash.length);
+        for (int i = 0; i < hash.length; i++) {
+            String hex = Integer.toHexString(0xff & hash[i]);
+            if(hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
+    }
+
     public static String toSHA1(String str) {
         return toSHA1(str.getBytes(StandardCharsets.UTF_8));
     }
 
     public static String toSHA1(byte[] data) {
-        MessageDigest md = null;
         try {
-            md = MessageDigest.getInstance("SHA-1");
+            final MessageDigest md = MessageDigest.getInstance("SHA-1");
+            return bytesToHex(md.digest(data));
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return new String(md.digest(data));
+    }
+
+    public static String toSHA256(final String str) {
+        return toSHA256(str.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static String toSHA256(byte[] data) {
+        try {
+            final MessageDigest md = MessageDigest.getInstance("SHA-256");
+            return bytesToHex(md.digest(data));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

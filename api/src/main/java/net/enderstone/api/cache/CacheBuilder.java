@@ -1,7 +1,7 @@
 package net.enderstone.api.cache;
 
 import net.enderstone.api.common.cache.*;
-import net.enderstone.api.common.cache.impl.HeapCacheImpl;
+import net.enderstone.api.common.cache.impl.SimpleCacheImpl;
 import net.enderstone.api.common.utils.Strings;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +48,7 @@ public class CacheBuilder<K, V> {
         if(id == null || storageType == null || writer == null) throw new UnsupportedOperationException("Id, StorageType and Writer must not be null.");
 
         final ICache<K, V> cache = switch (storageType) {
-            case HEAP -> new HeapCacheImpl<K, V>(id);
+            case HEAP, SERIALIZED_FILE -> new SimpleCacheImpl<>(id);
             default -> throw new UnsupportedOperationException("The specified storage type has not yet been implemented.");
         };
 

@@ -9,10 +9,13 @@ import net.enderstone.api.config.IPWhitelist;
 import net.enderstone.api.repository.IRepository;
 import net.enderstone.api.repository.PlayerRepository;
 import net.enderstone.api.repository.SystemPropertyRepository;
+import net.enderstone.api.repository.TranslationBundleRepository;
+import net.enderstone.api.repository.TranslationRepository;
 import net.enderstone.api.repository.UserPropertyRepository;
 import net.enderstone.api.rest.PlayerHandler;
 import net.enderstone.api.rest.SystemPropertyHandler;
 import net.enderstone.api.rest.UserPropertyHandler;
+import net.enderstone.api.service.I18nService;
 import net.enderstone.api.service.PlayerService;
 import net.enderstone.api.service.SystemPropertyService;
 import net.enderstone.api.service.UserPropertyService;
@@ -43,10 +46,10 @@ public class RestAPI {
     public static SQLConnector connector;
 
     private static SystemPropertyRepository systemPropertyRepository;
-
     private static PlayerRepository playerRepository;
-
     private static UserPropertyRepository userPropertyRepository;
+    private static TranslationBundleRepository translationBundleRepository;
+    private static TranslationRepository translationRepository;
 
     public static JWebServer restServer;
 
@@ -98,10 +101,16 @@ public class RestAPI {
         playerRepository = new PlayerRepository(userPropertyService);
         final PlayerService playerService = new PlayerService(playerRepository, userPropertyService);
 
+        translationBundleRepository = new TranslationBundleRepository();
+        translationRepository = new TranslationRepository();
+        final I18nService i18nService = new I18nService(translationRepository, translationBundleRepository);
 
         if(Arrays.contains(args, "--createDatabase")) {
             logger.info("Creating database..");
-            Stream.of(playerRepository, userPropertyRepository).forEach(IRepository::setupDatabase);
+            Stream.of(playerRepository,
+                      userPropertyRepository,
+                      translationBundleRepository,
+                      translationRepository).forEach(IRepository::setupDatabase);
             logger.info("Database created!");
         }
 
@@ -119,6 +128,7 @@ public class RestAPI {
         restServer.storeGlobalBean(systemPropertyService);
         restServer.storeGlobalBean(playerService);
         restServer.storeGlobalBean(userPropertyService);
+        restServer.storeGlobalBean(i18nService);
 
         logger.info(annotate("Started!", GREEN));
 
