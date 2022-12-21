@@ -57,7 +57,7 @@ public class TranslationBundleRepository implements IRepository<UUID, Translatio
      * Returns a list of all translation keys belonging to the given bundle
      */
     public List<String> getTranslationsOfBundle(UUID key) {
-        final ResultSet rs = RestAPI.connector.query("select `tKey` from `bundöes` where `bId`=?;", key.toString());
+        final ResultSet rs = RestAPI.connector.query("select `tKey` from `bundles` where `bId`=?;", key.toString());
         final List<String> translations = new ArrayList<>();
 
         try {

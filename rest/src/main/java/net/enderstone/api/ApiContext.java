@@ -31,4 +31,10 @@ public class ApiContext extends ServerContext {
                 .withStatusCode(400);
     }
 
+    public RequestResponse entityNotFoundMessage() {
+        return new RequestResponse()
+                .withContentData(new Message(404, "Entity Not Found."))
+                .withStatusCode(404);
+    }
+
 }

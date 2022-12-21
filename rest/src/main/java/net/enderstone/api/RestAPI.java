@@ -14,6 +14,7 @@ import net.enderstone.api.repository.TranslationRepository;
 import net.enderstone.api.repository.UserPropertyRepository;
 import net.enderstone.api.rest.PlayerHandler;
 import net.enderstone.api.rest.SystemPropertyHandler;
+import net.enderstone.api.rest.TranslationHandler;
 import net.enderstone.api.rest.UserPropertyHandler;
 import net.enderstone.api.service.I18nService;
 import net.enderstone.api.service.PlayerService;
@@ -122,7 +123,8 @@ public class RestAPI {
                 .withContextFactory(ApiContext::new)
                 .withHandler(PlayerHandler.class)
                 .withHandler(UserPropertyHandler.class)
-                .withHandler(SystemPropertyHandler.class);
+                .withHandler(SystemPropertyHandler.class)
+                .withHandler(TranslationHandler.class);
         restServer.start();
 
         restServer.storeGlobalBean(systemPropertyService);
