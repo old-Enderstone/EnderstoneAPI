@@ -23,7 +23,7 @@ public class PlayerHandler {
         final UUID uuid = UUID.fromString(uId);
 
         if(playerService.playerExists(uuid)) {
-            return context.entryAlreadyExistsMessage();
+            return context.entityAlreadyExistsMessage();
         }
 
         playerService.createPlayer(uuid, name);

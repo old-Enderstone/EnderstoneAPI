@@ -108,8 +108,9 @@ public class RestAPI {
 
         if(Arrays.contains(args, "--createDatabase")) {
             logger.info("Creating database..");
-            Stream.of(playerRepository,
-                      userPropertyRepository,
+            Stream.of(userPropertyRepository,
+                      playerRepository,
+                      systemPropertyRepository,
                       translationBundleRepository,
                       translationRepository).forEach(IRepository::setupDatabase);
             logger.info("Database created!");

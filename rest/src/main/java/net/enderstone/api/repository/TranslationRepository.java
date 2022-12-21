@@ -15,16 +15,16 @@ public class TranslationRepository implements IMultipleKeyRepository<String, Loc
 
     @Override
     public void setupDatabase() {
-        RestAPI.connector.update("""
+        RestAPI.connector.updateBatch("""
                 CREATE TABLE `translations` (
                   `tKey` varchar(128) NOT NULL,
                   `tLocale` varchar(5) NOT NULL,
                   `tValue` varchar(1024),
                   PRIMARY KEY (`tKey`, `tLocale`)
-                );
-                               
+                );"""/*,
+                """         
                 ALTER TABLE `translations` ADD FOREIGN KEY (`tKey`) REFERENCES `bundles` (`tKey`);
-                """);
+                """*/);
     }
 
     @Override

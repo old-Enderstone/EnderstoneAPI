@@ -30,6 +30,7 @@ public class IOUtils {
 
     public static <T> T getJson(String url, Function<String, T> deserializer) {
         try {
+            System.out.println(url);
             HttpURLConnection con = (HttpURLConnection) new URI(url).toURL().openConnection();
             con.setRequestMethod("GET");
             con.setDoInput(true);

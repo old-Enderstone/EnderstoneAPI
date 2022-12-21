@@ -16,6 +16,13 @@ public class Translation implements IStreamSerializable {
     private Locale locale;
     private String translation;
 
+    /**
+     * Needed because I was too lazy to property implement {@link net.enderstone.api.common.utils.ReflectUtils#createInstance(Class)}
+     */
+    public Translation() {
+        
+    }
+    
     public Translation(String key, Locale locale, String translation) {
         this.key = key;
         this.locale = locale;

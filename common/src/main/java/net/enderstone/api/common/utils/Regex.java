@@ -7,6 +7,6 @@ public class Regex {
 
     public static final String PROPERTY_VALUE = "[^/?#]+";
 
-    public static final String LOCALE ="[A-Za-z]{2}_[A-Za-z]{2}"; // TODO: Not Valid in some cases, needs to be updated
+    public static final String LOCALE ="[A-Za-z]{2}-[A-Za-z]{2}"; // TODO: Not Valid in some cases, needs to be updated
 
 }

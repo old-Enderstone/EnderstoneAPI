@@ -16,9 +16,9 @@ public class ApiContext extends ServerContext {
     /**
      * @return Response with status code 400, content data = message {id: 400, message: "An entry with the specified key already exists."}
      */
-    public RequestResponse entryAlreadyExistsMessage() {
+    public RequestResponse entityAlreadyExistsMessage() {
         return new RequestResponse()
-                .withContentData(new Message(400, "An entry with the specified key already exists."))
+                .withContentData(new Message(400, "An entity with the specified key already exists."))
                 .withStatusCode(400);
     }
 

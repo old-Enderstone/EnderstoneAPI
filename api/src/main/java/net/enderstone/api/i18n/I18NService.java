@@ -1,14 +1,17 @@
 package net.enderstone.api.i18n;
 
 import net.enderstone.api.cache.CacheBuilder;
+import net.enderstone.api.common.cache.CacheLifetimeType;
 import net.enderstone.api.common.cache.ICache;
 import net.enderstone.api.common.cache.StorageType;
 import net.enderstone.api.common.cache.impl.FileCacheWriter;
 import net.enderstone.api.common.cache.ref.HeapReference;
 import net.enderstone.api.common.i18n.Translation;
 import net.enderstone.api.common.types.SimpleEntry;
+import net.enderstone.api.repository.TranslationRepository;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class I18NService {
 
     private final File l2StorageRoot;
+    private final TranslationRepository repository;
 
     /**
      * Heap Cache
@@ -27,12 +31,14 @@ public abstract class I18NService {
      */
     private final ICache<SimpleEntry<String, Locale>, Translation> l2Cache;
 
-    public I18NService(File l2StorageRoot) {
+    public I18NService(final File l2StorageRoot, final TranslationRepository repository) {
         this.l2StorageRoot = l2StorageRoot;
+        this.repository = repository;
 
         l2Cache = CacheBuilder.<SimpleEntry<String, Locale>, Translation>build("translations")
                 .setStorageType(StorageType.SERIALIZED_FILE)
                 .setWriter(new FileCacheWriter<>(l2StorageRoot))
+                .setSupplier(k -> repository.getTranslation(k.getKey(), k.getValue()))
                 .create();
 
         l1Cache = CacheBuilder.<SimpleEntry<String, Locale>, Translation>build("translations")
@@ -41,7 +47,16 @@ public abstract class I18NService {
                 .setSupplier(l2Cache::get)
                 .setMaxSize(100)
                 .setLifetime(1L, TimeUnit.MINUTES)
+                .setLifetimeType(CacheLifetimeType.ON_ACCESS)
                 .create();
+    }
+
+    public void updateTranslation(final String key, final Locale locale, final String translation) {
+        repository.updateTranslation(key, locale, translation);
+
+        final SimpleEntry<String, Locale> entry = new SimpleEntry<>(key, locale);
+        l1Cache.remove(entry);
+        l2Cache.remove(entry);
     }
 
     /**
@@ -53,7 +68,7 @@ public abstract class I18NService {
     public Translation getTranslation(final UUID bundle, final String key, final Locale locale) {
         final Translation translation = l1Cache.get(new SimpleEntry<>(key, locale));
         if(translation == null) {
-            //repository.createTranslation(bundle, translation); // TODO: repository
+            repository.createEmptyTranslation(bundle, key, locale);
             return new Translation(key, locale, key);
         }
 
@@ -65,9 +80,11 @@ public abstract class I18NService {
      * @param bundle bundle to load
      * @param locale locale to load
      */
-    public void loadBundle(final UUID bundle, final Locale locale) { // TODO: repository
-        //final Collection<Translation> translations = repository.getBundleTranslations(bundle);
-        //translations.forEach(t -> l2Storage.set(t.toEntry(), t));
+    public void loadBundle(final UUID bundle, final Locale locale) {
+        final Collection<Translation> translations = repository.getBundleTranslations(bundle, locale);
+        if(translations == null || translations.isEmpty()) return;
+        System.out.println("loaded " + translations.size() + " translations.");
+        translations.forEach(t -> l2Cache.set(t.toEntry(), t));
     }
 
     public File getL2StorageRoot() {

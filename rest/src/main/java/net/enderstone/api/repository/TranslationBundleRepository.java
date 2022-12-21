@@ -15,7 +15,7 @@ public class TranslationBundleRepository implements IRepository<UUID, Translatio
     public void setupDatabase() {
         RestAPI.connector.update("""
                 CREATE TABLE `bundles` (
-                  `bId` varchar(36) KEY NOT NULL,
+                  `bId` varchar(36) NOT NULL,
                   `tKey` varchar(128) NOT NULL,
                   PRIMARY KEY(`bId`, `tKey`)
                 );""");
