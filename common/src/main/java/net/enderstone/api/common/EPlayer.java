@@ -2,6 +2,7 @@ package net.enderstone.api.common;
 
 import net.enderstone.api.common.properties.IUserProperty;
 import net.enderstone.api.common.properties.UserProperty;
+import net.enderstone.api.common.properties.abstraction.BooleanUserProperty;
 import net.enderstone.api.common.properties.abstraction.IntegerUserProperty;
 import net.enderstone.api.common.properties.abstraction.LongUserProperty;
 import net.enderstone.api.common.properties.abstraction.StringUserProperty;
@@ -48,16 +49,28 @@ public abstract class EPlayer {
         return List.copyOf(properties);
     }
 
-    private IntegerUserProperty getAsIntProperty(final UserProperty property) {
+    public IntegerUserProperty getAsIntProperty(final UserProperty property) {
         return (IntegerUserProperty) getProperty(property);
     }
 
-    private LongUserProperty getAsLongProperty(final UserProperty property){
+    public LongUserProperty getAsLongProperty(final UserProperty property){
         return (LongUserProperty) getProperty(property);
     }
 
-    private StringUserProperty getAsStringProperty(final UserProperty property) {
+    public StringUserProperty getAsStringProperty(final UserProperty property) {
         return (StringUserProperty) getProperty(property);
+    }
+
+    public BooleanUserProperty getAsBooleanProperty(final UserProperty property) {
+        return (BooleanUserProperty) getProperty(property);
+    }
+
+    public boolean hasAcceptedTos() {
+        return getAsBooleanProperty(UserProperty.ACCEPT_TOS).get();
+    }
+
+    public void acceptTos() {
+        getAsBooleanProperty(UserProperty.ACCEPT_TOS).set(true);
     }
 
     public IntegerUserProperty getCoinsProperty() {

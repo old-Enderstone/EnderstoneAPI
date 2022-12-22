@@ -8,7 +8,8 @@ public enum UserProperty {
     LAST_COUNTRY(PropertyType.STRING, null),
     LOCALE(PropertyType.STRING, new Locale("en", "us").toString()),
     PLAYTIME(PropertyType.INTEGER, 0),
-    COINS(PropertyType.INTEGER, 100);
+    COINS(PropertyType.INTEGER, 100),
+    ACCEPT_TOS(PropertyType.BOOLEAN, false);
 
     public final PropertyType type;
     public final Object defaultValue;
