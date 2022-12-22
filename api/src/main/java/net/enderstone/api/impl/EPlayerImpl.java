@@ -1,6 +1,7 @@
 package net.enderstone.api.impl;
 
 import net.enderstone.api.EnderStoneAPI;
+import net.enderstone.api.EnderStoneAPIImpl;
 import net.enderstone.api.common.EPlayer;
 import net.enderstone.api.common.properties.IUserProperty;
 import net.enderstone.api.common.properties.UserProperty;
@@ -12,6 +13,12 @@ public class EPlayerImpl extends EPlayer {
 
     public EPlayerImpl(UUID id, String lastKnownName, Collection<IUserProperty<?>> properties) {
         super(id, lastKnownName, properties);
+    }
+
+    @Override
+    public void setLastKnownName(String lastKnownName) {
+        super.setLastKnownName(lastKnownName);
+        ((EnderStoneAPIImpl)EnderStoneAPI.getInstance()).getPlayerRepository().update(this);
     }
 
     @Override

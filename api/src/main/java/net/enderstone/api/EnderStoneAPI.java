@@ -19,20 +19,20 @@ import net.enderstone.api.types.IUserPropertyFactory;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class EnderStoneAPI {
+public abstract class EnderStoneAPI {
 
     private static EnderStoneAPI instance;
 
     public static EnderStoneAPI getInstance() {
-        if(instance == null) instance = new EnderStoneAPI();
+        if(instance == null) instance = new EnderStoneAPIImpl();
         return instance;
     }
 
-    private final PlayerRepository playerRepository = new PlayerRepository(this);
-    private final UserPropertyRepository userPropertyRepository = new UserPropertyRepository(this);
-    private final SystemPropertyRepository systemPropertyRepository = new SystemPropertyRepository(this);
+    protected final PlayerRepository playerRepository = new PlayerRepository(this);
+    protected final UserPropertyRepository userPropertyRepository = new UserPropertyRepository(this);
+    protected final SystemPropertyRepository systemPropertyRepository = new SystemPropertyRepository(this);
 
-    private final ICache<UUID, EPlayer> playerCache = CacheBuilder.<UUID, EPlayer>build("PlayerCache")
+    protected final ICache<UUID, EPlayer> playerCache = CacheBuilder.<UUID, EPlayer>build("PlayerCache")
                                                                  .setStorageType(StorageType.HEAP)
                                                                  .setWriter((k, v) -> new HeapReference<>(v))
                                                                  .setSupplier(playerRepository::get)
@@ -41,7 +41,7 @@ public class EnderStoneAPI {
                                                                  .setMaxSize(1000)
                                                                  .create();
 
-    private final ICache<SystemProperty, IProperty<?>> propertyCache = CacheBuilder.<SystemProperty, IProperty<?>>build("PropertyCache")
+    protected final ICache<SystemProperty, IProperty<?>> propertyCache = CacheBuilder.<SystemProperty, IProperty<?>>build("PropertyCache")
                                                                                    .setStorageType(StorageType.HEAP)
                                                                                    .setWriter((k, v) -> new HeapReference<>(v))
                                                                                    .setSupplier(this::loadSystemProperty)
@@ -49,10 +49,10 @@ public class EnderStoneAPI {
 
     private String baseUrl;
 
-    private IUserPropertyFactory userPropertyFactory = new UserPropertyFactoryImpl(userPropertyRepository);
-    private ISystemPropertyFactory systemPropertyFactory = new SystemPropertyFactoryImpl(systemPropertyRepository);
+    protected IUserPropertyFactory userPropertyFactory = new UserPropertyFactoryImpl(userPropertyRepository);
+    protected ISystemPropertyFactory systemPropertyFactory = new SystemPropertyFactoryImpl(systemPropertyRepository);
 
-    private EnderStoneAPI() {
+    protected EnderStoneAPI() {
         init();
     }
 

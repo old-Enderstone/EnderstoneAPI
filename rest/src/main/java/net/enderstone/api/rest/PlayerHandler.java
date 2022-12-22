@@ -30,6 +30,22 @@ public class PlayerHandler {
         return playerService.getPlayerById(uuid);
     }
 
+    @URI(value = "/update/player/" + Regex.UUID + "/" + Regex.PROPERTY_VALUE, type = URI.URIType.REGEX)
+    @Whitelisted
+    public Object updatePlayer(final @Parameter(2) String uId,
+                               final @Parameter(3) String lastKnownName,
+                               final PlayerService playerService,
+                               final ApiContext context) {
+        final UUID uuid = UUID.fromString(uId);
+        if(!playerService.playerExists(uuid)) return context.entityNotFoundMessage();
+
+        final EPlayer player = playerService.getPlayerById(uuid);
+        player.setLastKnownName(lastKnownName);
+        playerService.saveLastKnownName(player);
+
+        return new Message(200, "OK");
+    }
+
     @URI(value = "/get/player/" + Regex.UUID, type = URI.URIType.REGEX)
     public Object getPlayer(final @Parameter(2) String uId,
                             final PlayerService playerService) {
