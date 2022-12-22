@@ -1,6 +1,6 @@
 package net.enderstone.api.i18n;
 
-import net.enderstone.api.cache.CacheBuilder;
+import net.enderstone.api.common.cache.CacheBuilder;
 import net.enderstone.api.common.cache.CacheLifetimeType;
 import net.enderstone.api.common.cache.ICache;
 import net.enderstone.api.common.cache.StorageType;

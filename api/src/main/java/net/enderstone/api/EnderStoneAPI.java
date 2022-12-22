@@ -1,6 +1,6 @@
 package net.enderstone.api;
 
-import net.enderstone.api.cache.CacheBuilder;
+import net.enderstone.api.common.cache.CacheBuilder;
 import net.enderstone.api.common.EPlayer;
 import net.enderstone.api.common.cache.CacheLifetimeType;
 import net.enderstone.api.common.cache.ICache;

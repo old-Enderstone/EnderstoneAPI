@@ -1,6 +1,5 @@
-package net.enderstone.api.cache;
+package net.enderstone.api.common.cache;
 
-import net.enderstone.api.common.cache.*;
 import net.enderstone.api.common.cache.impl.SimpleCacheImpl;
 import net.enderstone.api.common.utils.Strings;
 import org.jetbrains.annotations.NotNull;
