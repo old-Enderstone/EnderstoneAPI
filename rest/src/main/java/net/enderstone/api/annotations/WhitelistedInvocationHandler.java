@@ -14,6 +14,7 @@ public class WhitelistedInvocationHandler extends MethodInvocationHandlerAdapter
     @Override
     public void beforeInvocation(Method method, WebRequest request, JWebServer server) {
         if(!method.isAnnotationPresent(Whitelisted.class)) return;
+        if(!RestAPI.whitelist.use) return;
 
         final String str = request.getExchange().getRemoteAddress().getAddress().getHostAddress();
         if(!RestAPI.whitelist.whitelist.contains(str)) {
@@ -21,7 +22,6 @@ public class WhitelistedInvocationHandler extends MethodInvocationHandlerAdapter
             request.setResponse(new RequestResponse()
                     .withContentData(new Message(403, "Not Permitted"))
                     .withStatusCode(404));
-            return;
         }
     }
 }
