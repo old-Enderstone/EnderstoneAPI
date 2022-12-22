@@ -51,7 +51,7 @@ public abstract class I18NService {
                 .create();
     }
 
-    public void updateTranslation(final String key, final Locale locale, final String translation) {
+    protected void updateTranslation(final String key, final Locale locale, final String translation) {
         repository.updateTranslation(key, locale, translation);
 
         final SimpleEntry<String, Locale> entry = new SimpleEntry<>(key, locale);
@@ -65,7 +65,7 @@ public abstract class I18NService {
      * @param key translation key
      * @param locale locale of the translation you want to load
      */
-    public Translation getTranslation(final UUID bundle, final String key, final Locale locale) {
+    protected Translation getTranslation(final UUID bundle, final String key, final Locale locale) {
         final Translation translation = l1Cache.get(new SimpleEntry<>(key, locale));
         if(translation == null) {
             repository.createEmptyTranslation(bundle, key, locale);
@@ -80,18 +80,18 @@ public abstract class I18NService {
      * @param bundle bundle to load
      * @param locale locale to load
      */
-    public void loadBundle(final UUID bundle, final Locale locale) {
+    protected void loadBundle(final UUID bundle, final Locale locale) {
         final Collection<Translation> translations = repository.getBundleTranslations(bundle, locale);
         if(translations == null || translations.isEmpty()) return;
         System.out.println("loaded " + translations.size() + " translations.");
         translations.forEach(t -> l2Cache.set(t.toEntry(), t));
     }
 
-    public File getL2StorageRoot() {
+    protected File getL2StorageRoot() {
         return l2StorageRoot;
     }
 
-    public void eraseL2Cache() {
+    protected void eraseL2Cache() {
         l2Cache.clear();
     }
 
