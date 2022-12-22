@@ -5,7 +5,7 @@ import com.bethibande.web.response.RequestResponse;
 import net.enderstone.api.ApiContext;
 import net.enderstone.api.annotations.Parameter;
 import net.enderstone.api.annotations.Whitelisted;
-import net.enderstone.api.common.Player;
+import net.enderstone.api.common.EPlayer;
 import net.enderstone.api.common.types.Message;
 import net.enderstone.api.common.utils.Regex;
 import net.enderstone.api.service.PlayerService;
@@ -33,8 +33,8 @@ public class PlayerHandler {
     @URI(value = "/get/player/" + Regex.UUID, type = URI.URIType.REGEX)
     public Object getPlayer(final @Parameter(2) String uId,
                             final PlayerService playerService) {
-        Player player = playerService.getPlayerById(UUID.fromString(uId));
-        if(player != null) return player;
+        EPlayer EPlayer = playerService.getPlayerById(UUID.fromString(uId));
+        if(EPlayer != null) return EPlayer;
 
         return new RequestResponse()
                 .withStatusCode(404)

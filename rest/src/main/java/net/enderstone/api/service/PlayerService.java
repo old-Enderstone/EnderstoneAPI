@@ -1,10 +1,9 @@
 package net.enderstone.api.service;
 
 import com.bethibande.web.beans.GlobalBean;
-import net.enderstone.api.RestAPI;
-import net.enderstone.api.common.Player;
+import net.enderstone.api.common.EPlayer;
 import net.enderstone.api.common.properties.IUserProperty;
-import net.enderstone.api.impl.PlayerImpl;
+import net.enderstone.api.impl.EPlayerImpl;
 import net.enderstone.api.repository.PlayerRepository;
 
 import java.util.Collection;
@@ -25,25 +24,25 @@ public class PlayerService extends GlobalBean {
     }
 
     public void createPlayer(UUID id, String name) {
-        repository.insert(id, new PlayerImpl(id, name, null, userPropertyService));
+        repository.insert(id, new EPlayerImpl(id, name, null, userPropertyService));
     }
 
-    public void saveLastKnownName(Player player) {
-        repository.update(player.getId(), player);
+    public void saveLastKnownName(EPlayer EPlayer) {
+        repository.update(EPlayer.getId(), EPlayer);
     }
 
     public Collection<UUID> getIdByName(String name) {
         return repository.nameToUUID(name);
     }
 
-    public Player getPlayerById(UUID id) {
-        Player player = repository.get(id);
-        if(player == null) return null;
+    public EPlayer getPlayerById(UUID id) {
+        EPlayer EPlayer = repository.get(id);
+        if(EPlayer == null) return null;
 
         final Collection<IUserProperty<?>> properties = userPropertyService.getAllUserProperties(id);
-        player.setProperties(properties);
+        EPlayer.setProperties(properties);
 
-        return player;
+        return EPlayer;
     }
 
     public void deletePlayer(UUID id) {

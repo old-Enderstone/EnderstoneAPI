@@ -1,7 +1,7 @@
 package net.enderstone.api;
 
 import net.enderstone.api.cache.CacheBuilder;
-import net.enderstone.api.common.Player;
+import net.enderstone.api.common.EPlayer;
 import net.enderstone.api.common.cache.CacheLifetimeType;
 import net.enderstone.api.common.cache.ICache;
 import net.enderstone.api.common.cache.StorageType;
@@ -32,7 +32,7 @@ public class EnderStoneAPI {
     private final UserPropertyRepository userPropertyRepository = new UserPropertyRepository(this);
     private final SystemPropertyRepository systemPropertyRepository = new SystemPropertyRepository(this);
 
-    private final ICache<UUID, Player> playerCache = CacheBuilder.<UUID, Player>build("PlayerCache")
+    private final ICache<UUID, EPlayer> playerCache = CacheBuilder.<UUID, EPlayer>build("PlayerCache")
                                                                  .setStorageType(StorageType.HEAP)
                                                                  .setWriter((k, v) -> new HeapReference<>(v))
                                                                  .setSupplier(playerRepository::get)
@@ -95,16 +95,16 @@ public class EnderStoneAPI {
         return baseUrl;
     }
 
-    public Player getPlayerById(final UUID id) {
+    public EPlayer getPlayerById(final UUID id) {
         return playerCache.get(id);
     }
 
-    public Player createPlayer(final UUID id, final String name) {
-        final Player player = playerRepository.create(id, name);
-        if(player == null) return null;
+    public EPlayer createPlayer(final UUID id, final String name) {
+        final EPlayer EPlayer = playerRepository.create(id, name);
+        if(EPlayer == null) return null;
 
-        playerCache.set(id, player);
-        return player;
+        playerCache.set(id, EPlayer);
+        return EPlayer;
     }
 
 }

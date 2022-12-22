@@ -1,8 +1,8 @@
 package net.enderstone.api.repository;
 
 import net.enderstone.api.RestAPI;
-import net.enderstone.api.common.Player;
-import net.enderstone.api.impl.PlayerImpl;
+import net.enderstone.api.common.EPlayer;
+import net.enderstone.api.impl.EPlayerImpl;
 import net.enderstone.api.service.UserPropertyService;
 
 import java.sql.ResultSet;
@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-public class PlayerRepository implements IRepository<UUID, Player> {
+public class PlayerRepository implements IRepository<UUID, EPlayer> {
 
     private final UserPropertyService userPropertyService;
 
@@ -44,26 +44,26 @@ public class PlayerRepository implements IRepository<UUID, Player> {
     }
 
     @Override
-    public void insert(UUID key, Player value) {
+    public void insert(UUID key, EPlayer value) {
         RestAPI.connector.update("insert into `Player` values (?, ?);", key.toString(), value.getLastKnownName());
     }
 
     @Override
-    public void update(UUID key, Player value) {
+    public void update(UUID key, EPlayer value) {
         RestAPI.connector.update("update `Player` set `lastKnownName`=? where `uId`=?;", value.getLastKnownName(), key.toString());
     }
 
     /**
-     * Returns a player instance or null if no database entry is found, the property list of the player will be empty
+     * Returns a EPlayer instance or null if no database entry is found, the property list of the EPlayer will be empty
      */
     @Override
-    public Player get(UUID key) {
+    public EPlayer get(UUID key) {
         ResultSet rs = RestAPI.connector.query("select `lastKnownName` from `Player` where `uId`=?;", key.toString());
         try {
             if(!rs.next()) return null;
             final String lastKnownName = rs.getString("lastKnownName");
 
-            return new PlayerImpl(key, lastKnownName, new ArrayList<>(), userPropertyService);
+            return new EPlayerImpl(key, lastKnownName, new ArrayList<>(), userPropertyService);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -1,16 +1,16 @@
 package net.enderstone.api.impl;
 
 import net.enderstone.api.EnderStoneAPI;
-import net.enderstone.api.common.Player;
+import net.enderstone.api.common.EPlayer;
 import net.enderstone.api.common.properties.IUserProperty;
 import net.enderstone.api.common.properties.UserProperty;
 
 import java.util.Collection;
 import java.util.UUID;
 
-public class PlayerImpl extends Player {
+public class EPlayerImpl extends EPlayer {
 
-    public PlayerImpl(UUID id, String lastKnownName, Collection<IUserProperty<?>> properties) {
+    public EPlayerImpl(UUID id, String lastKnownName, Collection<IUserProperty<?>> properties) {
         super(id, lastKnownName, properties);
     }
 
