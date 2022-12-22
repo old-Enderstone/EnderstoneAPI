@@ -65,6 +65,13 @@ public class EnderStoneAPI {
         }
     }
 
+    /**
+     * Removes given player from cache
+     */
+    public void unloadPlayer(final UUID uuid) {
+        playerCache.remove(uuid);
+    }
+
     public IProperty<?> getSystemProperty(final SystemProperty property) {
         return propertyCache.get(property);
     }
