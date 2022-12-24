@@ -8,8 +8,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class DoubleSystemPropertyImpl extends DoubleProperty {
 
-    private final SystemPropertyRepository repository;
-    private final ReentrantLock lock = new ReentrantLock();
+    private transient final SystemPropertyRepository repository;
+    private transient final ReentrantLock lock = new ReentrantLock();
 
     public DoubleSystemPropertyImpl(SystemProperty key, Double value, SystemPropertyRepository repository) {
         super(key, value);

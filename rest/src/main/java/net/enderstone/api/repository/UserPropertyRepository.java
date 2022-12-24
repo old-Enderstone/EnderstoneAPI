@@ -28,7 +28,7 @@ public class UserPropertyRepository implements IMultipleKeyRepository<UUID, User
      * The return value is never null, if there are no properties an empty collection will be returned
      */
     public Collection<IUserProperty<?>> getAllPropertiesByOwner(UUID owner) {
-        ResultSet rs = RestAPI.connector.query("select `property`, `value` from `Property` where uId=?;", owner);
+        ResultSet rs = RestAPI.connector.query("select `property`, `value` from `Property` where uId=?;", owner.toString());
         List<IUserProperty<?>> properties = new ArrayList<>();
         try {
             while(rs.next()) {

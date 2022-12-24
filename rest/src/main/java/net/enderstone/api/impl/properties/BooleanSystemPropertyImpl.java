@@ -8,8 +8,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class BooleanSystemPropertyImpl extends BooleanProperty {
 
-    private final SystemPropertyRepository repository;
-    private final ReentrantLock lock = new ReentrantLock();
+    private transient final SystemPropertyRepository repository;
+    private transient final ReentrantLock lock = new ReentrantLock();
 
     public BooleanSystemPropertyImpl(SystemProperty key, Boolean value, SystemPropertyRepository repository) {
         super(key, value);

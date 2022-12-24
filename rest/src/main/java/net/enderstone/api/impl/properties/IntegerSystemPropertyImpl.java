@@ -8,8 +8,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class IntegerSystemPropertyImpl extends IntegerProperty {
     
-    private final SystemPropertyRepository repository;
-    private final ReentrantLock lock = new ReentrantLock();
+    private transient final SystemPropertyRepository repository;
+    private transient final ReentrantLock lock = new ReentrantLock();
 
     public IntegerSystemPropertyImpl(SystemProperty key, Integer value, SystemPropertyRepository repository) {
         super(key, value);

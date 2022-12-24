@@ -2,8 +2,10 @@ package net.enderstone.api;
 
 import com.bethibande.web.JWebServer;
 import com.bethibande.web.logging.LoggerFactory;
+import com.google.gson.GsonBuilder;
 import net.enderstone.api.annotations.ParameterAnnotationProcessor;
 import net.enderstone.api.annotations.WhitelistedInvocationHandler;
+import net.enderstone.api.common.properties.IUserProperty;
 import net.enderstone.api.config.Config;
 import net.enderstone.api.config.IPWhitelist;
 import net.enderstone.api.repository.IRepository;
@@ -12,17 +14,16 @@ import net.enderstone.api.repository.SystemPropertyRepository;
 import net.enderstone.api.repository.TranslationBundleRepository;
 import net.enderstone.api.repository.TranslationRepository;
 import net.enderstone.api.repository.UserPropertyRepository;
-import net.enderstone.api.rest.PlayerHandler;
-import net.enderstone.api.rest.SystemPropertyHandler;
-import net.enderstone.api.rest.TranslationHandler;
-import net.enderstone.api.rest.UserPropertyHandler;
+import net.enderstone.api.rest.*;
 import net.enderstone.api.service.I18nService;
 import net.enderstone.api.service.PlayerService;
 import net.enderstone.api.service.SystemPropertyService;
 import net.enderstone.api.service.UserPropertyService;
 import net.enderstone.api.sql.SQLConnector;
+import net.enderstone.api.types.SystemPropertySerializer;
 import net.enderstone.api.utils.Arrays;
 import net.enderstone.api.utils.FileUtil;
+import net.enderstone.api.types.UserPropertySerializer;
 
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
@@ -125,8 +126,13 @@ public class RestAPI {
                 .withHandler(PlayerHandler.class)
                 .withHandler(UserPropertyHandler.class)
                 .withHandler(SystemPropertyHandler.class)
-                .withHandler(TranslationHandler.class);
+                .withHandler(TranslationHandler.class)
+                .withHandler(StatusHandler.class);
         restServer.start();
+
+        restServer.setGson(new GsonBuilder().registerTypeAdapter(IUserProperty.class, new UserPropertySerializer())
+                                            .registerTypeAdapter(IUserProperty.class, new SystemPropertySerializer())
+                                            .create());
 
         restServer.storeGlobalBean(systemPropertyService);
         restServer.storeGlobalBean(playerService);

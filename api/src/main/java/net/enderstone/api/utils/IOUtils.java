@@ -2,8 +2,10 @@ package net.enderstone.api.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.enderstone.api.common.properties.IProperty;
 import net.enderstone.api.common.properties.IUserProperty;
 import net.enderstone.api.common.types.TypedMessage;
+import net.enderstone.api.types.SystemPropertyDeserializer;
 import net.enderstone.api.types.UserPropertyDeserializer;
 
 import java.io.IOException;
@@ -19,6 +21,7 @@ public class IOUtils {
 
     public static Gson gson = new GsonBuilder()
                                   .registerTypeAdapter(IUserProperty.class, new UserPropertyDeserializer())
+                                  .registerTypeAdapter(IProperty.class, new SystemPropertyDeserializer())
                                   .create();
 
     public static <T> T getJson(String url, Class<T> type) {
@@ -35,7 +38,6 @@ public class IOUtils {
 
     public static <T> T getJson(String url, Function<String, T> deserializer) {
         try {
-            System.out.println(url);
             HttpURLConnection con = (HttpURLConnection) new URI(url).toURL().openConnection();
             con.setRequestMethod("GET");
             con.setDoInput(true);

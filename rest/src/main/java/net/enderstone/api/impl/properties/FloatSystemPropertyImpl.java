@@ -8,8 +8,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class FloatSystemPropertyImpl extends FloatProperty {
 
-    private final SystemPropertyRepository repository;
-    private final ReentrantLock lock = new ReentrantLock();
+    private transient final SystemPropertyRepository repository;
+    private transient final ReentrantLock lock = new ReentrantLock();
 
     public FloatSystemPropertyImpl(SystemProperty key, Float value, SystemPropertyRepository repository) {
         super(key, value);

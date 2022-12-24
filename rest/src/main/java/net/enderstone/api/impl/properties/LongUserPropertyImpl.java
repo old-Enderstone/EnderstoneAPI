@@ -9,8 +9,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class LongUserPropertyImpl extends LongUserProperty {
     
-    private final UserPropertyRepository repo;
-    private final ReentrantLock lock = new ReentrantLock();
+    private transient final UserPropertyRepository repo;
+    private transient final ReentrantLock lock = new ReentrantLock();
 
     public LongUserPropertyImpl(UserProperty key, UUID owner, Long value, UserPropertyRepository repo) {
         super(key, owner, value);

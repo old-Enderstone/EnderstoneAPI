@@ -9,8 +9,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class BooleanUserPropertyImpl extends BooleanUserProperty {
 
-    private final UserPropertyRepository repo;
-    private final ReentrantLock lock = new ReentrantLock();
+    private transient final UserPropertyRepository repo;
+    private transient final ReentrantLock lock = new ReentrantLock();
 
     public BooleanUserPropertyImpl(UserProperty key, UUID owner, Boolean value, UserPropertyRepository repo) {
         super(key, owner, value);

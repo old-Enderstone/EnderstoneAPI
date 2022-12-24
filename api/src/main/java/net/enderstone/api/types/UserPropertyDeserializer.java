@@ -19,8 +19,6 @@ public class UserPropertyDeserializer implements JsonDeserializer<IUserProperty<
 
         final UUID owner = UUID.fromString(jsonObject.get("owner").getAsString());
 
-        factory.createOfValue(owner, key, jsonObject.get("value").getAsString());
-
-        return null;
+        return factory.createOfValue(owner, key, jsonObject.get("value").getAsString());
     }
 }

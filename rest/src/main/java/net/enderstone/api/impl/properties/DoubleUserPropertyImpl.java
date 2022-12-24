@@ -9,8 +9,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class DoubleUserPropertyImpl extends DoubleUserProperty {
 
-    private final UserPropertyRepository repo;
-    private final ReentrantLock lock = new ReentrantLock();
+    private transient final UserPropertyRepository repo;
+    private transient final ReentrantLock lock = new ReentrantLock();
 
     public DoubleUserPropertyImpl(UserProperty key, UUID owner, Double value, UserPropertyRepository repo) {
         super(key, owner, value);

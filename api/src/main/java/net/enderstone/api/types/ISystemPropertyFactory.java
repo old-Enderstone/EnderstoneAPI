@@ -6,7 +6,11 @@ import net.enderstone.api.repository.SystemPropertyRepository;
 
 public interface ISystemPropertyFactory {
 
+    IProperty<?> createEmpty(final SystemProperty property);
+
     IProperty<?> createEmpty(final SystemProperty property, final SystemPropertyRepository SystemPropertyRepository);
+
+    IProperty<?> createOfValue(final SystemProperty property, final String value);
 
     IProperty<?> createOfValue(final SystemProperty property,
                                final String value,

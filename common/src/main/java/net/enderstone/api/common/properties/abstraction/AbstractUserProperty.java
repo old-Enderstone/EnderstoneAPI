@@ -13,7 +13,7 @@ public abstract class AbstractUserProperty<T> implements IUserProperty<T> {
     private final UUID owner;
     protected T value;
 
-    private final Map.Entry<UUID, UserProperty> entry;
+    private transient final Map.Entry<UUID, UserProperty> entry;
 
     public AbstractUserProperty(UserProperty key, UUID owner, T value) {
         this.key = key;

@@ -9,8 +9,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class IntegerUserPropertyImpl extends IntegerUserProperty {
 
-    private final UserPropertyRepository repo;
-    private final ReentrantLock lock = new ReentrantLock();
+    private transient final UserPropertyRepository repo;
+    private transient final ReentrantLock lock = new ReentrantLock();
 
     public IntegerUserPropertyImpl(UserProperty key, UUID owner, Integer value, UserPropertyRepository repo) {
         super(key, owner, value);
