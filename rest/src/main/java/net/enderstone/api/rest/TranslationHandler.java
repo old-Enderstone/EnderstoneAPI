@@ -12,6 +12,7 @@ import net.enderstone.api.service.I18nService;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -72,7 +73,7 @@ public class TranslationHandler {
         final UUID uuid = UUID.fromString(bundleStr);
         final List<String> keys = i18nService.getTranslationsOfBundle(uuid);
 
-        if(keys == null || keys.isEmpty()) return context.entityNotFoundMessage();
+        if(keys == null) return new ArrayList<String>();
         return keys;
     }
 
@@ -85,7 +86,7 @@ public class TranslationHandler {
         final UUID uuid = UUID.fromString(bundleStr);
         final List<Translation> translations = i18nService.getTranslations(Locale.forLanguageTag(localeStr), uuid);
 
-        if(translations == null || translations.isEmpty()) return context.entityNotFoundMessage();
+        if(translations == null) return new ArrayList<Translation>();
         return translations;
     }
 

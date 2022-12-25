@@ -5,6 +5,7 @@ import com.bethibande.web.logging.LoggerFactory;
 import com.google.gson.GsonBuilder;
 import net.enderstone.api.annotations.ParameterAnnotationProcessor;
 import net.enderstone.api.annotations.WhitelistedInvocationHandler;
+import net.enderstone.api.common.properties.IProperty;
 import net.enderstone.api.common.properties.IUserProperty;
 import net.enderstone.api.config.Config;
 import net.enderstone.api.config.IPWhitelist;
@@ -131,7 +132,7 @@ public class RestAPI {
         restServer.start();
 
         restServer.setGson(new GsonBuilder().registerTypeAdapter(IUserProperty.class, new UserPropertySerializer())
-                                            .registerTypeAdapter(IUserProperty.class, new SystemPropertySerializer())
+                                            .registerTypeAdapter(IProperty.class, new SystemPropertySerializer())
                                             .create());
 
         restServer.storeGlobalBean(systemPropertyService);
