@@ -58,7 +58,7 @@ public abstract class EnderStoneAPI {
 
     private void init() {
         String host = System.getProperty("net.enderstone.api.host");
-        if(host == null || host.equals("prod")) baseUrl = "http://api.enderstone.net";
+        if(host == null || host.equals("prod")) baseUrl = "http://api.enderstone.net:4455";
 
         if("debug".equalsIgnoreCase(host)) {
             baseUrl = "http://127.0.0.1:4455";

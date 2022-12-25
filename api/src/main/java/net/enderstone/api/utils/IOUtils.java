@@ -50,6 +50,7 @@ public class IOUtils {
 
             InputStream in = con.getInputStream();
             byte[] bytes = in.readNBytes(contentLength);
+            //System.out.println(url + " | " + new String(bytes, StandardCharsets.UTF_8));
             return deserializer.apply(new String(bytes, StandardCharsets.UTF_8));
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
