@@ -22,7 +22,7 @@ public class SystemPropertyHandler {
     }
 
     @URI(value = "/get/system/property/" + Regex.PROPERTY, type = URI.URIType.REGEX)
-    public IProperty<?> getProperty(final @Parameter(2) String propertyStr,
+    public IProperty<?> getProperty(final @Parameter(3) String propertyStr,
                                     final SystemPropertyService systemPropertyService) {
         final SystemProperty property = SystemProperty.valueOf(propertyStr);
 

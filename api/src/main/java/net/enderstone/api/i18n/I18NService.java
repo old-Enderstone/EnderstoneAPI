@@ -66,10 +66,12 @@ public abstract class I18NService {
      * @param locale locale of the translation you want to load
      */
     protected Translation getTranslation(final UUID bundle, final String key, final Locale locale) {
-        final Translation translation = l1Cache.get(new SimpleEntry<>(key, locale));
+        Translation translation = l1Cache.get(new SimpleEntry<>(key, locale));
         if(translation == null) {
             repository.createEmptyTranslation(bundle, key, locale);
-            return new Translation(key, locale, key);
+            translation = new Translation(key, locale, key);
+            l2Cache.set(translation.toEntry(), translation);
+            l1Cache.set(translation.toEntry(), translation);
         }
 
         return translation;

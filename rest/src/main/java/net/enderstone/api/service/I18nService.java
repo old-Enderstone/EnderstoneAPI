@@ -28,7 +28,7 @@ public class I18nService extends GlobalBean {
 
     public void createEmptyTranslation(final UUID bundle, final String key, final Locale locale) {
         if(getTranslation(key, locale) !=  null) return;
-        translationRepository.insert(new SimpleEntry<>(key, locale), new Translation(key, locale, null));
+        translationRepository.insert(new SimpleEntry<>(key, locale), new Translation(key, locale, key));
         translationBundleRepository.insert(bundle, new TranslationBundleItem(bundle, key));
     }
 
