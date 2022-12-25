@@ -22,6 +22,7 @@ public class IOUtils {
     public static Gson gson = new GsonBuilder()
                                   .registerTypeAdapter(IUserProperty.class, new UserPropertyDeserializer())
                                   .registerTypeAdapter(IProperty.class, new SystemPropertyDeserializer())
+                                  .serializeNulls()
                                   .create();
 
     public static <T> T getJson(String url, Class<T> type) {

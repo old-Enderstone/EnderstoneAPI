@@ -32,9 +32,7 @@ public class SystemPropertyService extends GlobalBean {
     }
 
     public IProperty<?> getProperty(SystemProperty property) {
-        final IProperty<?> propertyHandle = repository.get(property);
-        if(propertyHandle != null) return propertyHandle;
-        return createProperty(property);
+        return repository.get(property);
     }
 
 }

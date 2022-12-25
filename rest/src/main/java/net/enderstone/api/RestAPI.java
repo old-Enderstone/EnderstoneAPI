@@ -133,6 +133,7 @@ public class RestAPI {
 
         restServer.setGson(new GsonBuilder().registerTypeAdapter(IUserProperty.class, new UserPropertySerializer())
                                             .registerTypeAdapter(IProperty.class, new SystemPropertySerializer())
+                                            .serializeNulls()
                                             .create());
 
         restServer.storeGlobalBean(systemPropertyService);

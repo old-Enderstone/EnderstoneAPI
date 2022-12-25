@@ -22,11 +22,14 @@ public class SystemPropertyHandler {
     }
 
     @URI(value = "/get/system/property/" + Regex.PROPERTY, type = URI.URIType.REGEX)
-    public IProperty<?> getProperty(final @Parameter(3) String propertyStr,
-                                    final SystemPropertyService systemPropertyService) {
+    public Object getProperty(final @Parameter(3) String propertyStr,
+                                    final SystemPropertyService systemPropertyService,
+                                    final ApiContext context) {
         final SystemProperty property = SystemProperty.valueOf(propertyStr);
 
-        return systemPropertyService.getProperty(property);
+        final IProperty<?> value =  systemPropertyService.getProperty(property);
+        if(value == null) return context.entityNotFoundMessage();
+        return value;
     }
 
     @URI(value = "/toggle/system/property/" + Regex.PROPERTY, type = URI.URIType.REGEX)
