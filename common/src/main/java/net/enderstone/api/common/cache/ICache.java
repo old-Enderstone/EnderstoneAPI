@@ -2,6 +2,8 @@ package net.enderstone.api.common.cache;
 
 import net.enderstone.api.common.utils.Strings;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public abstract class ICache<K, V> {
@@ -37,6 +39,8 @@ public abstract class ICache<K, V> {
     public abstract void set(K key, V value);
 
     public abstract V get(K key);
+
+    public abstract Set<K> getAllKeys();
 
     public abstract V remove(K key);
 

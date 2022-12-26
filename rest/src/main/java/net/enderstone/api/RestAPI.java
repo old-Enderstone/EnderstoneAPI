@@ -6,6 +6,12 @@ import com.google.gson.GsonBuilder;
 import net.enderstone.api.annotations.AuthenticationInvocationHandler;
 import net.enderstone.api.annotations.ParameterAnnotationProcessor;
 import net.enderstone.api.annotations.WhitelistedInvocationHandler;
+import net.enderstone.api.commands.command.CommandDispatcher;
+import net.enderstone.api.commands.command.CommandManager;
+import net.enderstone.api.commands.commands.HelpCommand;
+import net.enderstone.api.commands.commands.StopCommand;
+import net.enderstone.api.common.cache.CacheBuilder;
+import net.enderstone.api.common.cache.ICache;
 import net.enderstone.api.common.properties.IProperty;
 import net.enderstone.api.common.properties.IUserProperty;
 import net.enderstone.api.config.Config;
@@ -54,6 +60,8 @@ public class RestAPI {
     private static UserPropertyRepository userPropertyRepository;
     private static TranslationBundleRepository translationBundleRepository;
     private static TranslationRepository translationRepository;
+
+    public static CommandManager commandManager;
 
     public static JWebServer restServer;
 
@@ -143,11 +151,26 @@ public class RestAPI {
         restServer.storeGlobalBean(userPropertyService);
         restServer.storeGlobalBean(i18nService);
 
+        commandManager = new CommandManager();
+        commandManager.registerCommand(new HelpCommand(commandManager, logger));
+        commandManager.registerCommand(new StopCommand());
+
+        final CommandDispatcher commandDispatcher = new CommandDispatcher();
+        commandDispatcher.setCommandManager(commandManager);
+        commandDispatcher.start();
+
         logger.info(annotate("Started!", GREEN));
 
         exit.join();
 
         logger.info(annotate("Good Bye!", BLUE));
+
+        connector.disconnect();
+        restServer.stop();
+
+        CacheBuilder.caches.forEach(ICache::clear);
+
+        System.exit(0);
     }
 
 }

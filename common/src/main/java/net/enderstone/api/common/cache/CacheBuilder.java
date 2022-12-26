@@ -4,12 +4,20 @@ import net.enderstone.api.common.cache.impl.SimpleCacheImpl;
 import net.enderstone.api.common.utils.Strings;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class CacheBuilder<K, V> {
+
+    /**
+     * A List of all cache instances created by this builder class. Probably going to remove this later though,
+     * as this seems like an easy way to create a memory leak.
+     */
+    public static final List<ICache<?, ?>> caches = new ArrayList<>();
 
     public static <K, V> CacheBuilder<K, V> build(final @NotNull UUID id) {
         return new CacheBuilder<K, V>(id);
@@ -71,6 +79,7 @@ public class CacheBuilder<K, V> {
             supplied.setSupplier(supplier);
         }
 
+        caches.add(cache);
         return cache;
     }
 

@@ -4,10 +4,7 @@ import net.enderstone.api.common.cache.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -97,6 +94,16 @@ public class SimpleCacheImpl<K, V> extends ICache<K, V> implements HasListeners<
     }
 
     @Override
+    public BiConsumer<K, V> getSetListener() {
+        return setListener;
+    }
+
+    @Override
+    public BiConsumer<K, V> getRemoveListener() {
+        return removeListener;
+    }
+
+    @Override
     public int getSize() {
         return cache.size();
     }
@@ -113,6 +120,11 @@ public class SimpleCacheImpl<K, V> extends ICache<K, V> implements HasListeners<
         update();
 
         if(this.setListener != null) setListener.accept(key, value);
+    }
+
+    @Override
+    public Set<K> getAllKeys() {
+        return cache.keySet();
     }
 
     @Override

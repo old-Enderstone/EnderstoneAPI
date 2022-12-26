@@ -15,4 +15,7 @@ public interface HasListeners<K, V> {
      */
     void setRemoveListener(BiConsumer<K, V> listener);
 
+    BiConsumer<K, V> getSetListener();
+    BiConsumer<K, V> getRemoveListener();
+
 }

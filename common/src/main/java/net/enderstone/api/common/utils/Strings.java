@@ -11,6 +11,9 @@ public class Strings {
 
     private final static int BYTE_OFFSET_VARIATION = 8;
 
+    public static String characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+    public static final String alphabet = "abcdefghijklmnopqrstuvwxyz";
+
     private static int _gatherInt(byte[] buffer, int offset) {
         return (buffer[offset] << 24) | ((buffer[offset + 1] & 0xFF) << 16)
                 | ((buffer[offset + 2] & 0xFF) << 8) | (buffer[offset + 3] & 0xFF);
