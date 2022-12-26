@@ -9,11 +9,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class StringUserPropertyImpl extends StringUserProperty {
 
-    private transient UserPropertyRepository repo;
+    private transient final UserPropertyRepository repo;
     private transient final ReentrantLock lock = new ReentrantLock();
 
     public StringUserPropertyImpl(UserProperty key, UUID owner, String value, UserPropertyRepository repo) {
         super(key, owner, value);
+        this.repo = repo;
     }
 
     @Override

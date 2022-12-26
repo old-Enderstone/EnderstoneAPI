@@ -3,6 +3,7 @@ package net.enderstone.api;
 import com.bethibande.web.JWebServer;
 import com.bethibande.web.logging.LoggerFactory;
 import com.google.gson.GsonBuilder;
+import net.enderstone.api.annotations.AuthenticationInvocationHandler;
 import net.enderstone.api.annotations.ParameterAnnotationProcessor;
 import net.enderstone.api.annotations.WhitelistedInvocationHandler;
 import net.enderstone.api.common.properties.IProperty;
@@ -122,6 +123,7 @@ public class RestAPI {
                 .withLogLevel(Level.FINE)
                 .withBindAddress(config.bindAddress, config.port)
                 .withMethodInvocationHandler(new WhitelistedInvocationHandler())
+                .withMethodInvocationHandler(new AuthenticationInvocationHandler())
                 .withProcessor(new ParameterAnnotationProcessor())
                 .withContextFactory(ApiContext::new)
                 .withHandler(PlayerHandler.class)
