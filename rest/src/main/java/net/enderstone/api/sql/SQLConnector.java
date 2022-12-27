@@ -106,6 +106,19 @@ public class SQLConnector {
         return driverClass;
     }
 
+
+    public SQLTransaction createEmptyTransaction() {
+        return new SQLTransaction().withConnector(this);
+    }
+
+    public SQLTransaction createTransactionOfStatements(final String... statements) {
+        final SQLTransaction transaction = new SQLTransaction().withConnector(this);
+        for(String statement : statements) {
+            transaction.withStatement(new SQLStatement(statement));
+        }
+        return transaction;
+    }
+
     public void updateBatch(String... command) {
         try {
             Statement st = this.con.createStatement();

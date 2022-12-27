@@ -4,6 +4,8 @@ import net.enderstone.api.RestAPI;
 import net.enderstone.api.common.EPlayer;
 import net.enderstone.api.impl.EPlayerImpl;
 import net.enderstone.api.service.UserPropertyService;
+import net.enderstone.api.sql.SQLStatement;
+import net.enderstone.api.sql.SQLTransaction;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -87,6 +89,9 @@ public class PlayerRepository implements IRepository<UUID, EPlayer> {
 
     @Override
     public void delete(UUID key) {
-        RestAPI.connector.update("delete from `Player` where `uId`=?;", key.toString());
+        final SQLTransaction transaction = RestAPI.connector.createEmptyTransaction()
+                .withStatement(new SQLStatement("delete from `Property` where `uId`=?", key.toString()))
+                .withStatement(new SQLStatement("delete from `Player` where `uId`=?;", key.toString()));
+        transaction.transact();
     }
 }

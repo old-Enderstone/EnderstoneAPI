@@ -2,6 +2,8 @@ package net.enderstone.api.repository;
 
 import net.enderstone.api.RestAPI;
 import net.enderstone.api.common.i18n.Translation;
+import net.enderstone.api.sql.SQLStatement;
+import net.enderstone.api.sql.SQLTransaction;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,10 +23,7 @@ public class TranslationRepository implements IMultipleKeyRepository<String, Loc
                   `tLocale` varchar(5) NOT NULL,
                   `tValue` varchar(1024),
                   PRIMARY KEY (`tKey`, `tLocale`)
-                );"""/*,
-                """         
-                ALTER TABLE `translations` ADD FOREIGN KEY (`tKey`) REFERENCES `bundles` (`tKey`);
-                """*/);
+                );""");
     }
 
     @Override
@@ -76,6 +75,9 @@ public class TranslationRepository implements IMultipleKeyRepository<String, Loc
 
     @Override
     public void delete(Map.Entry<String, Locale> key) {
-        RestAPI.connector.update("delete from `translations` where `tKey`=? and `tValue`=?;", key.getKey(), key.getValue().toString());
+        final SQLTransaction transaction = RestAPI.connector.createEmptyTransaction()
+                .withStatement(new SQLStatement("delete from `translations` where `tKey`=? and `tValue`=?;", key.getKey(), key.getValue().toString()))
+                .withStatement(new SQLStatement("delete from `bundles` where `tKey`=?;", key.getKey()));
+        transaction.transact();
     }
 }
