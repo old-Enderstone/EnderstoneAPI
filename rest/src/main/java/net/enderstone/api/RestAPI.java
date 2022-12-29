@@ -1,7 +1,8 @@
 package net.enderstone.api;
 
 import com.bethibande.web.JWebServer;
-import com.bethibande.web.logging.LoggerFactory;
+import com.bethibande.web.context.ServerContext;
+import com.bethibande.web.response.RequestResponse;
 import com.google.gson.GsonBuilder;
 import net.enderstone.api.annotations.AuthenticationInvocationHandler;
 import net.enderstone.api.annotations.ParameterAnnotationProcessor;
@@ -14,6 +15,7 @@ import net.enderstone.api.common.cache.CacheBuilder;
 import net.enderstone.api.common.cache.ICache;
 import net.enderstone.api.common.properties.IProperty;
 import net.enderstone.api.common.properties.IUserProperty;
+import net.enderstone.api.common.types.Message;
 import net.enderstone.api.config.Config;
 import net.enderstone.api.config.IPWhitelist;
 import net.enderstone.api.repository.IRepository;
@@ -28,12 +30,14 @@ import net.enderstone.api.service.PlayerService;
 import net.enderstone.api.service.SystemPropertyService;
 import net.enderstone.api.service.UserPropertyService;
 import net.enderstone.api.sql.SQLConnector;
+import net.enderstone.api.tasks.ErrorWriteJob;
 import net.enderstone.api.types.SystemPropertySerializer;
 import net.enderstone.api.utils.Arrays;
 import net.enderstone.api.utils.FileUtil;
 import net.enderstone.api.types.UserPropertySerializer;
 
 import java.io.File;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.logging.Level;
@@ -91,7 +95,7 @@ public class RestAPI {
         executor = new ScheduledThreadPoolExecutor(10);
         executor.setCorePoolSize(10);
 
-        logger = LoggerFactory.createLogger(executor);
+        logger = new net.enderstone.api.logging.Logger(executor);
         logger.info("Starting..");
 
         config = FileUtil.readJson(configFile, Config.class);
@@ -128,7 +132,9 @@ public class RestAPI {
         }
 
         restServer = new JWebServer()
+                .withLogger(logger)
                 .withLogLevel(Level.FINE)
+                .withExecutor(executor)
                 .withBindAddress(config.bindAddress, config.port)
                 .withMethodInvocationHandler(new WhitelistedInvocationHandler())
                 .withMethodInvocationHandler(new AuthenticationInvocationHandler())
@@ -138,7 +144,9 @@ public class RestAPI {
                 .withHandler(UserPropertyHandler.class)
                 .withHandler(SystemPropertyHandler.class)
                 .withHandler(TranslationHandler.class)
-                .withHandler(StatusHandler.class);
+                .withHandler(StatusHandler.class)
+                .withHandler(NotFoundHandler.class)
+                .withErrorHandler(RestAPI::handleError);
         restServer.start();
 
         restServer.setGson(new GsonBuilder().registerTypeAdapter(IUserProperty.class, new UserPropertySerializer())
@@ -171,6 +179,18 @@ public class RestAPI {
         CacheBuilder.caches.forEach(ICache::clear);
 
         System.exit(0);
+    }
+
+    public static void handleError(final Throwable th, final ServerContext ctx) {
+        final UUID id = UUID.randomUUID();
+        ctx.server().getLogger().severe("Encountered an error: " + th.getLocalizedMessage() + " for path: " + ctx.request().getUri().getPath());
+        ctx.server().getLogger().severe("Stack trace was save under '" + new File(ErrorWriteJob.ERROR_DIR + "/" + id).getPath() + "'");
+
+        executor.execute(new ErrorWriteJob(id.toString(), th, "Error for route: " + ctx.request().getUri().toString()));
+
+        ctx.request().setResponse(new RequestResponse()
+                .withStatusCode(500)
+                .withContentData(new Message(500, "Internal server error")));
     }
 
 }
