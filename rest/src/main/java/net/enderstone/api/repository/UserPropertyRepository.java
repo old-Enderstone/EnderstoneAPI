@@ -11,18 +11,6 @@ import java.util.*;
 
 public class UserPropertyRepository implements IMultipleKeyRepository<UUID, UserProperty, IUserProperty<?>> {
 
-    @Override
-    public void setupDatabase() {
-        RestAPI.connector.updateBatch("""          
-                CREATE TABLE `Property` (
-                  `uId` varchar(36) NOT NULL,
-                  `property` varchar(128) NOT NULL,
-                  `value` varchar(1024),
-                  PRIMARY KEY (`uId`, `property`)
-                );
-                """);
-    }
-
     /**
      * Returns a collection containing all properties stored in the database that belong to the given uuid.
      * The return value is never null, if there are no properties an empty collection will be returned

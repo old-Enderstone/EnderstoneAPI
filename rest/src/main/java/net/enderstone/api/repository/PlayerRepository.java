@@ -23,19 +23,6 @@ public class PlayerRepository implements IRepository<UUID, EPlayer> {
     }
 
     @Override
-    public void setupDatabase() {
-        RestAPI.connector.updateBatch("""
-                CREATE TABLE `Player` (
-                  `uId` varchar(36) PRIMARY KEY NOT NULL,
-                  `lastKnownName` varchar(16)
-                );
-                """,
-                """
-                ALTER TABLE `Property` ADD FOREIGN KEY (`uId`) REFERENCES `Player` (`uId`);
-                """);
-    }
-
-    @Override
     public boolean hasKey(UUID key) {
         ResultSet rs = RestAPI.connector.query("select `uId` from `Player` where uId=?;", key.toString());
         try {

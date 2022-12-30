@@ -16,17 +16,6 @@ import java.util.UUID;
 public class TranslationRepository implements IMultipleKeyRepository<String, Locale, Translation> {
 
     @Override
-    public void setupDatabase() {
-        RestAPI.connector.updateBatch("""
-                CREATE TABLE `translations` (
-                  `tKey` varchar(128) NOT NULL,
-                  `tLocale` varchar(5) NOT NULL,
-                  `tValue` varchar(1024),
-                  PRIMARY KEY (`tKey`, `tLocale`)
-                );""");
-    }
-
-    @Override
     public boolean hasKey(Map.Entry<String, Locale> key) {
         final ResultSet rs = RestAPI.connector.query("select `tKey` from `translations` where `tKey`=? and tLocale=?;", key.getKey(), key.getValue().toString());
         try {

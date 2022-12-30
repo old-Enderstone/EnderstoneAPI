@@ -13,16 +13,6 @@ import java.util.List;
 
 public class SystemPropertyRepository implements IRepository<SystemProperty, IProperty<?>> {
 
-    @Override
-    public void setupDatabase() {
-        RestAPI.connector.update("""        
-                CREATE TABLE `SystemProperty` (
-                  `property` varchar(128) PRIMARY KEY NOT NULL,
-                  `value` varchar(1024)
-                );
-                """);
-    }
-
     private IProperty<?> createProperty(SystemProperty property, String value) {
         return switch(property.type) {
             case STRING -> new StringSystemPropertyImpl(property, value, this);

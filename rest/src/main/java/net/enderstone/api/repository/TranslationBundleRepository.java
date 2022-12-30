@@ -12,16 +12,6 @@ import java.util.UUID;
 public class TranslationBundleRepository implements IRepository<UUID, TranslationBundleItem> {
 
     @Override
-    public void setupDatabase() {
-        RestAPI.connector.update("""
-                CREATE TABLE `bundles` (
-                  `bId` varchar(36) NOT NULL,
-                  `tKey` varchar(128) NOT NULL,
-                  PRIMARY KEY(`bId`, `tKey`)
-                );""");
-    }
-
-    @Override
     public boolean hasKey(UUID key) {
         final ResultSet rs = RestAPI.connector.query("select `bId` from `bundles` where `bId`=?;", key.toString());
         try {

@@ -119,6 +119,20 @@ public class SQLConnector {
         return transaction;
     }
 
+    /**
+     * Check if a table with the given name exists
+     */
+    public boolean tableExists(final String tableName) {
+        try {
+            DatabaseMetaData meta = con.getMetaData();
+            ResultSet resultSet = meta.getTables(null, null, tableName, new String[] {"TABLE"});
+
+            return resultSet.next();
+        } catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void updateBatch(String... command) {
         try {
             Statement st = this.con.createStatement();
@@ -128,7 +142,7 @@ public class SQLConnector {
             st.executeBatch();
             st.close();
         } catch(SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -138,7 +152,7 @@ public class SQLConnector {
             st.execute(command);
             st.close();
         } catch(SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -150,7 +164,7 @@ public class SQLConnector {
             }
             st.execute();
         } catch(SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -159,9 +173,8 @@ public class SQLConnector {
             PreparedStatement st = this.con.prepareStatement(command);
             return st.executeQuery();
         } catch(SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     public ResultSet query(String command, Object... objects) {

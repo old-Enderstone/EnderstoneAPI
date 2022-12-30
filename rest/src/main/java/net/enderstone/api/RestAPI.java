@@ -18,6 +18,7 @@ import net.enderstone.api.common.properties.IUserProperty;
 import net.enderstone.api.common.types.Message;
 import net.enderstone.api.config.Config;
 import net.enderstone.api.config.IPWhitelist;
+import net.enderstone.api.dbm.DatabaseMigration;
 import net.enderstone.api.repository.IRepository;
 import net.enderstone.api.repository.PlayerRepository;
 import net.enderstone.api.repository.SystemPropertyRepository;
@@ -96,6 +97,7 @@ public class RestAPI {
         executor.setCorePoolSize(10);
 
         logger = new net.enderstone.api.logging.Logger(executor);
+        logger.setLevel(Level.FINE);
         logger.info("Starting..");
 
         config = FileUtil.readJson(configFile, Config.class);
@@ -121,19 +123,12 @@ public class RestAPI {
         translationRepository = new TranslationRepository();
         final I18nService i18nService = new I18nService(translationRepository, translationBundleRepository);
 
-        if(Arrays.contains(args, "--createDatabase")) {
-            logger.info("Creating database..");
-            Stream.of(userPropertyRepository,
-                      playerRepository,
-                      systemPropertyRepository,
-                      translationBundleRepository,
-                      translationRepository).forEach(IRepository::setupDatabase);
-            logger.info("Database created!");
-        }
+        final int currentVersion = DatabaseMigration.getCurrentVersion();
+        final int newVersion = DatabaseMigration.updateDatabase(currentVersion);
+        if(currentVersion != newVersion) DatabaseMigration.setCurrentVersion(newVersion);
 
         restServer = new JWebServer()
                 .withLogger(logger)
-                .withLogLevel(Level.FINE)
                 .withExecutor(executor)
                 .withBindAddress(config.bindAddress, config.port)
                 .withMethodInvocationHandler(new WhitelistedInvocationHandler())
