@@ -19,7 +19,6 @@ import net.enderstone.api.common.types.Message;
 import net.enderstone.api.config.Config;
 import net.enderstone.api.config.IPWhitelist;
 import net.enderstone.api.dbm.DatabaseMigration;
-import net.enderstone.api.repository.IRepository;
 import net.enderstone.api.repository.PlayerRepository;
 import net.enderstone.api.repository.SystemPropertyRepository;
 import net.enderstone.api.repository.TranslationBundleRepository;
@@ -28,12 +27,9 @@ import net.enderstone.api.repository.UserPropertyRepository;
 import net.enderstone.api.rest.*;
 import net.enderstone.api.service.I18nService;
 import net.enderstone.api.service.PlayerService;
-import net.enderstone.api.service.SystemPropertyService;
-import net.enderstone.api.service.UserPropertyService;
 import net.enderstone.api.sql.SQLConnector;
 import net.enderstone.api.tasks.ErrorWriteJob;
 import net.enderstone.api.types.SystemPropertySerializer;
-import net.enderstone.api.utils.Arrays;
 import net.enderstone.api.utils.FileUtil;
 import net.enderstone.api.types.UserPropertySerializer;
 
@@ -43,7 +39,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 import static com.bethibande.web.logging.ConsoleColors.*;
 
@@ -144,9 +139,7 @@ public class RestAPI {
                 .withErrorHandler(RestAPI::handleError);
         restServer.start();
 
-        restServer.setGson(new GsonBuilder().registerTypeAdapter(IUserProperty.class, new UserPropertySerializer())
-                                            .registerTypeAdapter(IProperty.class, new SystemPropertySerializer())
-                                            .serializeNulls()
+        restServer.setGson(new GsonBuilder().serializeNulls()
                                             .create());
 
         restServer.storeGlobalBean(systemPropertyService);

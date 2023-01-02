@@ -2,7 +2,6 @@ package net.enderstone.api.rest;
 
 import com.bethibande.web.annotations.URI;
 import net.enderstone.api.ApiContext;
-import net.enderstone.api.RestAPI;
 import net.enderstone.api.annotations.Parameter;
 import net.enderstone.api.annotations.Whitelisted;
 import net.enderstone.api.common.properties.IUserProperty;
@@ -10,7 +9,6 @@ import net.enderstone.api.common.properties.UserProperty;
 import net.enderstone.api.common.properties.abstraction.*;
 import net.enderstone.api.common.types.Message;
 import net.enderstone.api.common.utils.Regex;
-import net.enderstone.api.service.UserPropertyService;
 
 import java.util.UUID;
 

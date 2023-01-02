@@ -3,7 +3,6 @@ package net.enderstone.api.impl;
 import net.enderstone.api.common.EPlayer;
 import net.enderstone.api.common.properties.IUserProperty;
 import net.enderstone.api.common.properties.UserProperty;
-import net.enderstone.api.service.UserPropertyService;
 
 import java.util.Collection;
 import java.util.UUID;

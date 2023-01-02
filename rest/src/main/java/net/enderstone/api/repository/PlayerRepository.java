@@ -3,7 +3,6 @@ package net.enderstone.api.repository;
 import net.enderstone.api.RestAPI;
 import net.enderstone.api.common.EPlayer;
 import net.enderstone.api.impl.EPlayerImpl;
-import net.enderstone.api.service.UserPropertyService;
 import net.enderstone.api.sql.SQLStatement;
 import net.enderstone.api.sql.SQLTransaction;
 
