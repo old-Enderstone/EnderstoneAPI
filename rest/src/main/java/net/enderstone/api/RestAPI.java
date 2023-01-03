@@ -9,6 +9,7 @@ import net.enderstone.api.annotations.ParameterAnnotationProcessor;
 import net.enderstone.api.annotations.WhitelistedInvocationHandler;
 import net.enderstone.api.commands.command.CommandDispatcher;
 import net.enderstone.api.commands.command.CommandManager;
+import net.enderstone.api.commands.commands.CacheCommand;
 import net.enderstone.api.commands.commands.HelpCommand;
 import net.enderstone.api.commands.commands.StopCommand;
 import net.enderstone.api.common.cache.CacheBuilder;
@@ -146,6 +147,7 @@ public class RestAPI {
         commandManager = new CommandManager();
         commandManager.registerCommand(new HelpCommand(commandManager, logger));
         commandManager.registerCommand(new StopCommand());
+        commandManager.registerCommand(new CacheCommand());
 
         final CommandDispatcher commandDispatcher = new CommandDispatcher();
         commandDispatcher.setCommandManager(commandManager);
