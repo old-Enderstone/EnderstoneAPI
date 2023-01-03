@@ -11,6 +11,10 @@ public class LongProperty extends NumberProperty<Long> {
 
     @Override
     public void fromString(final String value) {
+        if(value == null) {
+            set(null);
+            return;
+        }
         set(Long.parseLong(value));
     }
 

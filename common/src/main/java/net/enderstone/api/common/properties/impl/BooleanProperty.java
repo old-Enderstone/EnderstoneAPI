@@ -11,6 +11,10 @@ public class BooleanProperty extends AbstractProperty<Boolean> {
 
     @Override
     public void fromString(final String value) {
+        if(value == null) {
+            set(null);
+            return;
+        }
         set(Boolean.parseBoolean(value));
     }
 

@@ -2,7 +2,6 @@ package net.enderstone.api.impl.properties;
 
 import net.enderstone.api.common.properties.UserProperty;
 import net.enderstone.api.common.properties.abstraction.FloatUserProperty;
-import net.enderstone.api.repository.UserPropertyRepository;
 
 import java.util.UUID;
 import java.util.concurrent.locks.ReentrantLock;

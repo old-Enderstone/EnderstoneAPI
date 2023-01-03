@@ -13,6 +13,10 @@ public class LocaleProperty extends AbstractProperty<Locale> {
 
     @Override
     public void fromString(final String value) {
+        if(value == null) {
+            set(null);
+            return;
+        }
         set(Locale.forLanguageTag(value));
     }
 

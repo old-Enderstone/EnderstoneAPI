@@ -20,18 +20,14 @@ import net.enderstone.api.config.Config;
 import net.enderstone.api.config.IPWhitelist;
 import net.enderstone.api.dbm.DatabaseMigration;
 import net.enderstone.api.repository.PlayerRepository;
-import net.enderstone.api.repository.SystemPropertyRepository;
 import net.enderstone.api.repository.TranslationBundleRepository;
 import net.enderstone.api.repository.TranslationRepository;
-import net.enderstone.api.repository.UserPropertyRepository;
 import net.enderstone.api.rest.*;
 import net.enderstone.api.service.I18nService;
 import net.enderstone.api.service.PlayerService;
 import net.enderstone.api.sql.SQLConnector;
 import net.enderstone.api.tasks.ErrorWriteJob;
-import net.enderstone.api.types.SystemPropertySerializer;
 import net.enderstone.api.utils.FileUtil;
-import net.enderstone.api.types.UserPropertySerializer;
 
 import java.io.File;
 import java.util.UUID;

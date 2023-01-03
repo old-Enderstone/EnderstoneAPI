@@ -7,14 +7,14 @@ create table propertyIdentifiers (
 );
 
 create table `property` (
-    `id` int,
+    `id` int NOT NULL,
     `uId` varchar(36),
     `value` varchar(65000),
     PRIMARY KEY(`id`, `uId`)
 );
 
 create table `arrayProperty` (
-    `id` int,
+    `id` int NOT NULL,
     `uId` varchar(36),
     `index` int,
     `value` varchar(65000),

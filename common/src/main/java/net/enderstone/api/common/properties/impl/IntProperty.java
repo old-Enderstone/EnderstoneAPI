@@ -11,6 +11,10 @@ public class IntProperty extends NumberProperty<Integer> {
 
     @Override
     public void fromString(final String value) {
+        if(value == null) {
+            set(null);
+            return;
+        }
         set(Integer.parseInt(value));
     }
 

@@ -11,6 +11,10 @@ public class DoubleProperty extends NumberProperty<Double> {
 
     @Override
     public void fromString(final String value) {
+        if(value == null) {
+            set(null);
+            return;
+        }
         set(Double.parseDouble(value));
     }
 

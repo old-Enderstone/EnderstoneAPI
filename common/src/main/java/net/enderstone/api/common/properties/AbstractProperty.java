@@ -51,7 +51,7 @@ public abstract class AbstractProperty<T> {
     /**
      * Parse and set property value from given String
      */
-    public abstract void fromString(final String value);
+    public abstract void fromString(final @Nullable String value);
 
     public void set(final T value) {
         lock.lock();

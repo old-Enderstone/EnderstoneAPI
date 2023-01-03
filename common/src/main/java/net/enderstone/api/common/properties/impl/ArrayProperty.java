@@ -51,6 +51,10 @@ public class ArrayProperty<T> extends AbstractProperty<T[]> {
     @Override
     @SuppressWarnings("unchecked")
     public void fromString(final String value) {
+        if(value == null) {
+            set(null);
+            return;
+        }
         set((T[]) new Gson().fromJson(value, type.arrayType())); // TODO: global gson instance???
     }
 

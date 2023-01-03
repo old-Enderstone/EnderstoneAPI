@@ -2,7 +2,6 @@ package net.enderstone.api.impl.properties;
 
 import net.enderstone.api.common.properties.SystemProperty;
 import net.enderstone.api.common.properties.abstraction.FloatProperty;
-import net.enderstone.api.repository.SystemPropertyRepository;
 
 import java.util.concurrent.locks.ReentrantLock;
 
