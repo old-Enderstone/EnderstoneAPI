@@ -14,18 +14,19 @@ import net.enderstone.api.commands.commands.HelpCommand;
 import net.enderstone.api.commands.commands.StopCommand;
 import net.enderstone.api.common.cache.CacheBuilder;
 import net.enderstone.api.common.cache.ICache;
-import net.enderstone.api.common.properties.IProperty;
-import net.enderstone.api.common.properties.IUserProperty;
 import net.enderstone.api.common.types.Message;
 import net.enderstone.api.config.Config;
 import net.enderstone.api.config.IPWhitelist;
 import net.enderstone.api.dbm.DatabaseMigration;
 import net.enderstone.api.repository.PlayerRepository;
+import net.enderstone.api.repository.PropertyKeyRepository;
+import net.enderstone.api.repository.PropertyRepository;
 import net.enderstone.api.repository.TranslationBundleRepository;
 import net.enderstone.api.repository.TranslationRepository;
 import net.enderstone.api.rest.*;
 import net.enderstone.api.service.I18nService;
 import net.enderstone.api.service.PlayerService;
+import net.enderstone.api.service.PropertyService;
 import net.enderstone.api.sql.SQLConnector;
 import net.enderstone.api.tasks.ErrorWriteJob;
 import net.enderstone.api.utils.FileUtil;
@@ -52,9 +53,9 @@ public class RestAPI {
 
     public static SQLConnector connector;
 
-    private static SystemPropertyRepository systemPropertyRepository;
+    private static PropertyKeyRepository propertyKeyRepository;
+    private static PropertyRepository propertyRepository;
     private static PlayerRepository playerRepository;
-    private static UserPropertyRepository userPropertyRepository;
     private static TranslationBundleRepository translationBundleRepository;
     private static TranslationRepository translationRepository;
 
@@ -102,11 +103,10 @@ public class RestAPI {
 
         connector.connect();
 
-        systemPropertyRepository = new SystemPropertyRepository();
-        final SystemPropertyService systemPropertyService = new SystemPropertyService(systemPropertyRepository);
+        propertyKeyRepository = new PropertyKeyRepository();
+        propertyRepository = new PropertyRepository();
 
-        userPropertyRepository = new UserPropertyRepository();
-        final UserPropertyService userPropertyService = new UserPropertyService(userPropertyRepository);
+        final PropertyService propertyService = new PropertyService(propertyRepository, propertyKeyRepository);
 
         playerRepository = new PlayerRepository(userPropertyService);
         final PlayerService playerService = new PlayerService(playerRepository, userPropertyService);
@@ -139,9 +139,8 @@ public class RestAPI {
         restServer.setGson(new GsonBuilder().serializeNulls()
                                             .create());
 
-        restServer.storeGlobalBean(systemPropertyService);
+        restServer.storeGlobalBean(propertyService);
         restServer.storeGlobalBean(playerService);
-        restServer.storeGlobalBean(userPropertyService);
         restServer.storeGlobalBean(i18nService);
 
         commandManager = new CommandManager();

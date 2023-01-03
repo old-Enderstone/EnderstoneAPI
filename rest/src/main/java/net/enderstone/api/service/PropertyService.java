@@ -6,7 +6,9 @@ import net.enderstone.api.common.cache.CacheLifetimeType;
 import net.enderstone.api.common.cache.ICache;
 import net.enderstone.api.common.cache.ref.HeapReference;
 import net.enderstone.api.common.properties.AbstractProperty;
+import net.enderstone.api.common.properties.Properties;
 import net.enderstone.api.common.properties.PropertyKey;
+import net.enderstone.api.common.properties.impl.ArrayProperty;
 import net.enderstone.api.common.types.SimpleEntry;
 import net.enderstone.api.repository.PropertyKeyRepository;
 import net.enderstone.api.repository.PropertyRepository;
@@ -32,6 +34,15 @@ public class PropertyService extends GlobalBean {
                 .setWriter((k, v) -> new HeapReference<>(v))
                 .setMaxSize(20)
                 .create();
+
+        Properties.registry.setOnUpdate(this::onUpdate);
+    }
+
+    private void onUpdate(final AbstractProperty<?> property) {
+        if(property instanceof ArrayProperty<?>) return;
+
+        final int key = keyCache.get(property.getKey().identifier());
+        propertyRepository.update(new SimpleEntry<>(key, property.getOwner()), property.asString());
     }
 
     public int registerIdentifier(final String identifier) {
@@ -50,8 +61,8 @@ public class PropertyService extends GlobalBean {
             keyCache.set(propertyKey.identifier(), key);
         }
 
-        final String value = propertyRepository.get(new SimpleEntry<>(key, owner));
         final AbstractProperty<T> property = propertyKey.supplier().apply(propertyKey);
+        final String value = propertyRepository.get(new SimpleEntry<>(key, owner));
         property.fromString(value);
 
         return property;

@@ -2,18 +2,48 @@ package net.enderstone.api.common.properties;
 
 import java.util.function.BiFunction;
 
+/**
+ * Used to represent number values and comes with add, subtract, multiply and divide methods.
+ * These methods should be used instead of {@link AbstractProperty#set(Object)} whenever possible, to prevent
+ * issues when two client try to change the value of the same property at the same time.
+ * @param <T> Number type, Integer, Float, Long, [...]
+ */
 public abstract class NumberProperty<T extends Number> extends AbstractProperty<T> {
 
     public NumberProperty(final PropertyKey<T> key, final T value) {
         super(key, value);
     }
 
+    /**
+     * Adds the properties current value and the given value
+     * @param number the number to add
+     * @return result after adding both numbers
+     * @see #performAction(Number, BiFunction) 
+     */
     public abstract T add(final T number);
 
+    /**
+     * Subtracts the properties current value and the given value
+     * @param number the number to subtract
+     * @return result after subtracting both numbers
+     * @see #performAction(Number, BiFunction) 
+     */
     public abstract T subtract(final T number);
 
+    /**
+     * Multiplies the properties current value and the given value
+     * @param number the number to multiply with
+     * @return result after multiplying both numbers
+     * @see #performAction(Number, BiFunction) 
+     */
     public abstract  T multiply(final T number);
 
+    /**
+     * Divides the properties current value and the given value
+     * @param number the number to divide by
+     * @return result after dividing both numbers
+     * @see #performAction(Number, BiFunction) 
+     */
     public abstract T divide(final T number);
 
     /**

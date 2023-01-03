@@ -1,11 +1,9 @@
 package net.enderstone.api.common;
 
-import net.enderstone.api.common.properties.IUserProperty;
-import net.enderstone.api.common.properties.UserProperty;
-import net.enderstone.api.common.properties.abstraction.BooleanUserProperty;
-import net.enderstone.api.common.properties.abstraction.IntegerUserProperty;
-import net.enderstone.api.common.properties.abstraction.LongUserProperty;
-import net.enderstone.api.common.properties.abstraction.StringUserProperty;
+import net.enderstone.api.common.properties.AbstractProperty;
+import net.enderstone.api.common.properties.NumberProperty;
+import net.enderstone.api.common.properties.Properties;
+import net.enderstone.api.common.properties.PropertyKey;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,9 +14,9 @@ public abstract class EPlayer {
 
     protected final UUID id;
     protected String lastKnownName;
-    protected Collection<IUserProperty<?>> properties;
+    protected Collection<AbstractProperty<?>> properties;
 
-    public EPlayer(UUID id, String lastKnownName, Collection<IUserProperty<?>> properties) {
+    public EPlayer(UUID id, String lastKnownName, Collection<AbstractProperty<?>> properties) {
         this.id = id;
         this.lastKnownName = lastKnownName;
         this.properties = properties;
@@ -27,13 +25,13 @@ public abstract class EPlayer {
     /**
      * Gets a user property or creates a new one using the given default value, if the property does not yet exist.
      */
-    public abstract IUserProperty<?> getProperty(UserProperty property);
+    public abstract <T> AbstractProperty<T> getProperty(PropertyKey<T> property);
 
     public void setLastKnownName(String lastKnownName) {
         this.lastKnownName = lastKnownName;
     }
 
-    public void setProperties(Collection<IUserProperty<?>> properties) {
+    public void setProperties(Collection<AbstractProperty<?>> properties) {
         this.properties = properties;
     }
 
@@ -45,36 +43,20 @@ public abstract class EPlayer {
         return lastKnownName;
     }
 
-    public Collection<IUserProperty<?>> getProperties() {
+    public Collection<AbstractProperty<?>> getProperties() {
         return List.copyOf(properties);
     }
 
-    public IntegerUserProperty getAsIntProperty(final UserProperty property) {
-        return (IntegerUserProperty) getProperty(property);
-    }
-
-    public LongUserProperty getAsLongProperty(final UserProperty property){
-        return (LongUserProperty) getProperty(property);
-    }
-
-    public StringUserProperty getAsStringProperty(final UserProperty property) {
-        return (StringUserProperty) getProperty(property);
-    }
-
-    public BooleanUserProperty getAsBooleanProperty(final UserProperty property) {
-        return (BooleanUserProperty) getProperty(property);
-    }
-
     public boolean hasAcceptedTos() {
-        return getAsBooleanProperty(UserProperty.ACCEPT_TOS).get();
+        return getProperty(Properties.PLAYER_ACCEPT_TOS).get();
     }
 
     public void acceptTos() {
-        getAsBooleanProperty(UserProperty.ACCEPT_TOS).set(true);
+        getProperty(Properties.PLAYER_ACCEPT_TOS).set(true);
     }
 
-    public IntegerUserProperty getCoinsProperty() {
-        return getAsIntProperty(UserProperty.COINS);
+    public AbstractProperty<Integer> getCoinsProperty() {
+        return getProperty(Properties.PLAYER_COINS);
     }
 
     public int getCoins() {
@@ -86,7 +68,7 @@ public abstract class EPlayer {
      * @return unix timestamp in ms
      */
     public long getLastSeen() {
-        return getAsLongProperty(UserProperty.LAST_SEEN).get();
+        return getProperty(Properties.PLAYER_LAST_SEEN).get();
     }
 
     /**
@@ -94,46 +76,46 @@ public abstract class EPlayer {
      * @param value unix timestamp in ms
      */
     public void setLastSeen(final long value) {
-        getAsLongProperty(UserProperty.LAST_SEEN).set(value);
+        getProperty(Properties.PLAYER_LAST_SEEN).set(value);
     }
 
     /**
      * Get player locale
      */
     public Locale getLocale() {
-        return Locale.forLanguageTag(getAsStringProperty(UserProperty.LOCALE).get());
+        return getProperty(Properties.PLAYER_LOCALE).get();
     }
 
     /**
      * Set player locale
      */
     public void setLocale(final Locale locale) {
-        getAsStringProperty(UserProperty.LOCALE).set(locale.toLanguageTag());
+        getProperty(Properties.PLAYER_LOCALE).set(locale);
     }
 
     /**
      * Returns country iso code (de, gb, fr, us, [...]) or null
      */
     public String getLastCountry() {
-        return getAsStringProperty(UserProperty.LAST_COUNTRY).get();
+        return getProperty(Properties.PLAYER_LAST_COUNTRY).get();
     }
 
     /**
      * Set last seen country iso code
      */
     public void setLastCountry(final String iso) {
-        getAsStringProperty(UserProperty.LAST_COUNTRY).set(iso);
+        getProperty(Properties.PLAYER_LAST_COUNTRY).set(iso);
     }
 
     /**
      * Get player play time in minutes
      */
     public int getPlayTime() {
-        return getAsIntProperty(UserProperty.PLAYTIME).get();
+        return getProperty(Properties.PLAYER_PLAYTIME).get();
     }
 
-    public IntegerUserProperty getPlayTimeProperty() {
-        return getAsIntProperty(UserProperty.PLAYTIME);
+    public NumberProperty<Integer> getPlayTimeProperty() {
+        return getProperty(Properties.PLAYER_PLAYTIME).asIntProperty();
     }
 
 }
