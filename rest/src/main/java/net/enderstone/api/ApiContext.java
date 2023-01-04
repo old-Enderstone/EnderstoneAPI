@@ -23,6 +23,15 @@ public class ApiContext extends ServerContext {
     }
 
     /**
+     * @return Response with status code 400, content data = message {id: 400, message: "Invalid Parameter: %s"}
+     */
+    public RequestResponse invalidParameterMessage(final String parameter) {
+        return new RequestResponse()
+                .withContentData(new Message(400, String.format("Invalid Parameter: %s", parameter)))
+                .withStatusCode(400);
+    }
+
+    /**
      * @return Response with status code 400, content data = message {id: 400, message: "Invalid Property type."}
      */
     public RequestResponse invalidPropertyMessage() {

@@ -14,6 +14,10 @@ import net.enderstone.api.repository.PropertyKeyRepository;
 import net.enderstone.api.repository.PropertyRepository;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +26,7 @@ public class PropertyService extends GlobalBean {
     private final PropertyKeyRepository keyRepository;
     private final PropertyRepository propertyRepository;
     private final ICache<String, Integer> keyCache;
+    private final ICache<Integer, String> mirrorCache;
 
     public PropertyService(final PropertyRepository propertyRepository, final PropertyKeyRepository keyRepository) {
         this.keyRepository = keyRepository;
@@ -31,6 +36,14 @@ public class PropertyService extends GlobalBean {
                 .setLifetime(20L, TimeUnit.MINUTES)
                 .setLifetimeType(CacheLifetimeType.ON_ACCESS)
                 .setSupplier(keyRepository::get)
+                .setWriter((k, v) -> new HeapReference<>(v))
+                .setMaxSize(20)
+                .create();
+
+        mirrorCache = CacheBuilder.<Integer, String>build("propertyKeysMirror")
+                .setLifetime(20L, TimeUnit.MINUTES)
+                .setLifetimeType(CacheLifetimeType.ON_ACCESS)
+                .setSupplier(keyRepository::getIdentifier)
                 .setWriter((k, v) -> new HeapReference<>(v))
                 .setMaxSize(20)
                 .create();
@@ -54,6 +67,27 @@ public class PropertyService extends GlobalBean {
         return getProperty(propertyKey, null);
     }
 
+    public PropertyKey<?> getKeyByIdentifier(final String identifier) {
+        return Properties.registry.getKeyByIdentifier(identifier);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<AbstractProperty<?>> getPropertiesByOwner(final @Nullable UUID owner) {
+        final HashMap<Integer, String> values = propertyRepository.getAllByOwner(owner);
+        final List<AbstractProperty<?>> properties = new ArrayList<>(values.size());
+
+        for(Map.Entry<Integer, String> entry : values.entrySet()) {
+            final String identifier = mirrorCache.get(entry.getKey());
+            final PropertyKey<Object> propertyKey = (PropertyKey<Object>) getKeyByIdentifier(identifier);
+
+            final AbstractProperty<?> property = propertyKey.supplier().apply(propertyKey);
+            property.setOwner(owner);
+            property.fromString(entry.getValue());
+        }
+
+        return properties;
+    }
+
     public <T> AbstractProperty<T> getProperty(final PropertyKey<T> propertyKey, final @Nullable UUID owner) {
         Integer key = keyCache.get(propertyKey.identifier());
         if(key == null) {
@@ -64,6 +98,7 @@ public class PropertyService extends GlobalBean {
         final AbstractProperty<T> property = propertyKey.supplier().apply(propertyKey);
         final String value = propertyRepository.get(new SimpleEntry<>(key, owner));
         property.fromString(value);
+        property.setOwner(owner);
 
         return property;
     }

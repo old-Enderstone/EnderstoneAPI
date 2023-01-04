@@ -2,7 +2,9 @@ package net.enderstone.api.repository;
 
 import net.enderstone.api.RestAPI;
 import net.enderstone.api.common.EPlayer;
+import net.enderstone.api.common.properties.AbstractProperty;
 import net.enderstone.api.impl.EPlayerImpl;
+import net.enderstone.api.service.PropertyService;
 import net.enderstone.api.sql.SQLStatement;
 import net.enderstone.api.sql.SQLTransaction;
 
@@ -15,10 +17,10 @@ import java.util.UUID;
 
 public class PlayerRepository implements IRepository<UUID, EPlayer> {
 
-    private final UserPropertyService userPropertyService;
+    private final PropertyService propertyService;
 
-    public PlayerRepository(final UserPropertyService userPropertyService) {
-        this.userPropertyService = userPropertyService;
+    public PlayerRepository(final PropertyService propertyService) {
+        this.propertyService = propertyService;
     }
 
     @Override
@@ -51,7 +53,7 @@ public class PlayerRepository implements IRepository<UUID, EPlayer> {
             if(!rs.next()) return null;
             final String lastKnownName = rs.getString("lastKnownName");
 
-            return new EPlayerImpl(key, lastKnownName, new ArrayList<>(), userPropertyService);
+            return new EPlayerImpl(key, lastKnownName, new ArrayList<AbstractProperty<?>>(), propertyService);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

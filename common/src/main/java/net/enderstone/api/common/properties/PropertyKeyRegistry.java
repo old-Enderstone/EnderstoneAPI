@@ -28,6 +28,10 @@ public class PropertyKeyRegistry {
         return keys.keySet();
     }
 
+    public PropertyKey<?> getKeyByIdentifier(final String identifier) {
+        return keys.get(identifier);
+    }
+
     public void setOnUpdate(final Consumer<AbstractProperty<?>> onUpdate) {
         this.onUpdate = onUpdate;
     }

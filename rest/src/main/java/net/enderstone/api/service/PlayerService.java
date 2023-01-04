@@ -7,7 +7,7 @@ import net.enderstone.api.common.cache.CacheLifetimeType;
 import net.enderstone.api.common.cache.ICache;
 import net.enderstone.api.common.cache.StorageType;
 import net.enderstone.api.common.cache.ref.HeapReference;
-import net.enderstone.api.common.properties.IUserProperty;
+import net.enderstone.api.common.properties.AbstractProperty;
 import net.enderstone.api.impl.EPlayerImpl;
 import net.enderstone.api.repository.PlayerRepository;
 
@@ -18,13 +18,13 @@ import java.util.concurrent.TimeUnit;
 public class PlayerService extends GlobalBean {
 
     private final PlayerRepository repository;
-    private final UserPropertyService userPropertyService;
+    private final PropertyService propertyService;
 
     private final ICache<UUID, EPlayer> playerCache;
 
-    public PlayerService(final PlayerRepository repository, final UserPropertyService userPropertyService) {
+    public PlayerService(final PlayerRepository repository, final PropertyService propertyService) {
         this.repository = repository;
-        this.userPropertyService = userPropertyService;
+        this.propertyService = propertyService;
 
         this.playerCache = CacheBuilder.<UUID, EPlayer>build("players")
                                        .setLifetime(5L, TimeUnit.MINUTES)
@@ -40,7 +40,7 @@ public class PlayerService extends GlobalBean {
     }
 
     public void createPlayer(UUID id, String name) {
-        repository.insert(id, new EPlayerImpl(id, name, null, userPropertyService));
+        repository.insert(id, new EPlayerImpl(id, name, null, propertyService));
     }
 
     public void saveLastKnownName(EPlayer EPlayer) {
@@ -56,7 +56,7 @@ public class PlayerService extends GlobalBean {
         if(player == null) return null;
 
         if(player.getProperties().isEmpty()) {
-            final Collection<IUserProperty<?>> properties = userPropertyService.getAllUserProperties(id);
+            final Collection<AbstractProperty<?>> properties = propertyService.getPropertiesByOwner(id);
             player.setProperties(properties);
         }
 

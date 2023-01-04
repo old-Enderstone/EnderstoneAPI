@@ -15,7 +15,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public abstract class AbstractProperty<T> {
 
     protected final PropertyKey<T> key;
-    private final UUID owner;
+    private UUID owner;
     protected T value;
 
     protected final ReentrantLock lock = new ReentrantLock();
@@ -30,6 +30,14 @@ public abstract class AbstractProperty<T> {
         this.key = key;
         this.owner = null;
         this.value = value;
+    }
+
+    /**
+     * Set the property owner, used by service class.
+     * A null value indicates the property is a system property.
+     */
+    public void setOwner(final @Nullable UUID owner) {
+        this.owner = owner;
     }
 
     /**

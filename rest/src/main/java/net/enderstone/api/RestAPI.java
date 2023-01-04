@@ -108,8 +108,8 @@ public class RestAPI {
 
         final PropertyService propertyService = new PropertyService(propertyRepository, propertyKeyRepository);
 
-        playerRepository = new PlayerRepository(userPropertyService);
-        final PlayerService playerService = new PlayerService(playerRepository, userPropertyService);
+        playerRepository = new PlayerRepository(propertyService);
+        final PlayerService playerService = new PlayerService(playerRepository, propertyService);
 
         translationBundleRepository = new TranslationBundleRepository();
         translationRepository = new TranslationRepository();
@@ -128,11 +128,10 @@ public class RestAPI {
                 .withProcessor(new ParameterAnnotationProcessor())
                 .withContextFactory(ApiContext::new)
                 .withHandler(PlayerHandler.class)
-                .withHandler(UserPropertyHandler.class)
-                .withHandler(SystemPropertyHandler.class)
                 .withHandler(TranslationHandler.class)
                 .withHandler(StatusHandler.class)
                 .withHandler(NotFoundHandler.class)
+                .withHandler(PropertyHandler.class)
                 .withErrorHandler(RestAPI::handleError);
         restServer.start();
 

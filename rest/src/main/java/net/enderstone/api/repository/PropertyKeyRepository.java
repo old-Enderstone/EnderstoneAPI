@@ -28,6 +28,16 @@ public class PropertyKeyRepository implements IRepository<String, Integer> {
         RestAPI.connector.update("update `propertyIdentifiers` set `id`=? where `label`=?;", value, key);
     }
 
+    public String getIdentifier(final int id) {
+        final ResultSet rs = RestAPI.connector.query("select `label` from `propertyIdentifiers` where `id`=?;", id);
+        try {
+            if(!rs.next()) return null;
+            return rs.getString("label");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public Integer get(final String key) {
         final ResultSet rs = RestAPI.connector.query("select `id` from `propertyIdentifiers` where `label`=?;", key);

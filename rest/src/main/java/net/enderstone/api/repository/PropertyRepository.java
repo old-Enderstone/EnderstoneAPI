@@ -1,9 +1,11 @@
 package net.enderstone.api.repository;
 
 import net.enderstone.api.RestAPI;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -39,6 +41,26 @@ public class PropertyRepository implements IMultipleKeyRepository<Integer, UUID,
             return;
         }
         RestAPI.connector.update("update `property` set `value`=? where `id`=? and `uId`=?;", value, key.getKey(), key.getValue().toString());
+    }
+
+    public HashMap<Integer, String> getAllByOwner(final @Nullable UUID owner) {
+        final HashMap<Integer, String> map = new HashMap<>();
+        final ResultSet rs;
+        if(owner == null) {
+            rs = RestAPI.connector.query("select `id`, `value` from `property` where `uId` is null;");
+        } else {
+            rs = RestAPI.connector.query("select `id`, `value` from `property` where `uId`=?;", owner.toString());
+        }
+
+        try {
+            while(rs.next()) {
+                map.put(rs.getInt("id"), rs.getString("value"));
+            }
+        } catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return map;
     }
 
     @Override
