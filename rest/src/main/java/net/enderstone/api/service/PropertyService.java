@@ -83,6 +83,8 @@ public class PropertyService extends GlobalBean {
             final AbstractProperty<?> property = propertyKey.supplier().apply(propertyKey);
             property.setOwner(owner);
             property.fromString(entry.getValue());
+
+            properties.add(property);
         }
 
         return properties;
@@ -95,8 +97,8 @@ public class PropertyService extends GlobalBean {
             keyCache.set(propertyKey.identifier(), key);
         }
 
-        final AbstractProperty<T> property = propertyKey.supplier().apply(propertyKey);
         final String value = propertyRepository.get(new SimpleEntry<>(key, owner));
+        final AbstractProperty<T> property = propertyKey.supplier().apply(propertyKey);
         property.fromString(value);
         property.setOwner(owner);
 
