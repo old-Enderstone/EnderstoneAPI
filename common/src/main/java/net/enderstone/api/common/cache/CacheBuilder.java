@@ -56,7 +56,7 @@ public class CacheBuilder<K, V> {
 
     @SuppressWarnings("unchecked")
     public ICache<K, V> create() {
-        if(id == null || storageType == null || writer == null) throw new UnsupportedOperationException("Id, StorageType and Writer must not be null.");
+        if(id == null || storageType == null) throw new UnsupportedOperationException("Id, StorageType and Writer must not be null.");
 
         final ICache<K, V> cache = switch (storageType) {
             case HEAP, SERIALIZED_FILE -> new SimpleCacheImpl<>(id);
