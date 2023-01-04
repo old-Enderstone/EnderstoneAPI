@@ -1,6 +1,7 @@
 package net.enderstone.api.common.cache;
 
 import net.enderstone.api.common.cache.impl.SimpleCacheImpl;
+import net.enderstone.api.common.cache.impl.SoftCacheImpl;
 import net.enderstone.api.common.utils.Strings;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class CacheBuilder<K, V> {
@@ -42,6 +44,8 @@ public class CacheBuilder<K, V> {
     private BiConsumer<K, V> setListener;
     private BiConsumer<K, V> removeListener;
 
+    private Consumer<K> onCollect;
+
     protected CacheBuilder(@NotNull UUID id) {
         this.id = id;
     }
@@ -56,6 +60,7 @@ public class CacheBuilder<K, V> {
 
         final ICache<K, V> cache = switch (storageType) {
             case HEAP, SERIALIZED_FILE -> new SimpleCacheImpl<>(id);
+            case SOFT_HEAP -> new SoftCacheImpl<>(id);
             default -> throw new UnsupportedOperationException("The specified storage type has not yet been implemented.");
         };
 
@@ -79,8 +84,17 @@ public class CacheBuilder<K, V> {
             supplied.setSupplier(supplier);
         }
 
+        if(cache instanceof HasGcListener listener) {
+            listener.setOnCollect(onCollect);
+        }
+
         caches.add(cache);
         return cache;
+    }
+
+    public CacheBuilder<K, V> setOnCollect(final Consumer<K> onCollect) {
+        this.onCollect = onCollect;
+        return this;
     }
 
     public CacheBuilder<K, V> setStorageType(StorageType storageType) {
