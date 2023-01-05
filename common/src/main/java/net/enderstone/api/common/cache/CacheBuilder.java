@@ -3,6 +3,7 @@ package net.enderstone.api.common.cache;
 import net.enderstone.api.common.cache.impl.SimpleCacheImpl;
 import net.enderstone.api.common.cache.impl.SoftCacheImpl;
 import net.enderstone.api.common.utils.Strings;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ public class CacheBuilder<K, V> {
     }
 
     @SuppressWarnings("unchecked")
+    @Contract(value = "->new", pure = true)
     public ICache<K, V> create() {
         if(id == null || storageType == null || writer == null) throw new UnsupportedOperationException("Id, StorageType and Writer must not be null.");
 
@@ -92,41 +94,49 @@ public class CacheBuilder<K, V> {
         return cache;
     }
 
+    @Contract("_->this")
     public CacheBuilder<K, V> setOnCollect(final Consumer<K> onCollect) {
         this.onCollect = onCollect;
         return this;
     }
 
+    @Contract("_->this")
     public CacheBuilder<K, V> setStorageType(StorageType storageType) {
         this.storageType = storageType;
         return this;
     }
 
+    @Contract("_->this")
     public CacheBuilder<K, V> setMaxSize(Integer maxSize) {
         this.maxSize = maxSize;
         return this;
     }
 
+    @Contract("_->this")
     public CacheBuilder<K, V> setLifetime(Long lifetime) {
         this.lifetime = lifetime;
         return this;
     }
 
+    @Contract("_,_->this")
     public CacheBuilder<K, V> setLifetime(Long lifetime, TimeUnit timeUnit) {
         this.lifetime = timeUnit.toMillis(lifetime);
         return this;
     }
 
+    @Contract("_->this")
     public CacheBuilder<K, V> setLifetimeType(CacheLifetimeType lifetimeType) {
         this.lifetimeType = lifetimeType;
         return this;
     }
 
+    @Contract("_->this")
     public CacheBuilder<K, V> setWriter(ICacheWriter<K, V> writer) {
         this.writer = writer;
         return this;
     }
 
+    @Contract("_->this")
     public CacheBuilder<K, V> setSupplier(Function<K, V> supplier) {
         this.supplier = supplier;
         return this;

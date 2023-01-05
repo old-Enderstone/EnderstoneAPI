@@ -14,11 +14,11 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public abstract class AbstractProperty<T> {
 
-    protected final PropertyKey<T> key;
+    protected transient final PropertyKey<T> key;
     private UUID owner;
     protected T value;
 
-    protected final ReentrantLock lock = new ReentrantLock();
+    protected transient final ReentrantLock lock = new ReentrantLock();
 
     public AbstractProperty(final PropertyKey<T> key, final UUID owner, final T value) {
         this.key = key;

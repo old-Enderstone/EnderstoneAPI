@@ -2,22 +2,16 @@ package net.enderstone.api;
 
 import net.enderstone.api.common.cache.CacheBuilder;
 import net.enderstone.api.common.EPlayer;
-import net.enderstone.api.common.cache.CacheLifetimeType;
 import net.enderstone.api.common.cache.ICache;
 import net.enderstone.api.common.cache.StorageType;
 import net.enderstone.api.common.cache.ref.HeapReference;
-import net.enderstone.api.common.properties.IProperty;
-import net.enderstone.api.common.properties.SystemProperty;
-import net.enderstone.api.impl.types.SystemPropertyFactoryImpl;
-import net.enderstone.api.impl.types.UserPropertyFactoryImpl;
+import net.enderstone.api.common.properties.AbstractProperty;
+import net.enderstone.api.common.properties.Properties;
+import net.enderstone.api.common.properties.PropertyKey;
 import net.enderstone.api.repository.PlayerRepository;
-import net.enderstone.api.repository.SystemPropertyRepository;
-import net.enderstone.api.repository.UserPropertyRepository;
-import net.enderstone.api.types.ISystemPropertyFactory;
-import net.enderstone.api.types.IUserPropertyFactory;
+import net.enderstone.api.repository.PropertyRepository;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public abstract class EnderStoneAPI {
 
@@ -28,41 +22,32 @@ public abstract class EnderStoneAPI {
         return instance;
     }
 
+    protected final PropertyRepository propertyRepository = new PropertyRepository();
     protected final PlayerRepository playerRepository = new PlayerRepository(this);
-    protected final UserPropertyRepository userPropertyRepository = new UserPropertyRepository(this);
-    protected final SystemPropertyRepository systemPropertyRepository = new SystemPropertyRepository(this);
 
     protected final ICache<UUID, EPlayer> playerCache = CacheBuilder.<UUID, EPlayer>build("PlayerCache")
-                                                                 .setStorageType(StorageType.HEAP)
-                                                                 .setWriter((k, v) -> new HeapReference<>(v))
-                                                                 .setSupplier(playerRepository::get)
-                                                                 .setLifetime(15L, TimeUnit.MINUTES)
-                                                                 .setLifetimeType(CacheLifetimeType.ON_ACCESS)
-                                                                 .setMaxSize(1000)
-                                                                 .create();
+                                                                    .setStorageType(StorageType.SOFT_HEAP)
+                                                                    .setWriter((k, v) -> new HeapReference<>(v))
+                                                                    .setSupplier(playerRepository::get)
+                                                                    .create();
 
-    protected final ICache<SystemProperty, IProperty<?>> propertyCache = CacheBuilder.<SystemProperty, IProperty<?>>build("PropertyCache")
-                                                                                   .setStorageType(StorageType.HEAP)
-                                                                                   .setWriter((k, v) -> new HeapReference<>(v))
-                                                                                   .setSupplier(this::loadSystemProperty)
-                                                                                   .create();
+    protected final ICache<PropertyKey<?>, AbstractProperty<?>> propertyCache = CacheBuilder.<PropertyKey<?>, AbstractProperty<?>>build("PropertyCache")
+                                                                                            .setStorageType(StorageType.HEAP)
+                                                                                            .setWriter((k, v) -> new HeapReference<>(v))
+                                                                                            .setSupplier(this::loadSystemProperty)
+                                                                                            .create();
 
-    private String baseUrl;
-
-    protected IUserPropertyFactory userPropertyFactory = new UserPropertyFactoryImpl(userPropertyRepository);
-    protected ISystemPropertyFactory systemPropertyFactory = new SystemPropertyFactoryImpl(systemPropertyRepository);
+    private String baseUrl = "http://api.enderstone.net:4455";
 
     protected EnderStoneAPI() {
         init();
     }
 
     private void init() {
-        String host = System.getProperty("net.enderstone.api.host");
-        if(host == null || host.equals("prod")) baseUrl = "http://api.enderstone.net:4455";
+        Properties.registry.setOnUpdate(propertyRepository::setProperty);
 
-        if("debug".equalsIgnoreCase(host)) {
-            baseUrl = "http://127.0.0.1:4455";
-        }
+        String host = System.getProperty("net.enderstone.api.host");
+        if("debug".equalsIgnoreCase(host)) baseUrl = "http://127.0.0.1:4455";
     }
 
     /**
@@ -72,30 +57,15 @@ public abstract class EnderStoneAPI {
         playerCache.remove(uuid);
     }
 
-    public IProperty<?> getSystemProperty(final SystemProperty property) {
-        return propertyCache.get(property);
+    @SuppressWarnings("unchecked")
+    public <T> AbstractProperty<T> getSystemProperty(final PropertyKey<T> propertyKey) {
+        return (AbstractProperty<T>) propertyCache.get(propertyKey);
     }
 
-    private IProperty<?> loadSystemProperty(final SystemProperty property) {
-        final IProperty<?> systemProperty = systemPropertyRepository.getProperty(property);
-        if(systemProperty != null) return systemProperty;
-        return systemPropertyFactory.createEmpty(property, systemPropertyRepository);
-    }
-
-    public void setSystemPropertyFactory(ISystemPropertyFactory systemPropertyFactory) {
-        this.systemPropertyFactory = systemPropertyFactory;
-    }
-
-    public ISystemPropertyFactory getSystemPropertyFactory() {
-        return systemPropertyFactory;
-    }
-
-    public void setUserPropertyFactory(IUserPropertyFactory userPropertyFactory) {
-        this.userPropertyFactory = userPropertyFactory;
-    }
-
-    public IUserPropertyFactory getUserPropertyFactory() {
-        return userPropertyFactory;
+    private <T> AbstractProperty<T> loadSystemProperty(final PropertyKey<T> propertyKey) {
+        final AbstractProperty<T> property = propertyRepository.getProperty(propertyKey, null);
+        if(property != null) return property;
+        return propertyKey.supplier().apply(propertyKey);
     }
 
     public String getBaseUrl() {

@@ -24,12 +24,12 @@ public class EPlayerImpl extends EPlayer {
     @Override
     @SuppressWarnings("unchecked")
     public <T> AbstractProperty<T> getProperty(final PropertyKey<T> key) {
-        for(AbstractProperty<?> prop : super.properties) {
-            if(prop.getKey() == key) return (AbstractProperty<T>) prop;
+        for(AbstractProperty<?> property : super.properties) {
+            if(property.getKey() == key) return (AbstractProperty<T>) property;
         }
 
-        final AbstractProperty<T> prop = propertyService.getProperty(key, super.id);
-        super.properties.add(prop);
-        return prop;
+        final AbstractProperty<T> property = propertyService.getProperty(key, super.id);
+        super.properties.add(property);
+        return property;
     }
 }

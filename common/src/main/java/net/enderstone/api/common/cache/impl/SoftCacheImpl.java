@@ -63,6 +63,9 @@ public class SoftCacheImpl<K, V> extends ICache<K, V> implements HasGcListener<K
     }
 
     private void onCollect(final K key) {
+        if(key == null) return;
+        remove(key);
+
         if(this.onCollect == null) return;
         this.onCollect.accept(key);
     }
