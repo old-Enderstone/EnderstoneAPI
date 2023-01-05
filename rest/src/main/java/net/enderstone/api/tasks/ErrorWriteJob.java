@@ -1,5 +1,8 @@
 package net.enderstone.api.tasks;
 
+import net.enderstone.api.common.utils.FileUtils;
+import net.enderstone.api.utils.FileUtil;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,7 +36,9 @@ public class ErrorWriteJob implements Runnable {
         Objects.requireNonNull(error, "Error may not be null");
 
         try {
-            final File outFile = new File(ERROR_DIR + "/" + label);
+            final File outFile = new File(ERROR_DIR + "/" +  label);
+            FileUtils.createFileIfNotExists(outFile);
+
             final PrintWriter writer = new PrintWriter(new FileOutputStream(outFile));
 
             if(extra != null && !extra.isEmpty()) {

@@ -2,15 +2,12 @@ package net.enderstone.api;
 
 import net.enderstone.api.common.EPlayer;
 import net.enderstone.api.common.i18n.Translation;
-import net.enderstone.api.common.properties.SystemProperty;
-import net.enderstone.api.common.properties.UserProperty;
-import net.enderstone.api.common.properties.abstraction.IntegerUserProperty;
-import net.enderstone.api.common.properties.abstraction.StringProperty;
-import net.enderstone.api.i18n.I18NService;
+import net.enderstone.api.common.properties.AbstractProperty;
+import net.enderstone.api.common.properties.Properties;
+import net.enderstone.api.common.properties.impl.IntProperty;
 import net.enderstone.api.repository.TranslationRepository;
 
 import java.io.File;
-import java.util.Locale;
 import java.util.UUID;
 
 public class Test {
@@ -23,13 +20,13 @@ public class Test {
             player = api.createPlayer(uId, "Test");
             System.out.println("Created player");
         }
-        final IntegerUserProperty coinsProperty = ((IntegerUserProperty)player.getProperty(UserProperty.COINS));
+        final IntProperty coinsProperty = (IntProperty) player.getCoinsProperty();
         System.out.println("current: " + coinsProperty.get());
         coinsProperty.set(200);
         coinsProperty.multiply(2);
         System.out.println("value: " + coinsProperty.get());
 
-        final StringProperty motd = (StringProperty) api.getSystemProperty(SystemProperty.MOTD);
+        final AbstractProperty<String> motd = api.getSystemProperty(Properties.SYSTEM_MOTD);
 
         System.out.println("MOTD: " + motd.get());
         motd.set("§cTest");

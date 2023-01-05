@@ -4,6 +4,7 @@ import com.bethibande.web.beans.GlobalBean;
 import net.enderstone.api.common.cache.CacheBuilder;
 import net.enderstone.api.common.cache.CacheLifetimeType;
 import net.enderstone.api.common.cache.ICache;
+import net.enderstone.api.common.cache.StorageType;
 import net.enderstone.api.common.cache.ref.HeapReference;
 import net.enderstone.api.common.properties.AbstractProperty;
 import net.enderstone.api.common.properties.Properties;
@@ -33,6 +34,7 @@ public class PropertyService extends GlobalBean {
         this.propertyRepository = propertyRepository;
 
         this.keyCache = CacheBuilder.<String, Integer>build("propertyKeys")
+                .setStorageType(StorageType.HEAP)
                 .setLifetime(20L, TimeUnit.MINUTES)
                 .setLifetimeType(CacheLifetimeType.ON_ACCESS)
                 .setSupplier(keyRepository::get)
@@ -41,6 +43,7 @@ public class PropertyService extends GlobalBean {
                 .create();
 
         mirrorCache = CacheBuilder.<Integer, String>build("propertyKeysMirror")
+                .setStorageType(StorageType.HEAP)
                 .setLifetime(20L, TimeUnit.MINUTES)
                 .setLifetimeType(CacheLifetimeType.ON_ACCESS)
                 .setSupplier(keyRepository::getIdentifier)

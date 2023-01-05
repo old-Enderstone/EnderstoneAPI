@@ -1,7 +1,7 @@
 drop table `Property`;
 drop table `SystemProperty`;
 
-create table propertyIdentifiers (
+create table `propertyIdentifiers` (
     `label` varchar(128) PRIMARY KEY NOT NULL,
     `id` int NOT NULL AUTO_INCREMENT
 );
