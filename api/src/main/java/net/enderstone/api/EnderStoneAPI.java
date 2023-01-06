@@ -8,6 +8,7 @@ import net.enderstone.api.common.cache.ref.HeapReference;
 import net.enderstone.api.common.properties.AbstractProperty;
 import net.enderstone.api.common.properties.Properties;
 import net.enderstone.api.common.properties.PropertyKey;
+import net.enderstone.api.common.properties.PropertyKeyRegistry;
 import net.enderstone.api.repository.PlayerRepository;
 import net.enderstone.api.repository.PropertyRepository;
 
@@ -44,10 +45,20 @@ public abstract class EnderStoneAPI {
     }
 
     private void init() {
-        Properties.registry.setOnUpdate(propertyRepository::setProperty);
+        final PropertyKeyRegistry propertyKeyRegistry = getPropertyKeyRegistry();
+        propertyKeyRegistry.setOnUpdate(propertyRepository::setProperty);
+        propertyKeyRegistry.setOnAdd(propertyRepository::add);
+        propertyKeyRegistry.setOnSubtract(propertyRepository::subtract);
+        propertyKeyRegistry.setOnDivide(propertyRepository::divide);
+        propertyKeyRegistry.setOnMultiply(propertyRepository::multiply);
+
 
         String host = System.getProperty("net.enderstone.api.host");
         if("debug".equalsIgnoreCase(host)) baseUrl = "http://127.0.0.1:4455";
+    }
+
+    public PropertyKeyRegistry getPropertyKeyRegistry() {
+        return Properties.registry;
     }
 
     /**

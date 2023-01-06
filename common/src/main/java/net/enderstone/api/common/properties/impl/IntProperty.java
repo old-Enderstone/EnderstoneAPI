@@ -2,11 +2,17 @@ package net.enderstone.api.common.properties.impl;
 
 import net.enderstone.api.common.properties.NumberProperty;
 import net.enderstone.api.common.properties.PropertyKey;
+import net.enderstone.api.common.types.NumberAction;
 
 public class IntProperty extends NumberProperty<Integer> {
 
-    public IntProperty(final PropertyKey<Integer> key, final Integer value) {
-        super(key, value);
+    public IntProperty(final PropertyKey<Integer> key,
+                       final Integer value,
+                       final NumberAction<Integer> addAction,
+                       final NumberAction<Integer> subtractAction,
+                       final NumberAction<Integer> multiplyAction,
+                       final NumberAction<Integer> divideAction) {
+        super(key, value, addAction, subtractAction, multiplyAction, divideAction);
     }
 
     @Override
@@ -18,23 +24,4 @@ public class IntProperty extends NumberProperty<Integer> {
         set(Integer.parseInt(value));
     }
 
-    @Override
-    public Integer add(final Integer number) {
-        return performAction(number, Integer::sum);
-    }
-
-    @Override
-    public Integer subtract(final Integer number) {
-        return performAction(number, (n1, n2) -> n1 - n2);
-    }
-
-    @Override
-    public Integer multiply(final Integer number) {
-        return performAction(number, (n1, n2) -> n1 * n2);
-    }
-
-    @Override
-    public Integer divide(final Integer number) {
-        return performAction(number, (n1, n2) -> n1 / n2);
-    }
 }

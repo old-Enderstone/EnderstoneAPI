@@ -1,5 +1,7 @@
 package net.enderstone.api.common.properties;
 
+import net.enderstone.api.common.types.NumberAction;
+
 import java.util.function.BiFunction;
 
 /**
@@ -10,55 +12,76 @@ import java.util.function.BiFunction;
  */
 public abstract class NumberProperty<T extends Number> extends AbstractProperty<T> {
 
-    public NumberProperty(final PropertyKey<T> key, final T value) {
+    private final NumberAction<T> addAction;
+    private final NumberAction<T> subtractAction;
+    private final NumberAction<T> multiplyAction;
+    private final NumberAction<T> divideAction;
+
+    public NumberProperty(final PropertyKey<T> key,
+                          final T value,
+                          final NumberAction<T> addAction,
+                          final NumberAction<T> subtractAction,
+                          final NumberAction<T> multiplyAction,
+                          final NumberAction<T> divideAction) {
         super(key, value);
+        this.addAction = addAction;
+        this.subtractAction = subtractAction;
+        this.multiplyAction = multiplyAction;
+        this.divideAction = divideAction;
     }
 
     /**
      * Adds the properties current value and the given value
      * @param number the number to add
      * @return result after adding both numbers
-     * @see #performAction(Number, BiFunction) 
+     * @see #performAction(Number, NumberAction)
      */
-    public abstract T add(final T number);
+    public T add(final T number) {
+        return performAction(number, addAction);
+    }
 
     /**
      * Subtracts the properties current value and the given value
      * @param number the number to subtract
      * @return result after subtracting both numbers
-     * @see #performAction(Number, BiFunction) 
+     * @see #performAction(Number, NumberAction)
      */
-    public abstract T subtract(final T number);
+    public T subtract(final T number) {
+        return performAction(number, subtractAction);
+    }
 
     /**
      * Multiplies the properties current value and the given value
      * @param number the number to multiply with
      * @return result after multiplying both numbers
-     * @see #performAction(Number, BiFunction) 
+     * @see #performAction(Number, NumberAction)
      */
-    public abstract  T multiply(final T number);
+    public  T multiply(final T number) {
+        return performAction(number, multiplyAction);
+    }
 
     /**
      * Divides the properties current value and the given value
      * @param number the number to divide by
      * @return result after dividing both numbers
-     * @see #performAction(Number, BiFunction) 
+     * @see #performAction(Number, NumberAction)
      */
-    public abstract T divide(final T number);
+    public T divide(final T number) {
+        return performAction(number, divideAction);
+    }
 
     /**
      * Perform an action using the value returned by {@link #get()} and the given number, like adding or subtracting numbers.
      * This method uses a lock to prevent concurrent invocations.
-     * This method will set the actions result as the properties value and return the new value
+     * This method will <b>not</b> update the properties value, however the given action may update the properties value
      * @param number number to work with
      * @param action action to perform
      * @return result of the action
      */
-    public T performAction(final T number, final BiFunction<T, T, T> action) {
+    public T performAction(final T number, final NumberAction<T> action) {
         lock.lock();
 
-        final T value = action.apply(get(), number);
-        set(value);
+        final T value = action.perform(this, number);
 
         lock.unlock();
         return value;

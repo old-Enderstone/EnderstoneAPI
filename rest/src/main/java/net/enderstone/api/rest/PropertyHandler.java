@@ -98,16 +98,20 @@ public class PropertyHandler {
         final AbstractProperty<?> property = propertyService.getProperty(propertyKey, owner);
 
         if(property instanceof IntProperty numberProperty) {
-            return new Message(200, numberProperty.add(Integer.parseInt(numberStr)));
+            numberProperty.add(Integer.parseInt(numberStr));
+            return new Message(200, numberProperty.asString());
         }
         if(property instanceof LongProperty numberProperty) {
-            return new Message(200, numberProperty.add(Long.parseLong(numberStr)));
+            numberProperty.add(Long.parseLong(numberStr));
+            return new Message(200, numberProperty.asString());
         }
         if(property instanceof FloatProperty numberProperty) {
-            return new Message(200, numberProperty.add(Float.parseFloat(numberStr)));
+            numberProperty.add(Float.parseFloat(numberStr));
+            return new Message(200, numberProperty.asString());
         }
         if(property instanceof DoubleProperty numberProperty) {
-            return new Message(200, numberProperty.add(Double.parseDouble(numberStr)));
+            numberProperty.add(Double.parseDouble(numberStr));
+            return new Message(200, numberProperty.asString());
         }
 
         return context.invalidParameterMessage("identifier");
@@ -129,16 +133,20 @@ public class PropertyHandler {
         final AbstractProperty<?> property = propertyService.getProperty(propertyKey, owner);
 
         if(property instanceof IntProperty numberProperty) {
-            return new Message(200, numberProperty.subtract(Integer.parseInt(numberStr)));
+            numberProperty.subtract(Integer.parseInt(numberStr));
+            return new Message(200, numberProperty.asString());
         }
         if(property instanceof LongProperty numberProperty) {
-            return new Message(200, numberProperty.subtract(Long.parseLong(numberStr)));
+            numberProperty.subtract(Long.parseLong(numberStr));
+            return new Message(200, numberProperty.asString());
         }
         if(property instanceof FloatProperty numberProperty) {
-            return new Message(200, numberProperty.subtract(Float.parseFloat(numberStr)));
+            numberProperty.subtract(Float.parseFloat(numberStr));
+            return new Message(200, numberProperty.asString());
         }
         if(property instanceof DoubleProperty numberProperty) {
-            return new Message(200, numberProperty.subtract(Double.parseDouble(numberStr)));
+            numberProperty.subtract(Double.parseDouble(numberStr));
+            return new Message(200, numberProperty.asString());
         }
 
         return context.invalidParameterMessage("identifier");
@@ -160,16 +168,20 @@ public class PropertyHandler {
         final AbstractProperty<?> property = propertyService.getProperty(propertyKey, owner);
 
         if(property instanceof IntProperty numberProperty) {
-            return new Message(200, numberProperty.multiply(Integer.parseInt(numberStr)));
+            numberProperty.multiply(Integer.parseInt(numberStr));
+            return new Message(200, numberProperty.asString());
         }
         if(property instanceof LongProperty numberProperty) {
-            return new Message(200, numberProperty.multiply(Long.parseLong(numberStr)));
+            numberProperty.multiply(Long.parseLong(numberStr));
+            return new Message(200, numberProperty.asString());
         }
         if(property instanceof FloatProperty numberProperty) {
-            return new Message(200, numberProperty.multiply(Float.parseFloat(numberStr)));
+            numberProperty.multiply(Float.parseFloat(numberStr));
+            return new Message(200, numberProperty.asString());
         }
         if(property instanceof DoubleProperty numberProperty) {
-            return new Message(200, numberProperty.multiply(Double.parseDouble(numberStr)));
+            numberProperty.multiply(Double.parseDouble(numberStr));
+            return new Message(200, numberProperty.asString());
         }
 
         return context.invalidParameterMessage("identifier");
@@ -191,16 +203,20 @@ public class PropertyHandler {
         final AbstractProperty<?> property = propertyService.getProperty(propertyKey, owner);
 
         if(property instanceof IntProperty numberProperty) {
-            return new Message(200, numberProperty.divide(Integer.parseInt(numberStr)));
+            numberProperty.divide(Integer.parseInt(numberStr));
+            return new Message(200, numberProperty.asString());
         }
         if(property instanceof LongProperty numberProperty) {
-            return new Message(200, numberProperty.divide(Long.parseLong(numberStr)));
+            numberProperty.divide(Long.parseLong(numberStr));
+            return new Message(200, numberProperty.asString());
         }
         if(property instanceof FloatProperty numberProperty) {
-            return new Message(200, numberProperty.divide(Float.parseFloat(numberStr)));
+            numberProperty.divide(Float.parseFloat(numberStr));
+            return new Message(200, numberProperty.asString());
         }
         if(property instanceof DoubleProperty numberProperty) {
-            return new Message(200, numberProperty.divide(Double.parseDouble(numberStr)));
+            numberProperty.divide(Double.parseDouble(numberStr));
+            return new Message(200, numberProperty.asString());
         }
 
         return context.invalidParameterMessage("identifier");
