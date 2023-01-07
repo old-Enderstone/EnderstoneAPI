@@ -14,7 +14,10 @@ import net.enderstone.api.commands.commands.HelpCommand;
 import net.enderstone.api.commands.commands.StopCommand;
 import net.enderstone.api.common.cache.CacheBuilder;
 import net.enderstone.api.common.cache.ICache;
+import net.enderstone.api.common.properties.AbstractProperty;
 import net.enderstone.api.common.types.Message;
+import net.enderstone.api.common.types.PropertyDeserializer;
+import net.enderstone.api.common.types.PropertySerializer;
 import net.enderstone.api.config.Config;
 import net.enderstone.api.config.IPWhitelist;
 import net.enderstone.api.dbm.DatabaseMigration;
@@ -136,6 +139,8 @@ public class RestAPI {
         restServer.start();
 
         restServer.setGson(new GsonBuilder().serializeNulls()
+                                            .registerTypeAdapter(AbstractProperty.class, new PropertySerializer())
+                                            .registerTypeAdapter(AbstractProperty.class, new PropertyDeserializer())
                                             .create());
 
         restServer.storeGlobalBean(propertyService);

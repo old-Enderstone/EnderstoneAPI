@@ -16,12 +16,33 @@ public class FloatProperty extends NumberProperty<Float> {
     }
 
     @Override
+    public Float add(final Float t1, final Float t2) {
+        return t1 + t2;
+    }
+
+    @Override
+    public Float sub(final Float t1, final Float t2) {
+        return t1 - t2;
+    }
+
+    @Override
+    public Float mul(final Float t1, final Float t2) {
+        return t1 * t2;
+    }
+
+    @Override
+    public Float div(final Float t1, final Float t2) {
+        return t1 / t2;
+    }
+
+    @Override
     public void fromString(final String value) {
+        super.checkNullValue(value == null);
         if(value == null) {
-            set(null);
+            super.value = null;
             return;
         }
-        set(Float.parseFloat(value));
+        super.value = Float.parseFloat(value);
     }
 
 }

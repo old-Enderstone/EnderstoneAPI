@@ -7,6 +7,7 @@ import net.enderstone.api.common.cache.ICache;
 import net.enderstone.api.common.cache.StorageType;
 import net.enderstone.api.common.cache.ref.HeapReference;
 import net.enderstone.api.common.properties.AbstractProperty;
+import net.enderstone.api.common.properties.NumberProperty;
 import net.enderstone.api.common.properties.Properties;
 import net.enderstone.api.common.properties.PropertyKey;
 import net.enderstone.api.common.properties.impl.ArrayProperty;
@@ -52,6 +53,34 @@ public class PropertyService extends GlobalBean {
                 .create();
 
         Properties.registry.setOnUpdate(this::onUpdate);
+        Properties.registry.setOnAdd(this::add);
+        Properties.registry.setOnSubtract(this::subtract);
+        Properties.registry.setOnMultiply(this::multiply);
+        Properties.registry.setOnDivide(this::divide);
+    }
+
+    private <T extends Number> T add(final NumberProperty<T> property, T n) {
+        final T result = property.add(property.get(), n);
+        property.set(result);
+        return result;
+    }
+
+    private <T extends Number> T subtract(final NumberProperty<T> property, T n) {
+        final T result = property.add(property.get(), n);
+        property.set(result);
+        return result;
+    }
+
+    private <T extends Number> T multiply(final NumberProperty<T> property, T n) {
+        final T result = property.add(property.get(), n);
+        property.set(result);
+        return result;
+    }
+
+    private <T extends Number> T divide(final NumberProperty<T> property, T n) {
+        final T result = property.add(property.get(), n);
+        property.set(result);
+        return result;
     }
 
     private void onUpdate(final AbstractProperty<?> property) {
@@ -85,7 +114,7 @@ public class PropertyService extends GlobalBean {
 
             final AbstractProperty<?> property = propertyKey.supplier().apply(propertyKey);
             property.setOwner(owner);
-            property.fromString(entry.getValue());
+            if(entry.getValue() != null) property.fromString(entry.getValue());
 
             properties.add(property);
         }
@@ -102,7 +131,7 @@ public class PropertyService extends GlobalBean {
 
         final String value = propertyRepository.get(new SimpleEntry<>(key, owner));
         final AbstractProperty<T> property = propertyKey.supplier().apply(propertyKey);
-        property.fromString(value);
+        if(value != null) property.fromString(value);
         property.setOwner(owner);
 
         return property;

@@ -11,11 +11,12 @@ public class BooleanProperty extends AbstractProperty<Boolean> {
 
     @Override
     public void fromString(final String value) {
+        super.checkNullValue(value == null);
         if(value == null) {
-            set(null);
+            super.value = null;
             return;
         }
-        set(Boolean.parseBoolean(value));
+        super.value = Boolean.parseBoolean(value);
     }
 
     public boolean toggle() {

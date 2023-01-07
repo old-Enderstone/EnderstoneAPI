@@ -16,18 +16,22 @@ import java.util.UUID;
 
 public class PropertyRepository implements NumberPropertyRepository {
 
-    private String host = EnderStoneAPI.getInstance().getBaseUrl();
+    private final EnderStoneAPI api;
+
+    public PropertyRepository(final EnderStoneAPI api) {
+        this.api = api;
+    }
 
     @SuppressWarnings("unchecked")
     public <T> AbstractProperty<T> getProperty(final PropertyKey<T> key, final @Nullable UUID owner) {
         final String url;
         if(owner == null) {
-            url = String.format("%s/property/get/%s", host, key.identifier());
+            url = String.format("%s/property/get/%s", api.getBaseUrl(), key.identifier());
         } else {
-            url = String.format("%s/property/get/%s?owner=%s", host, key.identifier(), owner);
+            url = String.format("%s/property/get/%s?owner=%s", api.getBaseUrl(), key.identifier(), owner);
         }
 
-        return (AbstractProperty<T>) IOUtils.getJson(url, AbstractProperty.class);
+        return IOUtils.getJson(url, TypedMessage.getType(AbstractProperty.class));
     }
 
     public void setProperty(final AbstractProperty<?> property) {
@@ -36,12 +40,12 @@ public class PropertyRepository implements NumberPropertyRepository {
 
         if(owner == null) {
             url = String.format("%s/property/set/%s/%s",
-                    host,
+                    api.getBaseUrl(),
                     property.getKey().identifier(),
                     URLEncoder.encode(property.asString(), StandardCharsets.UTF_8));
         } else {
             url = String.format("%s/property/set/%s/%s?owner=%s",
-                    host,
+                    api.getBaseUrl(),
                     property.getKey().identifier(),
                     URLEncoder.encode(property.asString(), StandardCharsets.UTF_8),
                     owner);
@@ -58,12 +62,12 @@ public class PropertyRepository implements NumberPropertyRepository {
 
         if(owner == null) {
             url = String.format("%s/property/add/%s/%s",
-                    host,
+                    api.getBaseUrl(),
                     property.getKey().identifier(),
                     property.asString());
         } else {
             url = String.format("%s/property/add/%s/%s?owner=%s",
-                    host,
+                    api.getBaseUrl(),
                     property.getKey().identifier(),
                     property.asString(),
                     owner);
@@ -83,12 +87,12 @@ public class PropertyRepository implements NumberPropertyRepository {
 
         if(owner == null) {
             url = String.format("%s/property/subtract/%s/%s",
-                    host,
+                    api.getBaseUrl(),
                     property.getKey().identifier(),
                     property.asString());
         } else {
             url = String.format("%s/property/subtract/%s/%s?owner=%s",
-                    host,
+                    api.getBaseUrl(),
                     property.getKey().identifier(),
                     property.asString(),
                     owner);
@@ -108,12 +112,12 @@ public class PropertyRepository implements NumberPropertyRepository {
 
         if(owner == null) {
             url = String.format("%s/property/divide/%s/%s",
-                    host,
+                    api.getBaseUrl(),
                     property.getKey().identifier(),
                     property.asString());
         } else {
             url = String.format("%s/property/divide/%s/%s?owner=%s",
-                    host,
+                    api.getBaseUrl(),
                     property.getKey().identifier(),
                     property.asString(),
                     owner);
@@ -133,12 +137,12 @@ public class PropertyRepository implements NumberPropertyRepository {
 
         if(owner == null) {
             url = String.format("%s/property/multiply/%s/%s",
-                    host,
+                    api.getBaseUrl(),
                     property.getKey().identifier(),
                     property.asString());
         } else {
             url = String.format("%s/property/multiply/%s/%s?owner=%s",
-                    host,
+                    api.getBaseUrl(),
                     property.getKey().identifier(),
                     property.asString(),
                     owner);

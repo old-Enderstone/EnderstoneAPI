@@ -16,7 +16,7 @@ public abstract class AbstractProperty<T> {
 
     protected transient final PropertyKey<T> key;
     private UUID owner;
-    protected T value;
+    protected volatile T value;
 
     protected transient final ReentrantLock lock = new ReentrantLock();
 
@@ -116,7 +116,8 @@ public abstract class AbstractProperty<T> {
 
     /**
      * Parse and set property value from given String.
-     * Used for loading values from http requests/responses or database
+     * Used for loading values from http requests/responses or database.
+     * This will not set the value directly without invoking the keys onUpdate listener.
      */
     public abstract void fromString(final @Nullable String value);
 

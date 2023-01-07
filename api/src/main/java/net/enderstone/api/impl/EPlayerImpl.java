@@ -29,6 +29,7 @@ public class EPlayerImpl extends EPlayer {
         }
 
         final AbstractProperty<T> property = propertyKey.supplier().apply(propertyKey);
+        property.setOwner(getId());
         super.properties.add(property);
         return property;
     }

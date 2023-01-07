@@ -69,16 +69,16 @@ public class DatabaseMigration {
         final String[] statements = loadPatch(version);
         final SQLConnector connector = RestAPI.connector;
 
-        try {
-            for(String statement : statements) {
+        for(String statement : statements) {
+            try {
                 connector.update(statement);
+            } catch(RuntimeException e) {
+                final Date date = new Date();
+                RestAPI.logger.severe("An error occurred whilst applying a database patch.");
+                RestAPI.logger.severe("The error log can be found under '" + new File(ErrorWriteJob.ERROR_DIR + "/" + date.toString().replaceAll("[\\s:]", "-")) + "'");
+                RestAPI.executor.execute(new ErrorWriteJob(date.toString().replaceAll("[\\s:]", "-"), e, "Error occurred whilst applying database patch version '" + version + "'\n" + statement + "\n"));
+                return false;
             }
-        } catch(RuntimeException e) {
-            final Date date = new Date();
-            RestAPI.logger.severe("An error occurred whilst applying a database patch.");
-            RestAPI.logger.severe("The error log can be found under '" + new File(ErrorWriteJob.ERROR_DIR + "/" + date.toString().replaceAll("[\\s:]", "-")) + "'");
-            RestAPI.executor.execute(new ErrorWriteJob(date.toString().replaceAll("[\\s:]", "-"), e, "Error occurred whilst applying database patch version '" + version + "'"));
-            return false;
         }
 
         return true;

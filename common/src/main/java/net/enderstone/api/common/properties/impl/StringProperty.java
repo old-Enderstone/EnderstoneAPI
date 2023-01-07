@@ -11,6 +11,7 @@ public class StringProperty extends AbstractProperty<String> {
 
     @Override
     public void fromString(final String value) {
-        set(value);
+        super.checkNullValue(value == null);
+        super.value = value;
     }
 }

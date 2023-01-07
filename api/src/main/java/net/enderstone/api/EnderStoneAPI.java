@@ -23,7 +23,7 @@ public abstract class EnderStoneAPI {
         return instance;
     }
 
-    protected final PropertyRepository propertyRepository = new PropertyRepository();
+    protected final PropertyRepository propertyRepository = new PropertyRepository(this);
     protected final PlayerRepository playerRepository = new PlayerRepository(this);
 
     protected final ICache<UUID, EPlayer> playerCache = CacheBuilder.<UUID, EPlayer>build("PlayerCache")

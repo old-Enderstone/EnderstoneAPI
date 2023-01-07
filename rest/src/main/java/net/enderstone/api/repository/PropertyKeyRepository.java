@@ -20,12 +20,12 @@ public class PropertyKeyRepository implements IRepository<String, Integer> {
 
     @Override
     public void insert(final String key, final @Nullable Integer value) {
-        RestAPI.connector.update("insert into `propertyIdentifiers` values (?, ?);", key, value);
+        RestAPI.connector.update("insert into `propertyIdentifiers` values (?, ?);", value, key);
     }
 
     @Override
     public void update(final String key, final Integer value) {
-        RestAPI.connector.update("update `propertyIdentifiers` set `id`=? where `label`=?;", value, key);
+        throw new UnsupportedOperationException("Update not supported");
     }
 
     public String getIdentifier(final int id) {

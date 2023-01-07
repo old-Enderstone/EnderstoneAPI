@@ -12,10 +12,10 @@ import java.util.function.BiFunction;
  */
 public abstract class NumberProperty<T extends Number> extends AbstractProperty<T> {
 
-    private final NumberAction<T> addAction;
-    private final NumberAction<T> subtractAction;
-    private final NumberAction<T> multiplyAction;
-    private final NumberAction<T> divideAction;
+    private transient final NumberAction<T> addAction;
+    private transient final NumberAction<T> subtractAction;
+    private transient final NumberAction<T> multiplyAction;
+    private transient final NumberAction<T> divideAction;
 
     public NumberProperty(final PropertyKey<T> key,
                           final T value,
@@ -29,6 +29,11 @@ public abstract class NumberProperty<T extends Number> extends AbstractProperty<
         this.multiplyAction = multiplyAction;
         this.divideAction = divideAction;
     }
+
+    public abstract T add(final T t1, final T t2);
+    public abstract T sub(final T t1, final T t2);
+    public abstract T mul(final T t1, final T t2);
+    public abstract T div(final T t1, final T t2);
 
     /**
      * Adds the properties current value and the given value

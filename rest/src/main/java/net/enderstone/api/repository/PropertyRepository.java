@@ -14,7 +14,7 @@ public class PropertyRepository implements IMultipleKeyRepository<Integer, UUID,
     @Override
     public boolean hasKey(final Map.Entry<Integer, UUID> key) {
         if(key.getValue() == null) {
-            final ResultSet rs = RestAPI.connector.query("select `id` from `property` where `id`=? and `uId` is null;", key.getKey());
+            final ResultSet rs = RestAPI.connector.query("select `id` from `property` where `id`=? and `uId`='NULL';", key.getKey());
             try {
                 return rs.next();
             } catch (SQLException e) {
@@ -37,24 +37,25 @@ public class PropertyRepository implements IMultipleKeyRepository<Integer, UUID,
     @Override
     public void update(final Map.Entry<Integer, UUID> key, final String value) {
         if(key.getValue() == null) {
-            RestAPI.connector.update("update `property` set `value`=? where `id`=? and `uId` is null;", value, key.getKey());
+            RestAPI.connector.update("replace into `property` values (?, 'NULL', ?);", key.getKey(), value);
             return;
         }
-        RestAPI.connector.update("update `property` set `value`=? where `id`=? and `uId`=?;", value, key.getKey(), key.getValue().toString());
+        RestAPI.connector.update("replace into `property` values (?, ?, ?);", key.getKey(), key.getValue().toString(), value);
     }
 
     public HashMap<Integer, String> getAllByOwner(final @Nullable UUID owner) {
         final HashMap<Integer, String> map = new HashMap<>();
         final ResultSet rs;
         if(owner == null) {
-            rs = RestAPI.connector.query("select `id`, `value` from `property` where `uId` is null;");
+            rs = RestAPI.connector.query("select `id`, `value` from `property` where `uId`='NULL';");
         } else {
             rs = RestAPI.connector.query("select `id`, `value` from `property` where `uId`=?;", owner.toString());
         }
 
         try {
             while(rs.next()) {
-                map.put(rs.getInt("id"), rs.getString("value"));
+                final String value = rs.getString("value");
+                map.put(rs.getInt("id"), value.equals("NULL") ? null: value);
             }
         } catch(SQLException e) {
             throw new RuntimeException(e);
@@ -66,10 +67,12 @@ public class PropertyRepository implements IMultipleKeyRepository<Integer, UUID,
     @Override
     public String get(final Map.Entry<Integer, UUID> key) {
         if(key.getValue() == null) {
-            final ResultSet rs = RestAPI.connector.query("select `value` from `property` where `id`=? and `uId` is null;", key.getKey());
+            final ResultSet rs = RestAPI.connector.query("select `value` from `property` where `id`=? and `uId`='NULL';", key.getKey());
             try {
                 if(!rs.next()) return null;
-                return rs.getString("value");
+
+                final String value = rs.getString("value");
+                return value.equals("NULL") ? null: value;
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -77,7 +80,9 @@ public class PropertyRepository implements IMultipleKeyRepository<Integer, UUID,
         final ResultSet rs = RestAPI.connector.query("select `value` from `property` where `id`=? and `uId`=?;", key.getKey(), key.getValue().toString());
         try {
             if(!rs.next()) return null;
-            return rs.getString("value");
+
+            final String value = rs.getString("value");
+            return value.equals("NULL") ? null: value;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -86,7 +91,7 @@ public class PropertyRepository implements IMultipleKeyRepository<Integer, UUID,
     @Override
     public void delete(final Map.Entry<Integer, UUID> key) {
         if(key.getValue() == null) {
-            RestAPI.connector.update("delete from `property` where `id`=? and `uId` is null;", key.getKey());
+            RestAPI.connector.update("delete from `property` where `id`=? and `uId`='NULL';", key.getKey());
             return;
         }
         RestAPI.connector.update("delete from `property` where `id`=? and `uId`=?;", key.getKey(), key.getValue().toString());

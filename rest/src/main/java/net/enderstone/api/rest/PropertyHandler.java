@@ -50,7 +50,7 @@ public class PropertyHandler {
         if(ownerStr != null && !ownerStr.matches(Regex.UUID)) return context.invalidParameterMessage("owner");
         final UUID owner = ownerStr != null ? UUID.fromString(ownerStr): null;
 
-        return propertyService.getProperty(propertyKey, owner).asString();
+        return new Message(200, propertyService.getProperty(propertyKey, owner));
     }
 
     @URI(value = "/property/get-all/", type = URI.URIType.REGEX)
