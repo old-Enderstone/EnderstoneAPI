@@ -12,8 +12,10 @@ public class PropertySerializer implements JsonSerializer<AbstractProperty<?>> {
 
     @Override
     public JsonElement serialize(final AbstractProperty<?> abstractProperty, final Type type, final JsonSerializationContext jsonSerializationContext) {
-        final JsonObject object = (JsonObject) jsonSerializationContext.serialize(abstractProperty);
+        final JsonObject object = new JsonObject();
         object.addProperty("identifier", abstractProperty.getKey().identifier());
+        object.addProperty("owner", abstractProperty.getOwner() == null ? null: abstractProperty.getOwner().toString());
+        object.addProperty("value", abstractProperty.asString());
         return object;
     }
 }

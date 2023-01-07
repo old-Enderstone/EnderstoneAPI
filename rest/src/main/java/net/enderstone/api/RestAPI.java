@@ -4,6 +4,7 @@ import com.bethibande.web.JWebServer;
 import com.bethibande.web.context.ServerContext;
 import com.bethibande.web.response.RequestResponse;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import net.enderstone.api.annotations.AuthenticationInvocationHandler;
 import net.enderstone.api.annotations.ParameterAnnotationProcessor;
 import net.enderstone.api.annotations.WhitelistedInvocationHandler;
@@ -15,9 +16,13 @@ import net.enderstone.api.commands.commands.StopCommand;
 import net.enderstone.api.common.cache.CacheBuilder;
 import net.enderstone.api.common.cache.ICache;
 import net.enderstone.api.common.properties.AbstractProperty;
+import net.enderstone.api.common.properties.impl.BooleanProperty;
+import net.enderstone.api.common.properties.impl.LocaleProperty;
+import net.enderstone.api.common.properties.impl.StringProperty;
 import net.enderstone.api.common.types.Message;
 import net.enderstone.api.common.types.PropertyDeserializer;
 import net.enderstone.api.common.types.PropertySerializer;
+import net.enderstone.api.common.types.PropertyTypeAdapter;
 import net.enderstone.api.config.Config;
 import net.enderstone.api.config.IPWhitelist;
 import net.enderstone.api.dbm.DatabaseMigration;
@@ -138,9 +143,12 @@ public class RestAPI {
                 .withErrorHandler(RestAPI::handleError);
         restServer.start();
 
+        // Gson isn't properly detecting types, all types, that do not extend NumberProperty need to be registered separately
         restServer.setGson(new GsonBuilder().serializeNulls()
                                             .registerTypeAdapter(AbstractProperty.class, new PropertySerializer())
-                                            .registerTypeAdapter(AbstractProperty.class, new PropertyDeserializer())
+                                            .registerTypeAdapter(StringProperty.class, new PropertySerializer())
+                                            .registerTypeAdapter(BooleanProperty.class, new PropertySerializer())
+                                            .registerTypeAdapter(LocaleProperty.class, new PropertySerializer())
                                             .create());
 
         restServer.storeGlobalBean(propertyService);

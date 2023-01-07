@@ -122,6 +122,19 @@ public abstract class AbstractProperty<T> {
     public abstract void fromString(final @Nullable String value);
 
     /**
+     * Locks write lock and invokes {@link #fromString(String)} and then {@link #set(Object)}
+     * before unlocking write lock again.
+     */
+    public void setFromString(final @Nullable String value) {
+        lock.lock();
+
+        fromString(value);
+        set(this.value);
+
+        lock.unlock();
+    }
+
+    /**
      * Locks the method, sets the new value, calls the onUpdate hook and then unlocks the method again
      * @param value the new value
      * @throws RuntimeException if the given value is null but the property key does not allow for values to be null

@@ -23,6 +23,7 @@ public class Test {
         final IntProperty coinsProperty = (IntProperty) player.getCoinsProperty();
         System.out.println("current: " + coinsProperty.get());
         coinsProperty.set(200);
+        System.out.println("value: " + coinsProperty.get());
         coinsProperty.multiply(2);
         System.out.println("value: " + coinsProperty.get());
 

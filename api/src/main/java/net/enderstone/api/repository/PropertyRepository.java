@@ -31,7 +31,7 @@ public class PropertyRepository implements NumberPropertyRepository {
             url = String.format("%s/property/get/%s?owner=%s", api.getBaseUrl(), key.identifier(), owner);
         }
 
-        return IOUtils.getJson(url, TypedMessage.getType(AbstractProperty.class));
+        return IOUtils.getJson(url, AbstractProperty.class);
     }
 
     public void setProperty(final AbstractProperty<?> property) {
@@ -64,12 +64,12 @@ public class PropertyRepository implements NumberPropertyRepository {
             url = String.format("%s/property/add/%s/%s",
                     api.getBaseUrl(),
                     property.getKey().identifier(),
-                    property.asString());
+                    number);
         } else {
             url = String.format("%s/property/add/%s/%s?owner=%s",
                     api.getBaseUrl(),
                     property.getKey().identifier(),
-                    property.asString(),
+                    number,
                     owner);
         }
 
@@ -89,12 +89,12 @@ public class PropertyRepository implements NumberPropertyRepository {
             url = String.format("%s/property/subtract/%s/%s",
                     api.getBaseUrl(),
                     property.getKey().identifier(),
-                    property.asString());
+                    number);
         } else {
             url = String.format("%s/property/subtract/%s/%s?owner=%s",
                     api.getBaseUrl(),
                     property.getKey().identifier(),
-                    property.asString(),
+                    number,
                     owner);
         }
 
@@ -114,12 +114,12 @@ public class PropertyRepository implements NumberPropertyRepository {
             url = String.format("%s/property/divide/%s/%s",
                     api.getBaseUrl(),
                     property.getKey().identifier(),
-                    property.asString());
+                    number);
         } else {
             url = String.format("%s/property/divide/%s/%s?owner=%s",
                     api.getBaseUrl(),
                     property.getKey().identifier(),
-                    property.asString(),
+                    number,
                     owner);
         }
 
@@ -139,12 +139,12 @@ public class PropertyRepository implements NumberPropertyRepository {
             url = String.format("%s/property/multiply/%s/%s",
                     api.getBaseUrl(),
                     property.getKey().identifier(),
-                    property.asString());
+                    number);
         } else {
             url = String.format("%s/property/multiply/%s/%s?owner=%s",
                     api.getBaseUrl(),
                     property.getKey().identifier(),
-                    property.asString(),
+                    number,
                     owner);
         }
 

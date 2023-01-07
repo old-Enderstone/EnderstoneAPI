@@ -5,6 +5,7 @@ import com.bethibande.web.annotations.URI;
 import net.enderstone.api.ApiContext;
 import net.enderstone.api.annotations.Parameter;
 import net.enderstone.api.annotations.Whitelisted;
+import net.enderstone.api.common.EPlayer;
 import net.enderstone.api.common.properties.AbstractProperty;
 import net.enderstone.api.common.properties.PropertyKey;
 import net.enderstone.api.common.properties.impl.BooleanProperty;
@@ -14,6 +15,7 @@ import net.enderstone.api.common.properties.impl.IntProperty;
 import net.enderstone.api.common.properties.impl.LongProperty;
 import net.enderstone.api.common.types.Message;
 import net.enderstone.api.common.utils.Regex;
+import net.enderstone.api.service.PlayerService;
 import net.enderstone.api.service.PropertyService;
 
 import java.util.UUID;
@@ -25,6 +27,7 @@ public class PropertyHandler {
     public Object setProperty(final @Parameter(2) String identifier,
                               final @Parameter(3) String valueStr,
                               final @QueryField("owner") String ownerStr,
+                              final PlayerService playerService,
                               final PropertyService propertyService,
                               final ApiContext context) {
         final PropertyKey<?> propertyKey = propertyService.getKeyByIdentifier(identifier);
@@ -33,8 +36,15 @@ public class PropertyHandler {
         if(ownerStr != null && !ownerStr.matches(Regex.UUID)) return context.invalidParameterMessage("owner");
         final UUID owner = ownerStr != null ? UUID.fromString(ownerStr): null;
 
-        final AbstractProperty<?> property = propertyService.getProperty(propertyKey, owner);
-        property.fromString(valueStr);
+        final AbstractProperty<?> property;
+        if(owner != null) {
+            final EPlayer player = playerService.getPlayerById(owner);
+            if(player == null) return context.entityNotFoundMessage();
+            property = player.getProperty(propertyKey);
+        } else {
+            property = propertyService.getProperty(propertyKey, null);
+        }
+        property.setFromString(valueStr);
 
         return new Message(200, "OK");
     }
@@ -42,6 +52,7 @@ public class PropertyHandler {
     @URI(value = "/property/get/" + Regex.PROPERTY, type = URI.URIType.REGEX)
     public Object getProperty(final @Parameter(2) String identifier,
                               final @QueryField("owner") String ownerStr,
+                              final PlayerService playerService,
                               final PropertyService propertyService,
                               final ApiContext context) {
         final PropertyKey<?> propertyKey = propertyService.getKeyByIdentifier(identifier);
@@ -50,7 +61,16 @@ public class PropertyHandler {
         if(ownerStr != null && !ownerStr.matches(Regex.UUID)) return context.invalidParameterMessage("owner");
         final UUID owner = ownerStr != null ? UUID.fromString(ownerStr): null;
 
-        return new Message(200, propertyService.getProperty(propertyKey, owner));
+        final AbstractProperty<?> property;
+        if(owner != null) {
+            final EPlayer player = playerService.getPlayerById(owner);
+            if(player == null) return context.entityNotFoundMessage();
+            property = player.getProperty(propertyKey);
+        } else {
+            property = propertyService.getProperty(propertyKey, null);
+        }
+
+        return property;
     }
 
     @URI(value = "/property/get-all/", type = URI.URIType.REGEX)
@@ -67,6 +87,7 @@ public class PropertyHandler {
     @Whitelisted
     public Object onToggle(final @Parameter(2) String identifier,
                            final @QueryField("owner") String ownerStr,
+                           final PlayerService playerService,
                            final PropertyService propertyService,
                            final ApiContext context) {
         final PropertyKey<?> propertyKey = propertyService.getKeyByIdentifier(identifier);
@@ -75,7 +96,14 @@ public class PropertyHandler {
         if(ownerStr != null && !ownerStr.matches(Regex.UUID)) return context.invalidParameterMessage("owner");
         final UUID owner = ownerStr != null ? UUID.fromString(ownerStr): null;
 
-        final AbstractProperty<?> property = propertyService.getProperty(propertyKey, owner);
+        final AbstractProperty<?> property;
+        if(owner != null) {
+            final EPlayer player = playerService.getPlayerById(owner);
+            if(player == null) return context.entityNotFoundMessage();
+            property = player.getProperty(propertyKey);
+        } else {
+            property = propertyService.getProperty(propertyKey, null);
+        }
 
         if(!(property instanceof BooleanProperty booleanProperty)) return context.invalidParameterMessage("identifier");
 
@@ -87,6 +115,7 @@ public class PropertyHandler {
     public Object add(final @Parameter(2) String identifier,
                       final @Parameter(3) String numberStr,
                       final @QueryField("owner") String ownerStr,
+                      final PlayerService playerService,
                       final PropertyService propertyService,
                       final ApiContext context) {
         final PropertyKey<?> propertyKey = propertyService.getKeyByIdentifier(identifier);
@@ -95,7 +124,14 @@ public class PropertyHandler {
         if(ownerStr != null && !ownerStr.matches(Regex.UUID)) return context.invalidParameterMessage("owner");
         final UUID owner = ownerStr != null ? UUID.fromString(ownerStr): null;
 
-        final AbstractProperty<?> property = propertyService.getProperty(propertyKey, owner);
+        final AbstractProperty<?> property;
+        if(owner != null) {
+            final EPlayer player = playerService.getPlayerById(owner);
+            if(player == null) return context.entityNotFoundMessage();
+            property = player.getProperty(propertyKey);
+        } else {
+            property = propertyService.getProperty(propertyKey, null);
+        }
 
         if(property instanceof IntProperty numberProperty) {
             numberProperty.add(Integer.parseInt(numberStr));
@@ -122,6 +158,7 @@ public class PropertyHandler {
     public Object subtract(final @Parameter(2) String identifier,
                       final @Parameter(3) String numberStr,
                       final @QueryField("owner") String ownerStr,
+                      final PlayerService playerService,
                       final PropertyService propertyService,
                       final ApiContext context) {
         final PropertyKey<?> propertyKey = propertyService.getKeyByIdentifier(identifier);
@@ -130,7 +167,14 @@ public class PropertyHandler {
         if(ownerStr != null && !ownerStr.matches(Regex.UUID)) return context.invalidParameterMessage("owner");
         final UUID owner = ownerStr != null ? UUID.fromString(ownerStr): null;
 
-        final AbstractProperty<?> property = propertyService.getProperty(propertyKey, owner);
+        final AbstractProperty<?> property;
+        if(owner != null) {
+            final EPlayer player = playerService.getPlayerById(owner);
+            if(player == null) return context.entityNotFoundMessage();
+            property = player.getProperty(propertyKey);
+        } else {
+            property = propertyService.getProperty(propertyKey, null);
+        }
 
         if(property instanceof IntProperty numberProperty) {
             numberProperty.subtract(Integer.parseInt(numberStr));
@@ -157,6 +201,7 @@ public class PropertyHandler {
     public Object multiply(final @Parameter(2) String identifier,
                       final @Parameter(3) String numberStr,
                       final @QueryField("owner") String ownerStr,
+                      final PlayerService playerService,
                       final PropertyService propertyService,
                       final ApiContext context) {
         final PropertyKey<?> propertyKey = propertyService.getKeyByIdentifier(identifier);
@@ -165,7 +210,14 @@ public class PropertyHandler {
         if(ownerStr != null && !ownerStr.matches(Regex.UUID)) return context.invalidParameterMessage("owner");
         final UUID owner = ownerStr != null ? UUID.fromString(ownerStr): null;
 
-        final AbstractProperty<?> property = propertyService.getProperty(propertyKey, owner);
+        final AbstractProperty<?> property;
+        if(owner != null) {
+            final EPlayer player = playerService.getPlayerById(owner);
+            if(player == null) return context.entityNotFoundMessage();
+            property = player.getProperty(propertyKey);
+        } else {
+            property = propertyService.getProperty(propertyKey, null);
+        }
 
         if(property instanceof IntProperty numberProperty) {
             numberProperty.multiply(Integer.parseInt(numberStr));
@@ -192,6 +244,7 @@ public class PropertyHandler {
     public Object divide(final @Parameter(2) String identifier,
                       final @Parameter(3) String numberStr,
                       final @QueryField("owner") String ownerStr,
+                      final PlayerService playerService,
                       final PropertyService propertyService,
                       final ApiContext context) {
         final PropertyKey<?> propertyKey = propertyService.getKeyByIdentifier(identifier);
@@ -200,7 +253,14 @@ public class PropertyHandler {
         if(ownerStr != null && !ownerStr.matches(Regex.UUID)) return context.invalidParameterMessage("owner");
         final UUID owner = ownerStr != null ? UUID.fromString(ownerStr): null;
 
-        final AbstractProperty<?> property = propertyService.getProperty(propertyKey, owner);
+        final AbstractProperty<?> property;
+        if(owner != null) {
+            final EPlayer player = playerService.getPlayerById(owner);
+            if(player == null) return context.entityNotFoundMessage();
+            property = player.getProperty(propertyKey);
+        } else {
+            property = propertyService.getProperty(propertyKey, null);
+        }
 
         if(property instanceof IntProperty numberProperty) {
             numberProperty.divide(Integer.parseInt(numberStr));

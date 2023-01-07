@@ -24,12 +24,12 @@ public class PropertyDeserializer implements JsonDeserializer<AbstractProperty<?
         final AbstractProperty<?> property = key.supplier().apply(key);
 
         if(jsonObject.has("owner")) {
-            final UUID owner = UUID.fromString(jsonObject.get("owner").getAsString());
+            final UUID owner = jsonObject.get("owner").isJsonNull() ? null: UUID.fromString(jsonObject.get("owner").getAsString());
             property.setOwner(owner);
         }
 
         if(jsonObject.has("value")) {
-            final String valueStr = jsonObject.get("value").getAsString();
+            final String valueStr = jsonObject.isJsonNull() ? null: jsonObject.get("value").getAsString();
             property.fromString(valueStr);
         }
 

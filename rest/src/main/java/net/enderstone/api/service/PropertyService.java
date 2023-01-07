@@ -66,19 +66,19 @@ public class PropertyService extends GlobalBean {
     }
 
     private <T extends Number> T subtract(final NumberProperty<T> property, T n) {
-        final T result = property.add(property.get(), n);
+        final T result = property.sub(property.get(), n);
         property.set(result);
         return result;
     }
 
     private <T extends Number> T multiply(final NumberProperty<T> property, T n) {
-        final T result = property.add(property.get(), n);
+        final T result = property.mul(property.get(), n);
         property.set(result);
         return result;
     }
 
     private <T extends Number> T divide(final NumberProperty<T> property, T n) {
-        final T result = property.add(property.get(), n);
+        final T result = property.div(property.get(), n);
         property.set(result);
         return result;
     }
