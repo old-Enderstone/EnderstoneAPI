@@ -4,6 +4,9 @@ import net.enderstone.api.RestAPI;
 
 import java.sql.*;
 import java.util.Properties;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 public class SQLConnector {
 
@@ -14,6 +17,9 @@ public class SQLConnector {
     private String database;
 
     private String driverClass = "com.mysql.cj.jdbc.Driver";
+
+    private BatchedSQLStatement current = null;
+    private ScheduledFuture<?> schedule = null;
 
     private Connection con;
 
@@ -107,6 +113,14 @@ public class SQLConnector {
     }
 
 
+    public PreparedStatement createPreparedStatement(final String statement) {
+        try {
+            return con.prepareStatement(statement);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public SQLTransaction createEmptyTransaction() {
         return new SQLTransaction().withConnector(this);
     }
@@ -156,39 +170,44 @@ public class SQLConnector {
         }
     }
 
-    public void update(String command, Object... objects) {
+    public synchronized void update(String statement, Object... objects) {
+        if(current == null || (schedule != null && schedule.isDone())) {
+            current = new BatchedSQLStatement(statement);
+            current.addParameterSet(objects);
+            schedule = RestAPI.executor.schedule(() -> current.execute(this), 5, TimeUnit.SECONDS);
+            return;
+        }
+
+        if(current.getStatement().equals(statement)) {
+            current.addParameterSet(objects);
+            return;
+        }
+
+        boolean canceled = schedule.cancel(false);
+        if(canceled) current.execute(this);
+
+        current = null;
+        update(statement, objects);
+    }
+
+    public <T> T query(final String query, final SQLAction<T> action, final Object... arguments) {
         try {
-            PreparedStatement st = this.con.prepareStatement(command);
-            for (int i = 0; i < objects.length; i++) {
-                st.setObject(i+1, objects[i]);
+            final PreparedStatement st = this.con.prepareStatement(query);
+
+            if(arguments != null && arguments.length > 0) {
+                for(int i = 0; i < arguments.length; i++) {
+                    st.setObject(i+1, arguments[i]);
+                }
             }
-            st.execute();
+
+            try (ResultSet rs = st.executeQuery()) {
+                return action.perform(rs);
+            } catch (Throwable th) {
+                throw new RuntimeException(th);
+            }
         } catch(SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public ResultSet query(String command) {
-        try {
-            PreparedStatement st = this.con.prepareStatement(command);
-            return st.executeQuery();
-        } catch(SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public ResultSet query(String command, Object... objects) {
-        try {
-            PreparedStatement st = this.con.prepareStatement(command);
-            for (int i = 0; i < objects.length; i++) {
-                st.setObject(i+1, objects[i]);
-            }
-
-            return st.executeQuery();
-        } catch(SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     /**

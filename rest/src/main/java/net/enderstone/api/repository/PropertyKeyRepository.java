@@ -10,12 +10,13 @@ public class PropertyKeyRepository implements IRepository<String, Integer> {
 
     @Override
     public boolean hasKey(final String key) {
-        final ResultSet rs = RestAPI.connector.query("select `id` from `propertyIdentifiers` where `label`=?;", key);
-        try {
-            return rs.next();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return RestAPI.connector.query("select `id` from `propertyIdentifiers` where `label`=?;", ResultSet::next, key);
+    }
+
+    public int create(final String key) {
+        return RestAPI.connector.query("insert into `propertyIdentifiers` values (NULL, ?) returning `id`;",
+                                       rs -> rs.getInt("id"),
+                                       key);
     }
 
     @Override
@@ -29,24 +30,18 @@ public class PropertyKeyRepository implements IRepository<String, Integer> {
     }
 
     public String getIdentifier(final int id) {
-        final ResultSet rs = RestAPI.connector.query("select `label` from `propertyIdentifiers` where `id`=?;", id);
-        try {
+        return RestAPI.connector.query("select `label` from `propertyIdentifiers` where `id`=?;", rs -> {
             if(!rs.next()) return null;
             return rs.getString("label");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        }, id);
     }
 
     @Override
     public Integer get(final String key) {
-        final ResultSet rs = RestAPI.connector.query("select `id` from `propertyIdentifiers` where `label`=?;", key);
-        try {
+        return RestAPI.connector.query("select `id` from `propertyIdentifiers` where `label`=?;", rs -> {
             if(!rs.next()) return null;
             return rs.getInt("id");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        }, key);
     }
 
     @Override

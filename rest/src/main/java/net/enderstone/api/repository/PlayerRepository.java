@@ -25,12 +25,7 @@ public class PlayerRepository implements IRepository<UUID, EPlayer> {
 
     @Override
     public boolean hasKey(UUID key) {
-        ResultSet rs = RestAPI.connector.query("select `uId` from `Player` where uId=?;", key.toString());
-        try {
-            return rs.next();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return RestAPI.connector.query("select `uId` from `Player` where uId=?;", ResultSet::next, key.toString());
     }
 
     @Override
@@ -48,37 +43,32 @@ public class PlayerRepository implements IRepository<UUID, EPlayer> {
      */
     @Override
     public EPlayer get(UUID key) {
-        ResultSet rs = RestAPI.connector.query("select `lastKnownName` from `Player` where `uId`=?;", key.toString());
-        try {
+        return RestAPI.connector.query("select `lastKnownName` from `Player` where `uId`=?;", rs -> {
             if(!rs.next()) return null;
             final String lastKnownName = rs.getString("lastKnownName");
 
             return new EPlayerImpl(key, lastKnownName, new ArrayList<AbstractProperty<?>>(), propertyService);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        }, key.toString());
     }
 
     public Collection<UUID> nameToUUID(String name) {
-        ResultSet rs = RestAPI.connector.query("select `uId` from `Player` where `lastKnownName`=?;", name);
-        List<UUID> ids = new ArrayList<>();
+        return RestAPI.connector.query("select `uId` from `Player` where `lastKnownName`=?;", rs -> {
+            final List<UUID> ids = new ArrayList<>();
 
-        try {
             while(rs.next()) {
                 final String uId = rs.getString("uId");
                 ids.add(UUID.fromString(uId));
             }
-        } catch(SQLException e) {
-            e.printStackTrace();
-        }
 
-        return ids;
+            return ids;
+        }, name);
     }
 
     @Override
     public void delete(UUID key) {
         final SQLTransaction transaction = RestAPI.connector.createEmptyTransaction()
-                .withStatement(new SQLStatement("delete from `Property` where `uId`=?", key.toString()))
+                .withStatement(new SQLStatement("delete from `property` where `uId`=?", key.toString()))
+                .withStatement(new SQLStatement("delete from `arrayProperty` where `uId`=?", key.toString()))
                 .withStatement(new SQLStatement("delete from `Player` where `uId`=?;", key.toString()));
         transaction.transact();
     }

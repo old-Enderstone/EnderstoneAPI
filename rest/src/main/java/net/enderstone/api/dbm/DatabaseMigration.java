@@ -29,13 +29,10 @@ public class DatabaseMigration {
         final boolean tableExists = connector.tableExists("dbm");
         if(!tableExists) return 0;
 
-        try {
-            final ResultSet rs = connector.query("select `value` from `dbm` where `key`='version';");
+        return connector.query("select `value` from `dbm` where `key`='version';", rs -> {
             if(!rs.next()) return 0;
             return rs.getInt("value");
-        } catch(SQLException e) {
-            throw new RuntimeException(e);
-        }
+        });
     }
 
     public static String[] loadVersions() {

@@ -17,12 +17,7 @@ public class TranslationRepository implements IMultipleKeyRepository<String, Loc
 
     @Override
     public boolean hasKey(Map.Entry<String, Locale> key) {
-        final ResultSet rs = RestAPI.connector.query("select `tKey` from `translations` where `tKey`=? and tLocale=?;", key.getKey(), key.getValue().toString());
-        try {
-            return rs.next();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return RestAPI.connector.query("select `tKey` from `translations` where `tKey`=? and tLocale=?;", ResultSet::next, key.getKey(), key.getValue().toString());
     }
 
     @Override
@@ -36,30 +31,24 @@ public class TranslationRepository implements IMultipleKeyRepository<String, Loc
     }
 
     public List<Translation> getAllTranslationOfBundle(Locale locale, UUID bundle) {
-        final ResultSet rs = RestAPI.connector.query("select `t`.`tKey`, `t`.`tValue` from translations t inner join bundles b on t.tKey=b.tKey where `t`.`tLocale`=? and `b`.`bId`=?;", locale.toString(), bundle.toString());
-        final List<Translation> translations = new ArrayList<>();
+        return RestAPI.connector.query("select `t`.`tKey`, `t`.`tValue` from translations t inner join bundles b on t.tKey=b.tKey where `t`.`tLocale`=? and `b`.`bId`=?;", rs -> {
+            final List<Translation> translations = new ArrayList<>();
 
-        try {
             while(rs.next()) {
                 translations.add(new Translation(rs.getString("tKey"), locale, rs.getString("tValue")));
             }
-        } catch(SQLException e) {
-            throw new RuntimeException(e);
-        }
 
-        return translations;
+            return translations;
+        }, locale.toString(), bundle.toString());
     }
 
     @Override
     public Translation get(Map.Entry<String, Locale> key) {
-        final ResultSet rs = RestAPI.connector.query("select `tValue` from `translations` where `tKey`=? and tLocale=?;", key.getKey(), key.getValue().toString());
-        try {
+        return RestAPI.connector.query("select `tValue` from `translations` where `tKey`=? and tLocale=?;", rs -> {
             if(!rs.next()) return null;
 
             return new Translation(key.getKey(), key.getValue(), rs.getString("tValue"));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        }, key.getKey(), key.getValue().toString());
     }
 
     @Override

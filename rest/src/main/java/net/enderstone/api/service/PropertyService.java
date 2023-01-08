@@ -91,8 +91,7 @@ public class PropertyService extends GlobalBean {
     }
 
     public int registerIdentifier(final String identifier) {
-        keyRepository.insert(identifier, null);
-        return keyRepository.get(identifier);
+        return keyRepository.create(identifier);
     }
 
     public <T> AbstractProperty<T> getSystemProperty(final PropertyKey<T> propertyKey) {
