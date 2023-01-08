@@ -3,6 +3,7 @@ package net.enderstone.api.sql;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BatchedSQLStatement {
@@ -29,16 +30,14 @@ public class BatchedSQLStatement {
     public void execute(final SQLConnector connector) {
         try (PreparedStatement ps = connector.createPreparedStatement(statement)) {
 
-            System.out.println("executing batch, parameters: " + parameters.size());
-
             for (Object[] parameterSet : parameters) {
                 for (int i = 0; i < parameterSet.length; i++) {
-                    ps.setObject(i, parameterSet[i]);
+                    ps.setObject(i+1, parameterSet[i]);
                 }
                 ps.addBatch();
             }
 
-            ps.execute();
+            ps.executeBatch();
         } catch(SQLException e){
             throw new RuntimeException(e);
         }

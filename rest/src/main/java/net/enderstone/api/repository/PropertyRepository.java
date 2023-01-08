@@ -26,7 +26,7 @@ public class PropertyRepository implements IMultipleKeyRepository<Integer, UUID,
 
     @Override
     public void update(final Map.Entry<Integer, UUID> key, final String value) {
-        RestAPI.connector.update("replace into `property` values (?, ?, ?)", key.getKey(), key.getValue() == null ? "NULL": key.getValue().toString(), value);
+        RestAPI.connector.update("replace into `property` values (?, ?, ?);", key.getKey(), key.getValue() == null ? "NULL": key.getValue().toString(), value);
     }
 
     public HashMap<Integer, String> getAllByOwner(final @Nullable UUID owner) {
