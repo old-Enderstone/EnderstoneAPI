@@ -30,6 +30,8 @@ public class PropertyService extends GlobalBean {
     private final ICache<String, Integer> keyCache;
     private final ICache<Integer, String> mirrorCache;
 
+    protected final ICache<PropertyKey<?>, AbstractProperty<?>> propertyCache;
+
     public PropertyService(final PropertyRepository propertyRepository, final PropertyKeyRepository keyRepository) {
         this.keyRepository = keyRepository;
         this.propertyRepository = propertyRepository;
@@ -50,6 +52,12 @@ public class PropertyService extends GlobalBean {
                 .setSupplier(keyRepository::getIdentifier)
                 .setWriter((k, v) -> new HeapReference<>(v))
                 .setMaxSize(20)
+                .create();
+
+        this.propertyCache = CacheBuilder.<PropertyKey<?>, AbstractProperty<?>>build("PropertyCache")
+                .setStorageType(StorageType.HEAP)
+                .setWriter((k, v) -> new HeapReference<>(v))
+                .setSupplier(k -> this.getProperty(k, null))
                 .create();
 
         Properties.registry.setOnUpdate(this::onUpdate);
@@ -121,6 +129,7 @@ public class PropertyService extends GlobalBean {
         return properties;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> AbstractProperty<T> getProperty(final PropertyKey<T> propertyKey, final @Nullable UUID owner) {
         Integer key = keyCache.get(propertyKey.identifier());
         if(key == null) {
@@ -128,10 +137,19 @@ public class PropertyService extends GlobalBean {
             keyCache.set(propertyKey.identifier(), key);
         }
 
+        if(owner == null) {
+            final AbstractProperty<T> property = (AbstractProperty<T>) propertyCache.get(propertyKey);
+            if(property != null) return property;
+        }
+
         final String value = propertyRepository.get(new SimpleEntry<>(key, owner));
         final AbstractProperty<T> property = propertyKey.supplier().apply(propertyKey);
         if(value != null) property.fromString(value);
         property.setOwner(owner);
+
+        if(owner == null) {
+            propertyCache.set(propertyKey, property);
+        }
 
         return property;
     }
