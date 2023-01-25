@@ -4,13 +4,17 @@ import com.bethibande.web.JWebServer;
 import com.bethibande.web.context.ServerContext;
 import com.bethibande.web.response.RequestResponse;
 import com.bethibande.web.sessions.Session;
+import com.bethibande.web.types.ServerInterface;
 import com.bethibande.web.types.WebRequest;
 import net.enderstone.api.common.types.Message;
 
 public class ApiContext extends ServerContext {
 
-    public ApiContext(final JWebServer server, final Session session, final WebRequest request) {
-        super(server, session, request);
+    public ApiContext(final JWebServer server,
+                      final ServerInterface _interface,
+                      final Session session,
+                      final WebRequest request) {
+        super(server, _interface, session, request);
     }
 
     /**

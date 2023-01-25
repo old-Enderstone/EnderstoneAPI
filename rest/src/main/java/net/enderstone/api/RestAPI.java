@@ -21,6 +21,7 @@ import net.enderstone.api.common.properties.impl.StringProperty;
 import net.enderstone.api.common.types.Message;
 import net.enderstone.api.common.types.PropertySerializer;
 import net.enderstone.api.config.Config;
+import net.enderstone.api.config.IPConfig;
 import net.enderstone.api.config.IPWhitelist;
 import net.enderstone.api.dbm.DatabaseMigration;
 import net.enderstone.api.repository.PlayerRepository;
@@ -34,9 +35,11 @@ import net.enderstone.api.service.PlayerService;
 import net.enderstone.api.service.PropertyService;
 import net.enderstone.api.sql.SQLConnector;
 import net.enderstone.api.tasks.ErrorWriteJob;
+import net.enderstone.api.utils.Arrays;
 import net.enderstone.api.utils.FileUtil;
 
 import java.io.File;
+import java.net.InetSocketAddress;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -47,6 +50,7 @@ import static com.bethibande.web.logging.ConsoleColors.*;
 
 public class RestAPI {
 
+    public static final File ipConfigFile = new File("./ip-config.json");
     public static final File configFile = new File("./config.json");
     public static final File whitelistFile = new File("./ip-whitelist.json");
 
@@ -54,6 +58,7 @@ public class RestAPI {
     public static Logger logger;
 
     public static Config config;
+    public static IPConfig ipConfig;
     public static IPWhitelist whitelist;
 
     public static SQLConnector connector;
@@ -71,10 +76,17 @@ public class RestAPI {
     public static final CompletableFuture<Integer> exit = new CompletableFuture<>();
 
     public static void createDefaults() {
+        if(!ipConfigFile.exists()) {
+            final IPConfig config = new IPConfig(Arrays.of(
+                    new IPConfig.IPEntry("127.0.0.1", 80, null, true),
+                    new IPConfig.IPEntry("::1", 80, null, true)
+            ));
+
+            FileUtil.writeJson(config, ipConfigFile);
+        }
+
         if(!configFile.exists()) {
             final Config def = new Config();
-            def.bindAddress = "0.0.0.0";
-            def.port = 80;
             def.sqlHost = "localhost";
             def.sqlPort = 3306;
             def.sqlDatabase = "api";
@@ -90,6 +102,8 @@ public class RestAPI {
     }
 
     public static void main(String[] args) {
+        final long start = System.currentTimeMillis();
+
         createDefaults();
         executor = new ScheduledThreadPoolExecutor(10);
         executor.setCorePoolSize(10);
@@ -100,6 +114,14 @@ public class RestAPI {
 
         config = FileUtil.readJson(configFile, Config.class);
         whitelist = FileUtil.readJson(whitelistFile, IPWhitelist.class);
+        ipConfig = FileUtil.readJson(ipConfigFile, IPConfig.class);
+
+        logger.config(String.format(
+                "Using SQL Server %s with database %s and user %s",
+                annotate(config.sqlHost + ":" + config.sqlPort, MAGENTA),
+                annotate(config.sqlDatabase, BLUE),
+                annotate(config.sqlUsername, BLUE)
+        ));
 
         connector = new SQLConnector();
         connector.setHostAddress(config.sqlHost, config.sqlPort)
@@ -127,7 +149,6 @@ public class RestAPI {
         restServer = new JWebServer()
                 .withLogger(logger)
                 .withExecutor(executor)
-                .withBindAddress(config.bindAddress, config.port)
                 .withMethodInvocationHandler(new WhitelistedInvocationHandler())
                 .withMethodInvocationHandler(new AuthenticationInvocationHandler())
                 .withProcessor(new ParameterAnnotationProcessor())
@@ -138,7 +159,10 @@ public class RestAPI {
                 .withHandler(NotFoundHandler.class)
                 .withHandler(PropertyHandler.class)
                 .withErrorHandler(RestAPI::handleError);
-        restServer.start();
+
+        for(IPConfig.IPEntry entry : ipConfig.entries()) {
+            restServer.start(new InetSocketAddress(entry.address(), entry.port()));
+        }
 
         // Gson isn't properly detecting types, all types, that do not extend NumberProperty need to be registered separately
         restServer.setGson(new GsonBuilder().serializeNulls()
@@ -161,7 +185,9 @@ public class RestAPI {
         commandDispatcher.setCommandManager(commandManager);
         commandDispatcher.start();
 
-        logger.info(annotate("Started!", GREEN));
+        long time = System.currentTimeMillis() - start;
+
+        logger.info(annotate(String.format("Started in %d ms!", time), GREEN));
 
         exit.join();
 
