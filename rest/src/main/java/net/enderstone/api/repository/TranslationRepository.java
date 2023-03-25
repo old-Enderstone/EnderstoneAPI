@@ -38,12 +38,12 @@ public class TranslationRepository implements IMultipleKeyRepository<String, Loc
             }
 
             return translations;
-        }, locale.toString(), bundle.toString());
+        }, bundle.toString(), locale.toString());
     }
 
     @Override
     public Translation get(Map.Entry<String, Locale> key) {
-        return RestAPI.connector.query("select `tValue` from `translations` where `tKey`=? and tLocale=?;", rs -> {
+        return RestAPI.connector.query("select `tValue` from `translations` t where t.`tKey`=? and t.`tLocale`=?;", rs -> {
             if(!rs.next()) return null;
 
             return new Translation(key.getKey(), key.getValue(), rs.getString("tValue"));
@@ -53,8 +53,8 @@ public class TranslationRepository implements IMultipleKeyRepository<String, Loc
     @Override
     public void delete(Map.Entry<String, Locale> key) {
         final SQLTransaction transaction = RestAPI.connector.createEmptyTransaction()
-                .withStatement(new SQLStatement("delete from `translations` where `tKey`=? and `tValue`=?;", key.getKey(), key.getValue().toString()))
-                .withStatement(new SQLStatement("delete from `bundles` where `tKey`=?;", key.getKey()));
+                .withStatement(new SQLStatement("delete from `bundles` where `tKey`=?;", key.getKey()))
+                .withStatement(new SQLStatement("delete from `translations` where `tKey`=?;", key.getKey()));
         transaction.transact();
     }
 }

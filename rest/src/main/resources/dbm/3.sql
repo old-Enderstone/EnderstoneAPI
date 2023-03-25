@@ -4,7 +4,7 @@ drop table `SystemProperty`;
 create table `propertyIdentifiers` (
 	`id` int UNSIGNED NOT NULL AUTO_INCREMENT,
     `label` varchar(128) NOT NULL,
-    PRIMARY KEY(`id`, `label`)
+    PRIMARY KEY(`id`)
 );
 
 create table `property` (
@@ -24,4 +24,7 @@ create table `arrayProperty` (
 
 ALTER TABLE `property` ADD FOREIGN KEY (`id`) REFERENCES `propertyIdentifiers` (`id`);
 ALTER TABLE `arrayProperty` ADD FOREIGN KEY (`id`) REFERENCES `propertyIdentifiers` (`id`);
-CREATE UNIQUE INDEX idx_key ON `bundles`(`bId`);
+
+CREATE INDEX idx_key ON `bundles`(`bId`);
+CREATE INDEX idx_name ON `Player`(`lastKnownName`);
+CREATE INDEX idx_label ON `propertyIdentifiers`(`label`)

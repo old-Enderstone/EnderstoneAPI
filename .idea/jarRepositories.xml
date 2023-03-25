@@ -19,17 +19,7 @@
     <remote-repository>
       <option name="id" value="github" />
       <option name="name" value="github" />
-      <option name="url" value="https://maven.pkg.github.com/Bethibande/test" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="github" />
-      <option name="name" value="github" />
       <option name="url" value="https://maven.pkg.github.com/Enderstone/EnderstoneAPI" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="nexus-snapshots" />
-      <option name="name" value="Nexus Snapshots" />
-      <option name="url" value="https://asia.orgatech-gmbh.de:9443/nexus/content/groups/nexus-snapshots/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />
@@ -42,11 +32,6 @@
       <option name="url" value="https://maven.pkg.github.com/Enderstone/MinigameAPI" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="jboss.community" />
-      <option name="name" value="JBoss Community repository" />
-      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="nexus-public" />
       <option name="name" value="Nexus Public" />
       <option name="url" value="https://asia.orgatech-gmbh.de:9443/nexus/content/groups/public/" />
@@ -55,6 +40,26 @@
       <option name="id" value="central" />
       <option name="name" value="central" />
       <option name="url" value="https://repo1.maven.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="github" />
+      <option name="name" value="github" />
+      <option name="url" value="https://maven.pkg.github.com/Bethibande/test" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="nexus-snapshots" />
+      <option name="name" value="Nexus Snapshots" />
+      <option name="url" value="https://asia.orgatech-gmbh.de:9443/nexus/content/groups/nexus-snapshots/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jboss.community" />
+      <option name="name" value="JBoss Community repository" />
+      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Central Repository" />
+      <option name="url" value="https://maven.bethibande.com/private" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="nexus-releases" />

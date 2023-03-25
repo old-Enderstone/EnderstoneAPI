@@ -29,7 +29,11 @@ import net.enderstone.api.repository.PropertyKeyRepository;
 import net.enderstone.api.repository.PropertyRepository;
 import net.enderstone.api.repository.TranslationBundleRepository;
 import net.enderstone.api.repository.TranslationRepository;
-import net.enderstone.api.rest.*;
+import net.enderstone.api.rest.NotFoundHandler;
+import net.enderstone.api.rest.PlayerHandler;
+import net.enderstone.api.rest.PropertyHandler;
+import net.enderstone.api.rest.StatusHandler;
+import net.enderstone.api.rest.TranslationHandler;
 import net.enderstone.api.service.I18nService;
 import net.enderstone.api.service.PlayerService;
 import net.enderstone.api.service.PropertyService;
@@ -50,8 +54,17 @@ import static com.bethibande.web.logging.ConsoleColors.*;
 
 public class RestAPI {
 
+    /**
+     * Argument used to indicate, that the rest api is starting as part of a unit test
+     */
+    public static final String ARG_UNIT_TEST = "--unit-test";
+
     public static final File ipConfigFile = new File("./ip-config.json");
     public static final File configFile = new File("./config.json");
+    /**
+     * Config used for unit tests, unit tests will cause a complete rebase of the database
+     */
+    public static final File unitConfigFile = new File("./u-config.json");
     public static final File whitelistFile = new File("./ip-whitelist.json");
 
     public static ScheduledThreadPoolExecutor executor;
@@ -75,7 +88,7 @@ public class RestAPI {
 
     public static final CompletableFuture<Integer> exit = new CompletableFuture<>();
 
-    public static void createDefaults() {
+    public static void createDefaults(final String[] args) {
         if(!ipConfigFile.exists()) {
             final IPConfig config = new IPConfig(Arrays.of(
                     new IPConfig.IPEntry("127.0.0.1", 80, null, true),
@@ -96,6 +109,19 @@ public class RestAPI {
             FileUtil.writeJson(def, configFile);
         }
 
+        if(Arrays.contains(args, ARG_UNIT_TEST)) {
+            if(!unitConfigFile.exists()) {
+                final Config def = new Config();
+                def.sqlHost = "localhost";
+                def.sqlPort = 3306;
+                def.sqlDatabase = "api-tests";
+                def.sqlUsername = "username";
+                def.sqlPassword = "password";
+
+                FileUtil.writeJson(def, unitConfigFile);
+            }
+        }
+
         if(!whitelistFile.exists()) {
             FileUtil.writeJson(new IPWhitelist(), whitelistFile);
         }
@@ -103,18 +129,24 @@ public class RestAPI {
 
     public static void main(String[] args) {
         final long start = System.currentTimeMillis();
+        final boolean isUnitTest = Arrays.contains(args, ARG_UNIT_TEST);
 
-        createDefaults();
+        createDefaults(args);
         executor = new ScheduledThreadPoolExecutor(10);
         executor.setCorePoolSize(10);
 
         logger = new net.enderstone.api.logging.Logger(executor);
-        logger.setLevel(Level.FINE);
+        logger.setLevel(isUnitTest ? Level.OFF: Level.FINE);
         logger.info("Starting..");
 
         config = FileUtil.readJson(configFile, Config.class);
         whitelist = FileUtil.readJson(whitelistFile, IPWhitelist.class);
         ipConfig = FileUtil.readJson(ipConfigFile, IPConfig.class);
+
+
+        if(isUnitTest) {
+            config = FileUtil.readJson(unitConfigFile, Config.class);
+        }
 
         logger.config(String.format(
                 "Using SQL Server %s with database %s and user %s",
@@ -124,11 +156,19 @@ public class RestAPI {
         ));
 
         connector = new SQLConnector();
-        connector.setHostAddress(config.sqlHost, config.sqlPort)
-                 .setUser(config.sqlUsername, config.sqlPassword)
-                 .setDatabase(config.sqlDatabase);
+        connector.setDriverClass("org.mariadb.jdbc.Driver")
+                 .setHostAddress(config.sqlHost, config.sqlPort)
+                 .setUser(config.sqlUsername, config.sqlPassword);
 
         connector.connect();
+
+        if(isUnitTest) {
+            connector.update("drop database if exists `" + config.sqlDatabase + "`;");
+            connector.update("create database `" + config.sqlDatabase + "`;");
+        }
+
+        connector.setDatabase(config.sqlDatabase);
+        connector.update("use `" + config.sqlDatabase + "`;");
 
         propertyKeyRepository = new PropertyKeyRepository();
         propertyRepository = new PropertyRepository();
@@ -189,8 +229,14 @@ public class RestAPI {
 
         logger.info(annotate(String.format("Started in %d ms!", time), GREEN));
 
-        exit.join();
+        if(!isUnitTest) {
+            final int status = exit.join();
 
+            exit(status);
+        }
+    }
+
+    public static void exit(final int code) {
         logger.info(annotate("Good Bye!", BLUE));
 
         connector.disconnect();

@@ -18,7 +18,7 @@ public class TranslationBundleRepository implements IRepository<UUID, Translatio
 
     @Override
     public void insert(UUID key, TranslationBundleItem value) {
-        RestAPI.connector.update("replace into `bundles` values (?, ?);", key.toString(), value.getTranslationKey());
+        RestAPI.connector.update("insert into `bundles` values (?, ?);", key.toString(), value.getTranslationKey());
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 
 public class Arrays {
 
+    @SafeVarargs
     public static <T> T[] of(T... arr) {
         return arr;
     }
@@ -25,6 +26,7 @@ public class Arrays {
         return sb.toString();
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T[] add(T[] array, T... add) {
         if(array[0] == null) return null;
         T[] newArray = (T[]) Array.newInstance(array[0].getClass(), array.length + add.length);

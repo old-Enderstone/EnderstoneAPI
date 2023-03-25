@@ -17,8 +17,8 @@ public class SQLConnector {
 
     private String driverClass = "com.mysql.cj.jdbc.Driver";
 
-    private BatchedSQLStatement current = null;
-    private ScheduledFuture<?> schedule = null;
+    //private BatchedSQLStatement current = null;
+    //private ScheduledFuture<?> schedule = null;
 
     private Connection con;
 
@@ -169,8 +169,8 @@ public class SQLConnector {
         }
     }
 
-    public synchronized void update(String statement, Object... objects) {
-        if(current == null || (schedule != null && schedule.isDone())) {
+    public synchronized int update(String statement, Object... objects) {
+        /*if(current == null || (schedule != null && schedule.isDone())) {
             current = new BatchedSQLStatement(statement);
             current.addParameterSet(objects);
             schedule = RestAPI.executor.schedule(() -> current.execute(this), 5, TimeUnit.SECONDS);
@@ -186,14 +186,27 @@ public class SQLConnector {
         if(canceled) current.execute(this);
 
         current = null;
-        update(statement, objects);
+        update(statement, objects);*/
+
+        try {
+            final PreparedStatement stmt = con.prepareStatement(statement);
+
+            if(objects != null)
+            for(int i = 0; i < objects.length; i++) {
+                stmt.setObject(i+1, objects[i]);
+            }
+
+            return stmt.executeUpdate();
+        } catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public <T> T query(final String query, final SQLAction<T> action, final Object... arguments) {
         try {
             final PreparedStatement st = this.con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
-            if(arguments != null && arguments.length > 0) {
+            if(arguments != null) {
                 for(int i = 0; i < arguments.length; i++) {
                     st.setObject(i+1, arguments[i]);
                 }
@@ -250,7 +263,7 @@ public class SQLConnector {
         try {
             Class.forName(this.driverClass).newInstance();
             con = DriverManager.getConnection(
-                    "jdbc:" + "mysql" + "://" +
+                    "jdbc:" + "mariadb" + "://" +
                             this.hostAddress +
                             ":" + this.hostPort +
                             (this.database != null ? "/" + this.database: "") +

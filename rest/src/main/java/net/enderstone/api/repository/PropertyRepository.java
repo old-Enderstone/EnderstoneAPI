@@ -16,7 +16,7 @@ public class PropertyRepository implements IMultipleKeyRepository<Integer, UUID,
         return RestAPI.connector.query("select `id` from `property` where `id`=? and `uId`=?;",
                                        ResultSet::next,
                                        key.getKey(),
-                                       key.getValue() == null ? "NULL": key.toString());
+                                       key.getValue() == null ? "NULL": key.getValue().toString());
     }
 
     @Override

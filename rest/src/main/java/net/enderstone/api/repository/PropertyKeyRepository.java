@@ -14,14 +14,17 @@ public class PropertyKeyRepository implements IRepository<String, Integer> {
     }
 
     public int create(final String key) {
-        return RestAPI.connector.query("insert into `propertyIdentifiers` values (NULL, ?) returning `id`;",
-                                       rs -> rs.getInt("id"),
+        return RestAPI.connector.query("insert into `propertyIdentifiers`(`label`) values (?) returning `id`;",
+                                       rs -> {
+                                            if(!rs.next()) return -1;
+                                            return rs.getInt("id");
+                                       },
                                        key);
     }
 
     @Override
     public void insert(final String key, final @Nullable Integer value) {
-        RestAPI.connector.update("insert into `propertyIdentifiers` values (?, ?);", value, key);
+        throw new UnsupportedOperationException("Use PropertyKeyRepository.create(String) instead.");
     }
 
     @Override

@@ -46,7 +46,7 @@ public class PlayerRepository implements IRepository<UUID, EPlayer> {
             if(!rs.next()) return null;
             final String lastKnownName = rs.getString("lastKnownName");
 
-            return new EPlayerImpl(key, lastKnownName, new ArrayList<AbstractProperty<?>>(), propertyService);
+            return new EPlayerImpl(key, lastKnownName, new ArrayList<>(), propertyService);
         }, key.toString());
     }
 
