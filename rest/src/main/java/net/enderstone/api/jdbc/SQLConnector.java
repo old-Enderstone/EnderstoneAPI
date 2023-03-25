@@ -1,4 +1,4 @@
-package net.enderstone.api.sql;
+package net.enderstone.api.jdbc;
 
 import net.enderstone.api.RestAPI;
 
@@ -6,7 +6,6 @@ import java.sql.*;
 import java.util.Properties;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 public class SQLConnector {
 
@@ -139,7 +138,7 @@ public class SQLConnector {
     public boolean tableExists(final String tableName) {
         try {
             DatabaseMetaData meta = con.getMetaData();
-            ResultSet resultSet = meta.getTables(null, null, tableName, new String[] {"TABLE"});
+            ResultSet resultSet = meta.getTables(database, database, tableName, new String[] {"TABLE"});
 
             return resultSet.next();
         } catch(SQLException e) {
@@ -192,7 +191,7 @@ public class SQLConnector {
 
     public <T> T query(final String query, final SQLAction<T> action, final Object... arguments) {
         try {
-            final PreparedStatement st = this.con.prepareStatement(query);
+            final PreparedStatement st = this.con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
             if(arguments != null && arguments.length > 0) {
                 for(int i = 0; i < arguments.length; i++) {

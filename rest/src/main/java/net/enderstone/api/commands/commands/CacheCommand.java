@@ -9,6 +9,8 @@ public class CacheCommand extends Command {
     public CacheCommand() {
         super("cc");
 
+        setDescription("Cache control command");
+
         addSubCommand(new CacheListCommand());
         addSubCommand(new CacheDumpCommand());
     }

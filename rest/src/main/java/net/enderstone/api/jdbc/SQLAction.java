@@ -1,4 +1,4 @@
-package net.enderstone.api.sql;
+package net.enderstone.api.jdbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

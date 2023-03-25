@@ -2,11 +2,10 @@ package net.enderstone.api.repository;
 
 import net.enderstone.api.RestAPI;
 import net.enderstone.api.common.i18n.Translation;
-import net.enderstone.api.sql.SQLStatement;
-import net.enderstone.api.sql.SQLTransaction;
+import net.enderstone.api.jdbc.SQLStatement;
+import net.enderstone.api.jdbc.SQLTransaction;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -31,7 +30,7 @@ public class TranslationRepository implements IMultipleKeyRepository<String, Loc
     }
 
     public List<Translation> getAllTranslationOfBundle(Locale locale, UUID bundle) {
-        return RestAPI.connector.query("select `t`.`tKey`, `t`.`tValue` from translations t inner join bundles b on t.tKey=b.tKey where `t`.`tLocale`=? and `b`.`bId`=?;", rs -> {
+        return RestAPI.connector.query("select `t`.`tKey`, `t`.`tValue` from translations t inner join bundles b on b.tKey=t.tKey where b.`bId`=? and t.`tLocale`=?;", rs -> {
             final List<Translation> translations = new ArrayList<>();
 
             while(rs.next()) {

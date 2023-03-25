@@ -24,3 +24,4 @@ create table `arrayProperty` (
 
 ALTER TABLE `property` ADD FOREIGN KEY (`id`) REFERENCES `propertyIdentifiers` (`id`);
 ALTER TABLE `arrayProperty` ADD FOREIGN KEY (`id`) REFERENCES `propertyIdentifiers` (`id`);
+CREATE UNIQUE INDEX idx_key ON `bundles`(`bId`);

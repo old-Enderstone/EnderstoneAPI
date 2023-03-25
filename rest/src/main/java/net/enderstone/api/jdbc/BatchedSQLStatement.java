@@ -1,9 +1,8 @@
-package net.enderstone.api.sql;
+package net.enderstone.api.jdbc;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class BatchedSQLStatement {

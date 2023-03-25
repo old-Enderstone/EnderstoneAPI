@@ -1,7 +1,7 @@
-package net.enderstone.api.dbm;
+package net.enderstone.api.jdbc.dbm;
 
 import net.enderstone.api.RestAPI;
-import net.enderstone.api.sql.SQLConnector;
+import net.enderstone.api.jdbc.SQLConnector;
 import net.enderstone.api.tasks.ErrorWriteJob;
 import net.enderstone.api.utils.Reflection;
 
@@ -10,11 +10,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Date;
 
+/**
+ * Database migration stuff
+ */
 public class DatabaseMigration {
 
     public static final String SQL_DELIMITER = "\\s*;\\s*(?=([^']*'[^']*')*[^']*$)";

@@ -5,11 +5,10 @@ import net.enderstone.api.common.EPlayer;
 import net.enderstone.api.common.properties.AbstractProperty;
 import net.enderstone.api.impl.EPlayerImpl;
 import net.enderstone.api.service.PropertyService;
-import net.enderstone.api.sql.SQLStatement;
-import net.enderstone.api.sql.SQLTransaction;
+import net.enderstone.api.jdbc.SQLStatement;
+import net.enderstone.api.jdbc.SQLTransaction;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
