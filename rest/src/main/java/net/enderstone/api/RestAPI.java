@@ -136,7 +136,7 @@ public class RestAPI {
         executor.setCorePoolSize(10);
 
         logger = new net.enderstone.api.logging.Logger(executor);
-        logger.setLevel(isUnitTest ? Level.OFF: Level.FINE);
+        logger.setLevel(isUnitTest ? Level.OFF: Level.ALL);
         logger.info("Starting..");
 
         config = FileUtil.readJson(configFile, Config.class);
@@ -249,8 +249,8 @@ public class RestAPI {
 
     public static void handleError(final Throwable th, final ServerContext ctx) {
         final UUID id = UUID.randomUUID();
-        ctx.server().getLogger().severe("Encountered an error: " + th.getLocalizedMessage() + " for path: " + ctx.request().getUri().getPath());
-        ctx.server().getLogger().severe("Stack trace was save under '" + new File(ErrorWriteJob.ERROR_DIR + "/" + id).getPath() + "'");
+        ctx.api().getLogger().severe("Encountered an error: " + th.getLocalizedMessage() + " for path: " + ctx.request().getUri().getPath());
+        ctx.api().getLogger().severe("Stack trace was save under '" + new File(ErrorWriteJob.ERROR_DIR + "/" + id).getPath() + "'");
 
         executor.execute(new ErrorWriteJob(id.toString(), th, "Error for route: " + ctx.request().getUri().toString()));
 

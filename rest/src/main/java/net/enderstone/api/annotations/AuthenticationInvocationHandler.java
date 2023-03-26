@@ -1,8 +1,10 @@
 package net.enderstone.api.annotations;
 
+import com.bethibande.web.JWebAPI;
 import com.bethibande.web.JWebServer;
 import com.bethibande.web.processors.MethodInvocationHandlerAdapter;
 import com.bethibande.web.response.RequestResponse;
+import com.bethibande.web.types.Request;
 import com.bethibande.web.types.WebRequest;
 import net.enderstone.api.common.types.Message;
 
@@ -11,8 +13,9 @@ import java.lang.reflect.Method;
 public class AuthenticationInvocationHandler extends MethodInvocationHandlerAdapter {
 
     @Override
-    public void beforeInvocation(Method method, WebRequest request, JWebServer server) {
+    public void beforeInvocation(Method method, Request _request, JWebAPI server) {
         if(!method.isAnnotationPresent(Authentication.class)) return;
+        if(!(_request instanceof WebRequest request)) return;
 
         final Authentication auth = method.getAnnotation(Authentication.class);
 
