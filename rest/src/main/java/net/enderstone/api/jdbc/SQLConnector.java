@@ -1,13 +1,32 @@
 package net.enderstone.api.jdbc;
 
 import net.enderstone.api.RestAPI;
+import net.enderstone.api.utils.Threads;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class SQLConnector {
+
+    /**
+     * Max amount attempts to reconnect to mysql server if connect was cut, after all attempts have been used and no
+     * new connection was established, an IllegalStateException is thrown
+     */
+    public static final int MAX_RETRIES = 3;
+    /**
+     * Delay for attempting to reconnect to mysql server. The timeout is multiplied by the attempt number.
+     * The attempt number is zero-indexed, meaning the first try has a delay of 0 ms, the next RETRY_TIMEOUT
+     * and the one after that a delay of 2*RETRY_TIMEOUT ms
+     */
+    public static final long RETRY_TIMEOUT = 100L;
 
     private String username;
     private String password;
@@ -113,11 +132,49 @@ public class SQLConnector {
 
 
     public PreparedStatement createPreparedStatement(final String statement) {
-        try {
-            return con.prepareStatement(statement);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        return withConnection((con) -> {
+            try {
+                return con.prepareStatement(statement);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public PreparedStatement createPreparedStatement(final String statement, final int keys) {
+        return withConnection((con) -> {
+            try {
+                return con.prepareStatement(statement, keys);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    private <R> R withConnection(final Function<Connection, R> action) {
+        return withConnection0(action, 0);
+    }
+
+    private void withConnection(final Consumer<Connection> action) {
+        withConnection0((con) -> {
+            action.accept(con);
+            return null;
+        }, 0);
+    }
+
+    private <R> R withConnection0(final Function<Connection, R> action, final int iteration) {
+        if(!isConnected()) {
+            Threads.sleep(iteration * RETRY_TIMEOUT);
+
+            final boolean successful = connect();
+            if(!successful && iteration < MAX_RETRIES) {
+                withConnection0(action, iteration + 1);
+            } else {
+                throw new IllegalStateException("Cannot connect to mysql database, connection failed after %d attempts".formatted(iteration));
+            }
         }
+
+        return action.apply(this.con);
     }
 
     public SQLTransaction createEmptyTransaction() {
@@ -136,64 +193,52 @@ public class SQLConnector {
      * Check if a table with the given name exists
      */
     public boolean tableExists(final String tableName) {
-        try {
-            DatabaseMetaData meta = con.getMetaData();
-            ResultSet resultSet = meta.getTables(database, database, tableName, new String[] {"TABLE"});
+        return withConnection((con) -> {
+            try {
+                DatabaseMetaData meta = con.getMetaData();
+                ResultSet resultSet = meta.getTables(database, database, tableName, new String[] {"TABLE"});
 
-            return resultSet.next();
-        } catch(SQLException e) {
-            throw new RuntimeException(e);
-        }
+                return resultSet.next();
+            } catch(SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public void updateBatch(String... command) {
-        try {
-            Statement st = this.con.createStatement();
-            for (String s : command) {
-                st.addBatch(s);
+        withConnection((con) -> {
+            try {
+                Statement st = this.con.createStatement();
+                for (String s : command) {
+                    st.addBatch(s);
+                }
+                st.executeBatch();
+                st.close();
+            } catch(SQLException e) {
+                throw new RuntimeException(e);
             }
-            st.executeBatch();
-            st.close();
-        } catch(SQLException e) {
-            throw new RuntimeException(e);
-        }
+        });
     }
 
     public void update(String command) {
-        try {
-            Statement st = this.con.createStatement();
-            st.execute(command);
-            st.close();
-        } catch(SQLException e) {
-            throw new RuntimeException(e);
-        }
+        withConnection((con) -> {
+            try {
+                Statement st = this.con.createStatement();
+                st.execute(command);
+                st.close();
+            } catch(SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public synchronized int update(String statement, Object... objects) {
-        /*if(current == null || (schedule != null && schedule.isDone())) {
-            current = new BatchedSQLStatement(statement);
-            current.addParameterSet(objects);
-            schedule = RestAPI.executor.schedule(() -> current.execute(this), 5, TimeUnit.SECONDS);
-            return;
-        }
+        try(final PreparedStatement stmt = this.createPreparedStatement(statement)) {
 
-        if(current.getStatement().equals(statement)) {
-            current.addParameterSet(objects);
-            return;
-        }
-
-        boolean canceled = schedule.cancel(false);
-        if(canceled) current.execute(this);
-
-        current = null;
-        update(statement, objects);*/
-
-        try {
-            final PreparedStatement stmt = con.prepareStatement(statement);
-
-            if(objects != null)
-            for(int i = 0; i < objects.length; i++) {
-                stmt.setObject(i+1, objects[i]);
+            if(objects != null) {
+                for(int i = 0; i < objects.length; i++) {
+                    stmt.setObject(i+1, objects[i]);
+                }
             }
 
             return stmt.executeUpdate();
@@ -203,8 +248,7 @@ public class SQLConnector {
     }
 
     public <T> T query(final String query, final SQLAction<T> action, final Object... arguments) {
-        try {
-            final PreparedStatement st = this.con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+        try(final PreparedStatement st = this.createPreparedStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
             if(arguments != null) {
                 for(int i = 0; i < arguments.length; i++) {
