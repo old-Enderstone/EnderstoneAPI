@@ -183,6 +183,9 @@ public class RestAPI {
         final I18nService i18nService = new I18nService(translationRepository, translationBundleRepository);
 
         final int currentVersion = DatabaseMigration.getCurrentVersion();
+
+        logger.info("Current database version is '%d'".formatted(currentVersion));
+
         final int newVersion = DatabaseMigration.updateDatabase(currentVersion);
         if(currentVersion != newVersion) DatabaseMigration.setCurrentVersion(newVersion);
 

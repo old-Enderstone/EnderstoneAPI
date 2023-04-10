@@ -38,6 +38,9 @@ public class Reflection {
                     if (checkSubdir >= 0) {
                         entry = entry.substring(0, checkSubdir);
                     }
+
+                    if(entry.isEmpty()) continue;
+
                     result.add(entry);
                 }
             }

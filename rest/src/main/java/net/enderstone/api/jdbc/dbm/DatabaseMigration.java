@@ -38,7 +38,7 @@ public class DatabaseMigration {
 
     public static String[] loadVersions() {
         try {
-            return Reflection.getResourceListing(DatabaseMigration.class, "dbm");
+            return Reflection.getResourceListing(DatabaseMigration.class, "dbm/");
         } catch(IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
