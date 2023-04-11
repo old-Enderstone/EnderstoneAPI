@@ -31,7 +31,10 @@ jobs:
         mysql password: 'password'
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-
+    - name: configure maven
+      uses: s4u/maven-settings-action@v2.8.0
+      with:
+        servers: '[{"id": "enderstone", "username": "github-deploy", "password": "${{ secrets.deployPassword }}"}]'
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
       env:
