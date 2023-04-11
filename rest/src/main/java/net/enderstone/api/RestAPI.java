@@ -91,8 +91,8 @@ public class RestAPI {
     public static void createDefaults(final String[] args) {
         if(!ipConfigFile.exists()) {
             final IPConfig config = new IPConfig(Arrays.of(
-                    new IPConfig.IPEntry("127.0.0.1", 80, null, true),
-                    new IPConfig.IPEntry("::1", 80, null, true)
+                    new IPConfig.IPEntry("127.0.0.1", 4574, null, true),
+                    new IPConfig.IPEntry("::1", 4574, null, true)
             ));
 
             FileUtil.writeJson(config, ipConfigFile);
