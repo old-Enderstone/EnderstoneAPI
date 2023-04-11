@@ -24,7 +24,14 @@ jobs:
         distribution: 'temurin'
         server-id: enderstone # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
-
+    - name: Start MariaDB Instance
+        # You may pin to the exact commit or the version.
+        # uses: tiehm/mariadb-action@fe9e696f076f0489f27c69ff1805bc380e1c4fba
+      uses: tiehm/mariadb-action@v1
+      with:
+        mysql database: api-tests
+        mysql user: username
+        mysql password: password
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
