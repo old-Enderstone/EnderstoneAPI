@@ -24,13 +24,12 @@ jobs:
         distribution: 'temurin'
         server-id: enderstone # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
-    - name: setup-mysql
-      uses: shogo82148/actions-setup-mysql@v1.15.0
+    - name: Start MariaDB
+      uses: getong/mariadb-action@v1.1
       with:
-        # name of a new user
-        user: username # optional
-        # password for the new user
-        password: password # optional
+        mysql database: 'api-tests'
+        mysql user: 'username'
+        mysql password: 'password'
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
